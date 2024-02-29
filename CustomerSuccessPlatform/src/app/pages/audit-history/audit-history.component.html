@@ -1,0 +1,43 @@
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Date Of Audit Column -->
+    <ng-container matColumnDef="dateOfAudit">
+      <th mat-header-cell *matHeaderCellDef> Date Of Audit </th>
+      <td mat-cell *matCellDef="let element"> {{element.dateOfAudit | date}} </td>
+    </ng-container>
+  
+    <!-- Reviewed By Column -->
+    <ng-container matColumnDef="reviewedBy">
+      <th mat-header-cell *matHeaderCellDef> Reviewed By </th>
+      <td mat-cell *matCellDef="let element"> {{element.reviewedBy}} </td>
+    </ng-container>
+  
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    </ng-container>
+  
+    <!-- Reviewed Section Column -->
+    <ng-container matColumnDef="reviewedSection">
+      <th mat-header-cell *matHeaderCellDef> Reviewed Section </th>
+      <td mat-cell *matCellDef="let element"> {{element.reviewedSection}} </td>
+    </ng-container>
+  
+    <!-- Comment Or Queries Column -->
+    <ng-container matColumnDef="commentOrQueries">
+      <th mat-header-cell *matHeaderCellDef> Comment Or Queries </th>
+      <td mat-cell *matCellDef="let element"> {{element.commentOrQueries}} </td>
+    </ng-container>
+  
+    <!-- Action Item Column -->
+    <ng-container matColumnDef="actionItem">
+      <th mat-header-cell *matHeaderCellDef> Action Item </th>
+      <td mat-cell *matCellDef="let element"> {{element.actionItem}} </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  

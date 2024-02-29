@@ -107,7 +107,6 @@ public class PlatformModule : AbpModule
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
-
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
             options.AddAssemblyResource(

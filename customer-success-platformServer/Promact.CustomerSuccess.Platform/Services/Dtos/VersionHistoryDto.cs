@@ -1,8 +1,9 @@
-﻿using Volo.Abp.Domain.Entities;
+﻿using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Entities;
 
 namespace Promact.CustomerSuccess.Platform.Services.Dtos
 {
-    public class VersionHistoryDto : IEntity<Guid>
+    public class VersionHistoryDto : IEntityDto<Guid>
     {
         public int Version { get; set; }
         public string Type { get; set; }

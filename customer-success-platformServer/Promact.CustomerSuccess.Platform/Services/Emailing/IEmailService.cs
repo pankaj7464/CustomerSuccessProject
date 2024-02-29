@@ -2,5 +2,9 @@
 {
     public interface IEmailService
     {
+        public interface IEmailServices
+        {
+            void SendEmail(EmailDto request);
+        }
     }
 }

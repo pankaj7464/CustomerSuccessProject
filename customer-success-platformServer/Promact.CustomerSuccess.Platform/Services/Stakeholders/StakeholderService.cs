@@ -12,8 +12,8 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
         CrudAppService<Stakeholder, StakeholderDto, Guid, PagedAndSortedResultRequestDto,
         CreateStakeholderDto, UpdateStakeholderDto>, IStakeholderService
     {
-        public StakeholderService(IRepository<Stakeholder,Guid> stakeHolderRepository)
-            : base(stakeHolderRepository)
+        public StakeholderService(IRepository<Stakeholder,Guid> stakeholderRepository)
+            : base(stakeholderRepository)
         {
 
         }

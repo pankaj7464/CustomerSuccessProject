@@ -1,0 +1,53 @@
+<table mat-table [dataSource]="dataSource">
+
+  <!-- Version Column -->
+  <ng-container matColumnDef="version">
+    <th mat-header-cell *matHeaderCellDef> Version </th>
+    <td mat-cell *matCellDef="let element"> {{element.version}} </td>
+  </ng-container>
+
+  <!-- Type Column -->
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef> Type </th>
+    <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+  </ng-container>
+
+  <!-- Change Column -->
+  <ng-container matColumnDef="change">
+    <th mat-header-cell *matHeaderCellDef> Change </th>
+    <td mat-cell *matCellDef="let element"> {{element.change}} </td>
+  </ng-container>
+
+  <!-- Change Reason Column -->
+  <ng-container matColumnDef="changeReason">
+    <th mat-header-cell *matHeaderCellDef> Change Reason </th>
+    <td mat-cell *matCellDef="let element"> {{element.changeReason}} </td>
+  </ng-container>
+
+  <!-- Created By Column -->
+  <ng-container matColumnDef="createdBy">
+    <th mat-header-cell *matHeaderCellDef> Created By </th>
+    <td mat-cell *matCellDef="let element"> {{element.createdBy}} </td>
+  </ng-container>
+
+  <!-- Revision Date Column -->
+  <ng-container matColumnDef="revisionDate">
+    <th mat-header-cell *matHeaderCellDef> Revision Date </th>
+    <td mat-cell *matCellDef="let element"> {{element.revisionDate | date}} </td>
+  </ng-container>
+
+  <!-- Approval Date Column -->
+  <ng-container matColumnDef="approvalDate">
+    <th mat-header-cell *matHeaderCellDef> Approval Date </th>
+    <td mat-cell *matCellDef="let element"> {{element.approvalDate |date}} </td>
+  </ng-container>
+
+  <!-- Approved By Column -->
+  <ng-container matColumnDef="approvedBy">
+    <th mat-header-cell *matHeaderCellDef> Approved By </th>
+    <td mat-cell *matCellDef="let element"> {{element.approvedBy ? element.approvedBy : '-'}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

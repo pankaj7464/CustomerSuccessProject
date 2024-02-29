@@ -27,7 +27,6 @@ namespace Promact.CustomerSuccess.Platform.Entities
         public Guid? TenantId { get; set; }
 
         public virtual Organization? Organization { get; set; }        
-
         public ExtraPropertyDictionary ExtraProperties { get; set; }
     }
 }
