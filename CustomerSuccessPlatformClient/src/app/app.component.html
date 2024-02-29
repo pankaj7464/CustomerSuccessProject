@@ -1,5 +1,5 @@
 <!-- navbar.component.html -->
-<header class="bg-gray-800 py-3 px-6 flex justify-between items-center gap-10">
+<header class="bg-gray-800 py-3 px-6 flex justify-between items-center gap-10 mb-4">
   <!-- Left side: Project name -->
   <div class="flex items-center">
     <span class="text-white text-lg font-semibold">CSP</span>
@@ -15,17 +15,27 @@
     <span class="text-white">User</span>
   </div>
 </header>
-<mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer class="example-sidenav" mode="side" opened>
-    @if (showFiller) {
-      <p>Lorem, ipsum dolor sit amet consectetur.</p>
-    }
-    <button (click)="showFiller = !showFiller" mat-raised-button>
-      Toggle extra text
+<mat-drawer-container class="home-container" autosize>
+  <mat-drawer #drawer  mode="side" opened >
+     <!-- Center: Buttons -->
+  <div class="flex gap-4 flex-col m-2">
+    <!-- Button 1: Create Project -->
+    <button mat-raised-button color="primary" class="h-10 bg-blue-500 hover:bg-blue-600 text-white  py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      Create Project
     </button>
+
+   @for (nav of Navigations; track $index) {
+    <button mat-raised-button color="primary" class="h-10 bg-gray-100 hover:bg-gray-600  py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+    {{nav.displayName}}
+    </button>
+   }
+
+   
+  </div>
+
   </mat-drawer>
 
-  <div class="example-sidenav-content">
+  <div class="m-2 p-2">
     <app-project-budget></app-project-budget>
     <button type="button" mat-button (click)="drawer.toggle()">
       Toggle sidenav

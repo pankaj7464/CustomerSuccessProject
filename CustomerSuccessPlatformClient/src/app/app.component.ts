@@ -13,5 +13,10 @@ import { ProjectBudgetComponent } from './componants/project-budget/project-budg
 })
 export class AppComponent {
   showFiller = false;
+  Navigations = [
+    { path: 'project-manager', displayName: 'Project Manager' },
+    { path: 'placeholder', displayName: 'Placeholder' }
+  
+  ];
   title = 'CustomerSuccessPlatformClient';
 }
