@@ -1,0 +1,37 @@
+<!-- navbar.component.html -->
+<header class="bg-gray-800 py-3 px-6 flex justify-between items-center gap-10">
+  <!-- Left side: Project name -->
+  <div class="flex items-center">
+    <span class="text-white text-lg font-semibold">CSP</span>
+  </div>
+
+  <!-- Center: Search box -->
+  <div class="flex-grow flex items-center justify-center">
+    <input class="flex-grow bg-gray-700 text-white rounded py-1 px-3 focus:outline-none" type="text" placeholder="Search...">
+  </div>
+
+  <!-- Right side: User -->
+  <div>
+    <span class="text-white">User</span>
+  </div>
+</header>
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer #drawer class="example-sidenav" mode="side" opened>
+    @if (showFiller) {
+      <p>Lorem, ipsum dolor sit amet consectetur.</p>
+    }
+    <button (click)="showFiller = !showFiller" mat-raised-button>
+      Toggle extra text
+    </button>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <app-project-budget></app-project-budget>
+    <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button>
+  </div>
+
+</mat-drawer-container>
+
+
