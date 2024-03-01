@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-stakeholder-table',
@@ -7,18 +8,13 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./stakeholder.component.css']
 })
 export class StakeholderComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'title', 'name', 'contact'];
-  dataSource!: MatTableDataSource<any>;
-
-  constructor() { }
+  displayedColumns: string[] = ['title', 'name', 'contact'];
+  dataSource!: any[];
+  constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    // Dummy JSON data
-    const jsonData = [
-      { id: '1', title: 'Title A', name: 'John Doe', contact: 'john@example.com' },
-      { id: '2', title: 'Title B', name: 'Jane Doe', contact: 'jane@example.com' }
-    ];
-
-    this.dataSource = new MatTableDataSource(jsonData);
+    this.apiService.getAllAuditHistory().subscribe(res=>{
+      this.dataSource = res.items;
+    })
   }
 }

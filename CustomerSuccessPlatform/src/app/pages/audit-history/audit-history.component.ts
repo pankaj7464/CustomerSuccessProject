@@ -1,23 +1,7 @@
 import { Component } from '@angular/core';
-export const AUDIT_DATA: any[] = [
-  { 
-    dateOfAudit: new Date('2024-02-28'), 
-    reviewedBy: 'John Doe', 
-    status: 'Completed', 
-    reviewedSection: 'Security', 
-    commentOrQueries: 'No comments', 
-    actionItem: 'None' 
-  },
-  { 
-    dateOfAudit: new Date('2024-02-27'), 
-    reviewedBy: 'Jane Smith', 
-    status: 'In Progress', 
-    reviewedSection: 'Performance', 
-    commentOrQueries: 'Need clarification on section 2', 
-    actionItem: 'Follow up with team' 
-  }
-];
-
+import { ApiService } from '../../services/api.service';
+import { ProjectBudget } from '../../models/project-budget';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 @Component({
   selector: 'app-audit-history',
   templateUrl: './audit-history.component.html',
@@ -25,5 +9,40 @@ export const AUDIT_DATA: any[] = [
 })
 export class AuditHistoryComponent {
   displayedColumns: string[] = ['dateOfAudit', 'reviewedBy', 'status', 'reviewedSection', 'commentOrQueries', 'actionItem'];
-  dataSource: any[] = AUDIT_DATA;
+  dataSource!: ProjectBudget[];
+  statuses:string[] = ["Pending","Done"];
+  form: FormGroup;
+
+  constructor(private apiService:ApiService,private fb: FormBuilder) {
+    this.form = this.fb.group({
+      dateOfAudit: ['', Validators.required],
+      reviewedBy: ['', Validators.required],
+      status: ['', Validators.required],
+      reviewedSection: ['', Validators.required],
+      commentOrQueries: ['', Validators.required],
+      actionItem: ['', Validators.required]
+    });
+ }
+
+ 
+  ngOnInit() {
+    this.apiService.getAllAuditHistory().subscribe(res=>{
+      this.dataSource = res.items;
+    })
+  }
+
+
+  submitForm(): void {
+    if (this.form.valid) {
+      
+      console.log(this.form.value);
+     
+    } else {
+     
+      this.form.markAllAsTouched();
+    }
+  }
+
+
+  
 }

@@ -1,3 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()" class="flex gap-2 flex-wrap m-4">
+  <div class="flex justify-between items-center w-full mb-4 gap-4">
+    <!-- Level -->
+    <mat-form-field class="flex-1">
+      <mat-label>Level</mat-label>
+      <mat-select formControlName="level">
+        <mat-option *ngFor="let level of levels " [value]="level">{{
+         level
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Escalation Type -->
+    <mat-form-field class="flex-1">
+      <mat-label>Escalation Type</mat-label>
+      <mat-select formControlName="escalationType">
+        <mat-option *ngFor="let type of escalationType" [value]="type">{{
+          type
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Project ID -->
+    <mat-form-field class="flex-1">
+      <mat-label>Project ID</mat-label>
+      <mat-select formControlName="projectId">
+        <mat-option *ngFor="let project of projects " [value]="project">{{
+         project
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </div>
+
+  <!-- Submit Button -->
+  <button mat-raised-button color="primary" background type="submit" class="mat-primary">Submit</button>
+</form>
+
+
+
+
+
+
 <table mat-table [dataSource]="dataSource">
 
     <!-- ID Column -->

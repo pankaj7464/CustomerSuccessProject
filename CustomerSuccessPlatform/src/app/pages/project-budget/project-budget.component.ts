@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-project-budget-table',
@@ -7,18 +9,37 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./project-budget.component.css']
 })
 export class ProjectBudgetComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'type', 'durationInMonths', 'contractDuration', 'budgetedHours', 'budgetedCost', 'currency', 'projectId'];
+  displayedColumns: string[] = ['type', 'durationInMonths', 'contractDuration', 'budgetedHours', 'budgetedCost', 'currency', 'projectId'];
   dataSource!: MatTableDataSource<any>;
+  form!: FormGroup;
 
-  constructor() { }
+  
+
+  constructor(private apiService:ApiService,private fb: FormBuilder) { }
 
   ngOnInit() {
-    // Dummy JSON data
-    const jsonData = [
-      { id: '1', type: 'Type A', durationInMonths: 12, contractDuration: 24, budgetedHours: 100, budgetedCost: 5000, currency: 'USD', projectId: '123' },
-      { id: '2', type: 'Type B', durationInMonths: 6, contractDuration: 12, budgetedHours: 50, budgetedCost: 3000, currency: 'EUR', projectId: '456' }
-    ];
+    this.form = this.fb.group({
+      type: ['', Validators.required],
+      durationInMonths: ['', Validators.required],
+      contractDuration: ['', Validators.required],
+      budgetedHours: ['', Validators.required],
+      budgetedCost: ['', Validators.required],
+      currency: ['', Validators.required],
+      projectId: ['', Validators.required]
+    });
+    this.apiService.getProjectBudgets().subscribe(res=>{
+      this.dataSource = new MatTableDataSource(res.items);
+    })
+  }
 
-    this.dataSource = new MatTableDataSource(jsonData);
+  submitForm(){
+    if (this.form.valid) {
+      
+      console.log(this.form.value);
+     
+    } else {
+     
+      this.form.markAllAsTouched();
+    }
   }
 }

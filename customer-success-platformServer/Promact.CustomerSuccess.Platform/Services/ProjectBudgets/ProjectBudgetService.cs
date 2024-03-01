@@ -3,27 +3,72 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Emailing; // Import the email service namespace
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
 {
-    public class ProjectBudgetService :
-                       CrudAppService<ProjectBudget,
-                       ProjectBudgetDto, 
-                       Guid, 
-                       PagedAndSortedResultRequestDto, 
-                       CreateProjectBudgetDto, 
-                       UpdateProjectBudgetDto>, 
-        IProjectBudgetService
+    public class ProjectBudgetService : CrudAppService<ProjectBudget,
+                                ProjectBudgetDto,
+                                Guid,
+                                PagedAndSortedResultRequestDto,
+                                CreateProjectBudgetDto,
+                                UpdateProjectBudgetDto>,
+                                IProjectBudgetService
     {
-        private readonly IRepository<ProjectBudget, Guid> _projectBudgetRepository;
+        private readonly IEmailService _emailService;
+        private readonly string Useremail = "pankajkumarnikk@gmail.com";
+        private readonly string Username = "Pankaj Kumar"; 
 
-        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository)
-            : base(projectBudgetRepository) 
+        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService)
+            : base(projectBudgetRepository)
         {
-            _projectBudgetRepository = projectBudgetRepository;
+            _emailService = emailService;
+        }
+
+        public override async Task<ProjectBudgetDto> CreateAsync(CreateProjectBudgetDto input)
+        {
+            var projectBudgetDto = await base.CreateAsync(input);
+
+            var emailDto = new EmailDto
+            {
+                To = Useremail,
+                Subject = "Project Budget Created alert",
+                Body = Template.GetEmailTemplate(Username) 
+            };
+            _emailService.SendEmail(emailDto);
+
+            return projectBudgetDto;
+        }
+
+        public override async Task<ProjectBudgetDto> UpdateAsync(Guid id, UpdateProjectBudgetDto input)
+        {
+            var projectBudgetDto = await base.UpdateAsync(id, input);
+
+            var emailDto = new EmailDto
+            {
+                To = Useremail,
+                Subject = "Project Budget Updated alert",
+                Body = Template.GetEmailTemplate(Username)
+            };
+            _emailService.SendEmail(emailDto);
+
+            return projectBudgetDto;
+        }
+
+        public override async Task DeleteAsync(Guid id)
+        {
+            var emailDto = new EmailDto
+            {
+                To = Useremail,
+                Subject = "Project Budget Deleted alert",
+                Body = Template.GetEmailTemplate(Username)
+            };
+            _emailService.SendEmail(emailDto);
+
+            await base.DeleteAsync(id);
         }
     }
 }

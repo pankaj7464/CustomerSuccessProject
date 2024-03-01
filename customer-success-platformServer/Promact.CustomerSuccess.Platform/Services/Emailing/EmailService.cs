@@ -1,45 +1,49 @@
 ﻿using MailKit.Security;
-using Microsoft.Extensions.Options;
 using MimeKit.Text;
 using MimeKit;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Volo.Abp.Emailing;
 
 namespace Promact.CustomerSuccess.Platform.Services.Emailing
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
-        private readonly SmtpSettings _smtpSettings;
+        private readonly IConfiguration _configuration;
+        private readonly IEmailSender emailSender;
 
-        public EmailServices(IOptions<SmtpSettings> smtpSettings)
+        public EmailService(IConfiguration configuration)
         {
-            _smtpSettings = smtpSettings.Value;
+            _configuration = configuration;
         }
-        /// <summary>
-        /// This method, SendEmail, sends an email using SMTP protocol. 
-        /// It takes an EmailDto object as a parameter, containing details  recipient, subject, and body. 
-        /// It then creates a MimeMessage, sets the sender, recipient, subject, and body of the email, 
-        /// And sends it using an SMTP client after authenticating with the provided credentials.
-        /// Finally, it disconnects from the SMTP server after sending the email
-        /// </summary>
-        /// <param name="request"></param>
+
         public void SendEmail(EmailDto request)
         {
-            // Create a new MimeMessage
+            Console.WriteLine("=================================================");
+            var smtpServer = _configuration["EmailSettings:SmtpServer"];
+            var port = int.Parse(_configuration["EmailSettings:Port"]);
+            var username = _configuration["EmailSettings:Username"];
+            var password = _configuration["EmailSettings:Password"];
+            var fromAddress = _configuration["EmailSettings:FromAddress"];
+
+
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_smtpSettings.Sender));
+            email.From.Add(MailboxAddress.Parse(fromAddress));
             email.To.Add(MailboxAddress.Parse(request.To));
             email.Subject = request.Subject;
             email.Body = new TextPart(TextFormat.Html)
             {
-                Text = request.Body,
+                Text =request.Body
             };
+
             using (var client = new SmtpClient())
             {
-                client.Connect(_smtpSettings.Server, _smtpSettings.Port, SecureSocketOptions.StartTls);
-                client.Authenticate(_smtpSettings.Sender, _smtpSettings.Password);
+                client.Connect(smtpServer, port, SecureSocketOptions.StartTls);
+                client.Authenticate(username, password);
                 client.Send(email);
                 client.Disconnect(true);
-
             }
-
         }
     }
+}

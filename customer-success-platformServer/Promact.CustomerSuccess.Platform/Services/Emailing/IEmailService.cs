@@ -1,10 +1,9 @@
-﻿namespace Promact.CustomerSuccess.Platform.Services.Emailing
+﻿using Promact.CustomerSuccess.Platform.Services.Dtos;
+
+namespace Promact.CustomerSuccess.Platform.Services.Emailing
 {
     public interface IEmailService
     {
-        public interface IEmailServices
-        {
-            void SendEmail(EmailDto request);
-        }
+        void SendEmail(EmailDto request);
     }
 }

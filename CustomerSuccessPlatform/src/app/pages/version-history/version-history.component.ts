@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-version-history-table',
@@ -8,17 +9,14 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class VersionHistoryComponent implements OnInit {
   displayedColumns: string[] = ['version', 'type', 'change', 'changeReason', 'createdBy', 'revisionDate', 'approvalDate', 'approvedBy'];
-  dataSource!: MatTableDataSource<any>;
+  dataSource!:any[];
 
-  constructor() { }
+  constructor(private apiService:ApiService) { }
 
   ngOnInit() {
-    // Dummy JSON data
-    const jsonData = [
-      { version: 1, type: 'Type A', change: 'Change A', changeReason: 'Reason A', createdBy: 'User A', revisionDate: new Date('2024-02-28T10:00:00Z'), approvalDate: new Date('2024-02-28T11:00:00Z'), approvedBy: 'User B' },
-      { version: 2, type: 'Type B', change: 'Change B', changeReason: 'Reason B', createdBy: 'User C', revisionDate: new Date('2024-02-28T12:00:00Z'), approvalDate: null, approvedBy: '' }
-    ];
-
-    this.dataSource = new MatTableDataSource(jsonData);
+    this.apiService.getAllAuditHistory().subscribe(res=>{
+      console.log(res)
+      this.dataSource = res.items;
+    })
   }
 }

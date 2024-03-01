@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-risk-profile-table',
@@ -7,18 +9,38 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./risk-profiling.component.css']
 })
 export class RiskProfileComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'projectId', 'riskType', 'severity', 'impact', 'remediationSteps'];
-  dataSource!: MatTableDataSource<any>;
+  displayedColumns: string[] = [ 'projectId', 'riskType', 'severity', 'impact', 'remediationSteps'];
+  dataSource!:any[];
+  form!: FormGroup;
 
-  constructor() { }
+
+  constructor(private apiService:ApiService,private fb: FormBuilder) { }
 
   ngOnInit() {
-    // Dummy JSON data
-    const jsonData = [
-      { id: '1', projectId: '123', riskType: 'Type A', severity: 'High', impact: 'Critical', remediationSteps: ['Step 1', 'Step 2'] },
-      { id: '2', projectId: '456', riskType: 'Type B', severity: 'Medium', impact: 'Normal', remediationSteps: ['Step 3', 'Step 4'] }
-    ];
 
-    this.dataSource = new MatTableDataSource(jsonData);
+    this.form = this.fb.group({
+      projectId: ['', Validators.required],
+      riskType: ['', Validators.required],
+      severity: ['', Validators.required],
+      impact: ['', Validators.required],
+      remediationSteps: ['', Validators.required]
+    });
+
+
+    this.apiService.getAllRiskProfile().subscribe(res=>{
+      console.log(res)
+      this.dataSource = res.items;
+    })
   }
+
+  submitForm() {
+    if (this.form.valid) {
+      
+      console.log(this.form.value);
+     
+    } else {
+     
+      this.form.markAllAsTouched();
+    }
+    }
 }

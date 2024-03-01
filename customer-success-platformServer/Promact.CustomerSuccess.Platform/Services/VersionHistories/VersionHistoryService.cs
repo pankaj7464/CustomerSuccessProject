@@ -1,17 +1,70 @@
 ﻿using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Emailing; 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
 {
-    public class VersionHistoryService :
-        CrudAppService<VersionHistory, VersionHistoryDto, Guid, PagedAndSortedResultRequestDto, CreateVersionHistoryDto, UpdateVersionHistoryDto>,
-        IVersionHistoryService
+    public class VersionHistoryService : CrudAppService<VersionHistory,
+                                VersionHistoryDto,
+                                Guid,
+                                PagedAndSortedResultRequestDto,
+                                CreateVersionHistoryDto,
+                                UpdateVersionHistoryDto>,
+                                IVersionHistoryService
     {
-        public VersionHistoryService(IRepository<VersionHistory, Guid> repository) : base(repository)
+        private readonly IEmailService _emailService;
+        private readonly string Useremail = "pankajkumarnikk@gmail.com";
+        private readonly string Username = "Pankaj Kumar"; 
+
+        public VersionHistoryService(IRepository<VersionHistory, Guid> repository, IEmailService emailService) : base(repository)
         {
+            _emailService = emailService;
+        }
+
+        public override async Task<VersionHistoryDto> CreateAsync(CreateVersionHistoryDto input)
+        {
+            var versionHistoryDto = await base.CreateAsync(input);
+
+            var emailDto = new EmailDto
+            {
+                To = Useremail,
+                Subject = "Version History Created alert",
+                Body = Template.GetEmailTemplate(Username)
+            };
+            _emailService.SendEmail(emailDto);
+
+            return versionHistoryDto;
+        }
+
+        public override async Task<VersionHistoryDto> UpdateAsync(Guid id, UpdateVersionHistoryDto input)
+        {
+            var versionHistoryDto = await base.UpdateAsync(id, input);
+
+            var emailDto = new EmailDto
+            {
+                To = Useremail,
+                Subject = "Version History Updated alert",
+                Body = Template.GetEmailTemplate(Username)
+            };
+            _emailService.SendEmail(emailDto);
+
+            return versionHistoryDto;
+        }
+
+        public override async Task DeleteAsync(Guid id)
+        {
+            var emailDto = new EmailDto
+            {
+                To = Useremail,
+                Subject = "Version History Deleted alert",
+                Body = Template.GetEmailTemplate(Username)
+            };
+            _emailService.SendEmail(emailDto);
+
+            await base.DeleteAsync(id);
         }
     }
 }

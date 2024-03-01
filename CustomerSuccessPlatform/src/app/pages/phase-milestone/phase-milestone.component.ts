@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-phase-milestone-table',
@@ -7,18 +9,38 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./phase-milestone.component.css']
 })
 export class PhaseMilestoneComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'projectId', 'title', 'startDate', 'endDate', 'description', 'comments', 'status'];
-  dataSource!: MatTableDataSource<any>;
+  form!: FormGroup;
+  statuses: string[] = ["Completed", "Pending"];
 
-  constructor() { }
+  displayedColumns: string[] = ['projectId', 'title', 'startDate', 'endDate', 'description', 'comments', 'status'];
+  dataSource!: any[];
+  projects: string[] = ["Project 1", "Project 2"]
+  constructor(private apiService: ApiService, private fb: FormBuilder) { }
 
   ngOnInit() {
-    // Dummy JSON data
-    const jsonData = [
-      { id: '1', projectId: '123', title: 'Title A', startDate: new Date('2024-02-28T08:00:00Z'), endDate: new Date('2024-03-10T17:00:00Z'), description: 'Description A', comments: 'Comments A', status: 'Active' },
-      { id: '2', projectId: '456', title: 'Title B', startDate: new Date('2024-03-11T08:00:00Z'), endDate: new Date('2024-03-25T17:00:00Z'), description: 'Description B', comments: 'Comments B', status: 'Inactive' }
-    ];
+    this.form = this.fb.group({
+      projectId: ['', Validators.required],
+      title: ['', Validators.required],
+      startDate: ['', Validators.required],
+      endDate: ['', Validators.required],
+      description: ['', Validators.required],
+      comments: ['', Validators.required],
+      status: ['', Validators.required]
+    });
+    this.apiService.getAllPhaseMilestone().subscribe(res => {
+      console.log(res)
+      this.dataSource = res.items;
+    })
+  }
 
-    this.dataSource = new MatTableDataSource(jsonData);
+  submitForm() {
+    if (this.form.valid) {
+
+      console.log(this.form.value);
+
+    } else {
+
+      this.form.markAllAsTouched();
+    }
   }
 }

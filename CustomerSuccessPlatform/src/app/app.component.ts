@@ -16,9 +16,9 @@ export class AppComponent {
   }
   showFiller = false;
   Navigations = [
+    { path: 'project', displayName: 'Project' },
     { path: 'project-manager', displayName: 'Project Manager' },
-    { path: 'placeholder', displayName: 'Placeholder' }
-
+    { path: 'settings', displayName: 'Settings' }
   ];
   tabs: { path: string, displayName: string }[] = [
     { path: 'audit-history', displayName: 'Audit History' },

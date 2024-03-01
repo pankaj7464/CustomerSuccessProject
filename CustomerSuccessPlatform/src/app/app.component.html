@@ -21,7 +21,7 @@
     <span class="text-white">User</span>
   </div>
 </header>
-<mat-drawer-container class="home-container" autosize>
+<mat-drawer-container class="home-container min-h-[50vh]" autosize>
   <mat-drawer #drawer mode="side" opened>
     <!-- Center: Buttons -->
     <div class="flex gap-4 flex-col m-2">
@@ -36,9 +36,8 @@
 
       @for (nav of Navigations; track $index) {
       <button
-        mat-raised-button
         color="primary"
-        class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        class="h-10 bg-gray-100  hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         {{ nav.displayName }}
       </button>
@@ -50,12 +49,11 @@
     <button type="button" mat-button (click)="drawer.toggle()">
       Toggle sidenav
     </button>
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center border-b-2 ">
       @for (tab of tabs; track $index) {
-        <span class=" border-b-2  p-2" (click)="navigateTo(tab.path)">{{tab.displayName}}</span>
+        <span class="  p-2 cursor-pointer "  [routerLink]="tab.path" routerLinkActive="active" (click)="navigateTo(tab.path)">{{tab.displayName}}</span>
       }
     </div>
     <router-outlet></router-outlet>
-   
   </div>
 </mat-drawer-container>

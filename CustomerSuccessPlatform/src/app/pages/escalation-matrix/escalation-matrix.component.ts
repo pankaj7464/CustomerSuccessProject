@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-escalation-matrix-table',
@@ -7,18 +9,37 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./escalation-matrix.component.css']
 })
 export class EscalationMatrixComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'level', 'escalationType', 'projectId', 'projectName'];
+[x: string]: any;
+  displayedColumns: string[] = ['level', 'escalationType', 'projectId'];
   dataSource!: MatTableDataSource<any>;
+  form!: FormGroup;
 
-  constructor() { }
+  escalationType:string[] = ["Type 1"," Type-2"];
+  levels:string[] = ["Level 1","Level 2"];
+  projects:string[] = ["Project 1","Project 2"]
+
+  constructor(private apiService:ApiService,private fb: FormBuilder) { }
+
+  submitForm() {
+    if (this.form.valid) {
+      
+      console.log(this.form.value);
+     
+    } else {
+     
+      this.form.markAllAsTouched();
+    }
+  }
 
   ngOnInit() {
-    // Dummy JSON data
-    const jsonData = [
-      { id: '1', level: 'High', escalationType: 'Critical', projectId: '123', projectName: 'Project A' },
-      { id: '2', level: 'Medium', escalationType: 'Normal', projectId: '456', projectName: 'Project B' }
-    ];
-
-    this.dataSource = new MatTableDataSource(jsonData);
+    this.form = this.fb.group({
+      level: ['',Validators.required],
+      escalationType: ['',Validators.required],
+      projectId: ['',Validators.required],
+    });
+    this.apiService.getAllEscalationMatrix().subscribe(res=>{
+      console.log(res)
+      this.dataSource = new MatTableDataSource(res.items);
+    })
   }
 }

@@ -10,3 +10,7 @@
     margin-left: 8px;
   }
   
+  .active{
+    color: red;
+    border-bottom: 2px solid red;
+  }

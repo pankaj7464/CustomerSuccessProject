@@ -54,6 +54,11 @@ public class PlatformAutoMapperProfile : Profile
         CreateMap<UpdateSprintDto, Sprint>();
         CreateMap<Sprint, SprintDto>().ReverseMap();
         
+        //Done
+        CreateMap<CreatePhaseMilestoneDto, PhaseMilestone>();
+        CreateMap<UpdatePhaseMilestoneDto, PhaseMilestone>();
+        CreateMap<PhaseMilestone, PhaseMilestoneDto>().ReverseMap();
+        
 
 
 
