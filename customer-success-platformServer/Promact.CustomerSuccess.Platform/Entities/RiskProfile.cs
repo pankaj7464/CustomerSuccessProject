@@ -5,6 +5,7 @@ namespace Promact.CustomerSuccess.Platform.Entities
 {
     public class RiskProfile : AuditedAggregateRootWithUser<Guid, ApplicationUser>
     {
+
         [ForeignKey("Project")]
         public Guid ProjectId { get; set; }
         public RiskType RiskType { get; set; }

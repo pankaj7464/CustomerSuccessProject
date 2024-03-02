@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
     // other imports...
     MatIconModule
   ],
-  // other module properties...
+
 })
 export class AppModule { }
 

@@ -19,6 +19,8 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
     {
     }
 
+    public DbSet<Stakeholder> Stakeholders    { get; set; }
+    public DbSet<VersionHistory> VersionHistories    { get; set; }
     public DbSet<AuditHistory> AuditHistories    { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<Document> Documents { get; set; }

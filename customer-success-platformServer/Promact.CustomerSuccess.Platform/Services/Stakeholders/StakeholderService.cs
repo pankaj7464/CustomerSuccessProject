@@ -1,6 +1,6 @@
 ﻿using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
-using Promact.CustomerSuccess.Platform.Services.Emailing; // Import the email service namespace
+using Promact.CustomerSuccess.Platform.Services.Emailing; 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -17,9 +17,9 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
     {
         private readonly IEmailService _emailService;
         private readonly string Useremail = "pankajkumarnikk@gmail.com";
-        private readonly string Username = "Pankaj Kumar"; 
+        private readonly string Username = "Pankaj Kumar";
 
-        public StakeholderService(IRepository<Stakeholder, Guid> stakeholderRepository, IEmailService emailService) : base(stakeholderRepository)
+        public StakeholderService(IRepository<Stakeholder, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
         }

@@ -37,7 +37,7 @@
       @for (nav of Navigations; track $index) {
       <button
         color="primary"
-        class="h-10 bg-gray-100  hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         {{ nav.displayName }}
       </button>
@@ -46,12 +46,36 @@
   </mat-drawer>
 
   <div class="m-2 p-2">
-    <button type="button" mat-button (click)="drawer.toggle()">
-      Toggle sidenav
-    </button>
-    <div class="flex justify-between items-center border-b-2 ">
+    <div class="flex justify-between">
+      <button
+        mat-raised-button
+        type="button"
+        mat-button
+        (click)="drawer.toggle()"
+      >
+        Toggle
+      </button>
+      <!-- Submit Button -->
+      <button
+        mat-raised-button
+        color="primary"
+        background
+        type="button"
+        class="mat-primary"
+        (click)="generatePdf()"
+      >
+        Export PDF
+      </button>
+    </div>
+    <div  class="flex justify-between items-center border-b-2">
       @for (tab of tabs; track $index) {
-        <span class="  p-2 cursor-pointer "  [routerLink]="tab.path" routerLinkActive="active" (click)="navigateTo(tab.path)">{{tab.displayName}}</span>
+      <span
+        class="p-2 cursor-pointer"
+        [routerLink]="tab.path"
+        routerLinkActive="active"
+        (click)="navigateTo(tab.path)"
+        >{{ tab.displayName }}</span
+      >
       }
     </div>
     <router-outlet></router-outlet>
