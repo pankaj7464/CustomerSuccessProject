@@ -5,7 +5,7 @@ namespace Promact.CustomerSuccess.Platform.Entities
 {
     public class EscalationMatrix : AuditedEntity<Guid>
     {      
-        public string ResponsiblePerson { get; set; }
+        public required string ResponsiblePerson { get; set; }
         public EscalationMatrixLevels Level { get; set; }
         public EscalationType EscalationType { get; set; }        
         [ForeignKey("Project")]

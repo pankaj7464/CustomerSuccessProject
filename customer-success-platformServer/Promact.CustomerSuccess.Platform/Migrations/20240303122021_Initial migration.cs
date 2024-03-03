@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Promact.CustomerSuccess.Platform.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -480,6 +480,29 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VersionHistories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Version = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Change = table.Column<string>(type: "text", nullable: false),
+                    ChangeReason = table.Column<string>(type: "text", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    RevisionDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ApprovalDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "text", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VersionHistories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AbpAuditLogActions",
                 columns: table => new
                 {
@@ -757,7 +780,7 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: false)
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -809,6 +832,56 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                     table.PrimaryKey("PK_Documents", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Documents_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EscalationMatrices",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ResponsiblePerson = table.Column<string>(type: "text", nullable: false),
+                    Level = table.Column<int>(type: "integer", nullable: false),
+                    EscalationType = table.Column<int>(type: "integer", nullable: false),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EscalationMatrices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EscalationMatrices_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Stakeholders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Contact = table.Column<string>(type: "text", nullable: false),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stakeholders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Stakeholders_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
@@ -876,42 +949,6 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                         name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
                         column: x => x.AuthorizationId,
                         principalTable: "OpenIddictAuthorizations",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EscalationMatrices",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Level = table.Column<int>(type: "integer", nullable: false),
-                    EscalationType = table.Column<int>(type: "integer", nullable: false),
-                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EscalationMatrices", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EscalationMatrices_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EscalationMatrices_Users_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_EscalationMatrices_Users_LastModifierId",
-                        column: x => x.LastModifierId,
-                        principalTable: "Users",
                         principalColumn: "Id");
                 });
 
@@ -1434,16 +1471,6 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 column: "LastModifierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EscalationMatrices_CreatorId",
-                table: "EscalationMatrices",
-                column: "CreatorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EscalationMatrices_LastModifierId",
-                table: "EscalationMatrices",
-                column: "LastModifierId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EscalationMatrices_ProjectId",
                 table: "EscalationMatrices",
                 column: "ProjectId");
@@ -1584,6 +1611,11 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 column: "PhaseMilestoneId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Stakeholders_ProjectId",
+                table: "Stakeholders",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_TenantId",
                 table: "Users",
                 column: "TenantId");
@@ -1690,6 +1722,12 @@ namespace Promact.CustomerSuccess.Platform.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sprints");
+
+            migrationBuilder.DropTable(
+                name: "Stakeholders");
+
+            migrationBuilder.DropTable(
+                name: "VersionHistories");
 
             migrationBuilder.DropTable(
                 name: "AbpEntityChanges");

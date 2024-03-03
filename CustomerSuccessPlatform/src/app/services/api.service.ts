@@ -323,8 +323,8 @@ export class ApiService {
   getAllDataForPdf(): Observable<any> {
     const projectBudgets$ = this.getProjectBudgets();
     const auditHistory$ = this.getAllAuditHistory();
-    // const versionHistory$ = this.getAllVersionHistory();
-    // const stakeholder$ = this.getAllStakeholder();
+    const versionHistory$ = this.getAllVersionHistory();
+    const stakeholder$ = this.getAllStakeholder();
     const phaseMilestone$ = this.getAllPhaseMilestone();
     const escalationMatrix$ = this.getAllEscalationMatrix();
     const riskProfile$ = this.getAllRiskProfile();
@@ -333,8 +333,8 @@ export class ApiService {
     return forkJoin([
       projectBudgets$,
       auditHistory$,
-      // versionHistory$,
-      // stakeholder$,
+      versionHistory$,
+      stakeholder$,
       phaseMilestone$,
       escalationMatrix$,
       riskProfile$,
@@ -344,15 +344,15 @@ export class ApiService {
         ([
           projectBudgets,
           auditHistory,
-          // versionHistory,
-          // stakeholder,
+          versionHistory,
+          stakeholder,
           phaseMilestone,
           escalationMatrix,
           riskProfile,
           sprint,
         ]: [
-          // ApiResponse,
-          // ApiResponse,
+          ApiResponse,
+          ApiResponse,
           ApiResponse,
           ApiResponse,
           ApiResponse,
@@ -362,8 +362,8 @@ export class ApiService {
         ]) => {
           console.log( projectBudgets,
             auditHistory,
-            // versionHistory,
-            // stakeholder,
+            versionHistory,
+            stakeholder,
             phaseMilestone,
             escalationMatrix,
             riskProfile,
@@ -372,8 +372,8 @@ export class ApiService {
           return {
             projectBudgets,
             auditHistory,
-            // versionHistory,
-            // stakeholder,
+            versionHistory,
+            stakeholder,
             phaseMilestone,
             escalationMatrix,
             riskProfile,

@@ -768,11 +768,16 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Stakeholders");
                 });
@@ -2738,6 +2743,17 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                     b.Navigation("LastModifier");
 
                     b.Navigation("PhaseMilestone");
+                });
+
+            modelBuilder.Entity("Promact.CustomerSuccess.Platform.Entities.Stakeholder", b =>
+                {
+                    b.HasOne("Promact.CustomerSuccess.Platform.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>

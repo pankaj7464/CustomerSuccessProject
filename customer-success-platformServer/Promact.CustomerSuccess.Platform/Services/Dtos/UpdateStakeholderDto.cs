@@ -4,6 +4,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
 {
     public class UpdateStakeholderDto
     {
+
         [Required]
         public string Title { get; set; }
         public string Name { get; set; }
