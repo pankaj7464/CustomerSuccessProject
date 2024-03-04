@@ -70,7 +70,7 @@ export class VersionHistoryComponent implements OnInit {
       });
     }
     else{
-      this.apiService.postStakeholder(this.form.value).subscribe((res) => {
+      this.apiService.postVersionHistory(this.form.value).subscribe((res) => {
         console.log(res);
         this.apiService.showSuccessToast(
           'Version History Added Successfully'

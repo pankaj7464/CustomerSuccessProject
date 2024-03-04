@@ -83,6 +83,12 @@ export class AppComponent implements OnInit {
                   item.severity = this.apiService.severities[item.severity]
                   break;
                 }
+                case "versionHistory": {
+                  item.approvalDate  = new Date(item.approvalDate).toLocaleDateString();
+                  item.revisionDate  = new Date(item.revisionDate).toLocaleDateString();
+                  item.status = this.apiService.sprintStatuses[item.status];
+                  break;
+                }
                 case "sprint": {
                   item.endDate  = new Date(item.endDate).toLocaleDateString();
                   item.startDate  = new Date(item.startDate).toLocaleDateString();
@@ -93,7 +99,7 @@ export class AppComponent implements OnInit {
                   "test"
               }
               for (const prop in item) {
-                if (item.hasOwnProperty(prop) && !prop.toLowerCase().includes('id')) { // Exclude keys containing 'id' substring
+                if (item.hasOwnProperty(prop) && !prop.toLowerCase().includes('id')) { 
                   rowData.push(item[prop]);
                 }
               }
@@ -116,7 +122,7 @@ export class AppComponent implements OnInit {
           }
         });
 
-        doc.save('data.pdf');
+        doc.save('Report.pdf');
       },
       (err) => console.log(err)
     );

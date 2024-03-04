@@ -8,9 +8,9 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
         public string Type { get; set; }
         public string Change { get; set; }
         public string ChangeReason { get; set; }
-        public ApplicationUser CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime RevisionDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
-        public ApplicationUser ApprovedBy { get; set; }
+        public string ApprovedBy { get; set; }
     }
 }
