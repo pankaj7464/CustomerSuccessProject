@@ -68,6 +68,7 @@ export class RiskProfileComponent implements OnInit {
   deleteItem(id: any) {
     this.apiService.deleteRiskProfile(id).subscribe(
       (res) => {
+        this.dataSource = this.dataSource.filter(i => i.id != id);
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {

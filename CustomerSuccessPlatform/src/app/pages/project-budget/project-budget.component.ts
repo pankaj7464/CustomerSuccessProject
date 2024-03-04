@@ -81,6 +81,7 @@ export class ProjectBudgetComponent implements OnInit {
   deleteItem(id: any) {
     this.apiService.deleteProjectBudget(id).subscribe(
       (res) => {
+        this.dataSource = this.dataSource.filter(i => i.id != id);
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {

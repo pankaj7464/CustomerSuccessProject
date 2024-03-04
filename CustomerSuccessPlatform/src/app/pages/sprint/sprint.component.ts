@@ -42,6 +42,7 @@ export class SprintComponent implements OnInit {
   deleteItem(id: any) {
     this.apiService.deleteSprint(id).subscribe(
       (res) => {
+        this.dataSource = this.dataSource.filter(i => i.id != id);
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {
@@ -64,6 +65,7 @@ export class SprintComponent implements OnInit {
       }
       else {
         this.apiService.postSprint(this.form.value).subscribe((res) => {
+          
           console.log(res);
           this.apiService.showSuccessToast("Audit History Added Successfully");
         });

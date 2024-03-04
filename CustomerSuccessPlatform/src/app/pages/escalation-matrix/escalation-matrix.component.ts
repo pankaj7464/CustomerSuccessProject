@@ -25,7 +25,7 @@ export class EscalationMatrixComponent implements OnInit {
   escalationType: string[] = this.apiService.escalationType;
   levels: string[] = this.apiService.levels;
   projects: any[] = ['Project 1', 'Project 2'];
-
+  dataSource!:any[]
   constructor(private apiService: ApiService, private fb: FormBuilder) { }
 
   submitForm(): void {
@@ -59,6 +59,7 @@ export class EscalationMatrixComponent implements OnInit {
       projectId: ['', Validators.required],
     });
     this.apiService.getAllEscalationMatrix().subscribe((res) => {
+      this.dataSource = res.items
       this.dataSourceForFinantials = res.items.filter(i=>i.escalationType==0).sort((a, b) => a.level - b.level);
       this.dataSourceForTechnicals = res.items.filter(i=>i.escalationType==1).sort((a, b) => a.level - b.level);
       this.dataSourceForOperationals = res.items.filter(i=>i.escalationType==2).sort((a, b) => a.level - b.level);
@@ -77,6 +78,7 @@ export class EscalationMatrixComponent implements OnInit {
   deleteItem(id: any) {
     this.apiService.deleteEscalationMatrix(id).subscribe(
       (res) => {
+        this.dataSource = this.dataSource.filter(i => i.id != id);
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {
