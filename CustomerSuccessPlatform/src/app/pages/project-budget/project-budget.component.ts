@@ -6,16 +6,25 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-project-budget-table',
   templateUrl: './project-budget.component.html',
-  styleUrls: ['./project-budget.component.css']
+  styleUrls: ['./project-budget.component.css'],
 })
 export class ProjectBudgetComponent implements OnInit {
-  displayedColumns: string[] = ['type', 'durationInMonths', 'contractDuration', 'budgetedHours', 'budgetedCost', 'currency', 'projectId'];
-  dataSource!: MatTableDataSource<any>;
+  displayedColumns: string[] = [
+    'type',
+    'durationInMonths',
+    'contractDuration',
+    'budgetedHours',
+    'budgetedCost',
+    'currency',
+    'projectId',
+    'Actions',
+  ];
+  dataSource!: any[];
   form!: FormGroup;
+  projects: any[] = [];
+  projectType: string[] = ['FixedBidget', 'ManMonth'];
 
-  
-
-  constructor(private apiService:ApiService,private fb: FormBuilder) { }
+  constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -25,21 +34,46 @@ export class ProjectBudgetComponent implements OnInit {
       budgetedHours: ['', Validators.required],
       budgetedCost: ['', Validators.required],
       currency: ['', Validators.required],
-      projectId: ['', Validators.required]
+      projectId: ['', Validators.required],
     });
-    this.apiService.getProjectBudgets().subscribe(res=>{
-      this.dataSource = new MatTableDataSource(res.items);
-    })
+    this.apiService.getProjectBudgets().subscribe((res) => {
+      this.dataSource = res.items;
+    });
+    this.apiService.getAllProject().subscribe((res) => {
+      console.log(res);
+      this.projects = res.items;
+    });
   }
 
-  submitForm(){
+  submitForm(): void {
     if (this.form.valid) {
-      
       console.log(this.form.value);
-     
+      this.apiService.postProjectBudget(this.form.value).subscribe(
+        (res) => {
+          console.log(res);
+          this.apiService.showSuccessToast('Project Budget Added Successfully');
+        },
+
+        (error) => {
+          console.log(error);
+        }
+      );
     } else {
-     
       this.form.markAllAsTouched();
     }
+  }
+
+  deleteItem(id: any) {
+    this.apiService.deleteProjectBudget(id).subscribe(
+      (res) => {
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
+  }
+  editItem(data: any) {
+    this.form.patchValue(data);
   }
 }

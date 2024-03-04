@@ -6,40 +6,64 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-escalation-matrix-table',
   templateUrl: './escalation-matrix.component.html',
-  styleUrls: ['./escalation-matrix.component.css']
+  styleUrls: ['./escalation-matrix.component.css'],
 })
 export class EscalationMatrixComponent implements OnInit {
-[x: string]: any;
-  displayedColumns: string[] = ['level', 'escalationType', 'projectId'];
+  [x: string]: any;
+  displayedColumns: string[] = [
+    'level',
+    'escalationType',
+    'responsiblePerson',
+    'Actions',
+  ];
   dataSource!: MatTableDataSource<any>;
   form!: FormGroup;
 
-  escalationType:string[] = ["Type 1"," Type-2"];
-  levels:string[] = ["Level 1","Level 2"];
-  projects:string[] = ["Project 1","Project 2"]
+  escalationType: string[] = ['Operational', ' Financial', 'Technical'];
+  levels: string[] = ['Level1', 'Level2', 'Level3', 'Level4', 'Level5'];
+  projects: any[] = ['Project 1', 'Project 2'];
 
-  constructor(private apiService:ApiService,private fb: FormBuilder) { }
+  constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
-  submitForm() {
+  submitForm(): void {
     if (this.form.valid) {
-      
-      console.log(this.form.value);
-     
+      this.apiService.postEscalationMatrix(this.form.value).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast(
+          'Escalation Matrix Added Successfully'
+        );
+      });
     } else {
-     
       this.form.markAllAsTouched();
     }
   }
 
   ngOnInit() {
     this.form = this.fb.group({
-      level: ['',Validators.required],
-      escalationType: ['',Validators.required],
-      projectId: ['',Validators.required],
+      level: ['', Validators.required],
+      escalationType: ['', Validators.required],
+      responsiblePerson: ['', Validators.required],
+      projectId: ['', Validators.required],
     });
-    this.apiService.getAllEscalationMatrix().subscribe(res=>{
-      console.log(res)
+    this.apiService.getAllEscalationMatrix().subscribe((res) => {
       this.dataSource = new MatTableDataSource(res.items);
-    })
+    });
+    this.apiService.getAllProject().subscribe((res) => {
+      this.projects = res.items;
+    });
+  }
+
+  editItem(data: any) {
+    this.form.patchValue(data);
+  }
+  deleteItem(id: any) {
+    this.apiService.deleteEscalationMatrix(id).subscribe(
+      (res) => {
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
 }

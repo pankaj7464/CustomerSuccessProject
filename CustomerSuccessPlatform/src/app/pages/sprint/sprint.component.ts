@@ -15,7 +15,13 @@ export class SprintComponent implements OnInit {
   form!: FormGroup;
   constructor(private apiService: ApiService, private fb: FormBuilder) { }
   phaseMilestone: any = []
-  statuses: string[] = ["Pending", "Done", "In Progress"]
+  statuses: string[] = [
+    "InProgress",
+    "Completed",
+    "Delayed",
+    "OnTrack",
+    "SignOffPending"
+];
   ngOnInit() {
 
     this.form = this.fb.group({
@@ -38,21 +44,28 @@ export class SprintComponent implements OnInit {
     })
 
   }
-  deleteItem(id: string) {
-    console.log(id)
+  deleteItem(id: any) {
+    this.apiService.deleteSprint(id).subscribe(
+      (res) => {
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
   editItem(data: any) {
     this.form.patchValue(data);
   }
 
-  submitForm() {
+  submitForm(): void {
     if (this.form.valid) {
-      console.log(this.form.value)
-      this.apiService.postSprint(this.form.value).subscribe(res => {
-       this.apiService.showSuccessToast("Sprint added Successfully")
-      })
+      this.apiService.postSprint(this.form.value).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast("Audit History Added Successfully");
+      });
     } else {
-      console.log('Form is invalid');
+      this.form.markAllAsTouched();
     }
   }
 }

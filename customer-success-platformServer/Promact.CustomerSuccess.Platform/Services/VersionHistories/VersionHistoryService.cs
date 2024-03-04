@@ -17,7 +17,7 @@ namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
     {
         private readonly IEmailService _emailService;
         private readonly string Useremail = "pankajkumarnikk@gmail.com";
-        private readonly string Username = "Pankaj Kumar"; 
+        private readonly string Username = "Pankaj Kumar";
 
         public VersionHistoryService(IRepository<VersionHistory, Guid> repository, IEmailService emailService) : base(repository)
         {

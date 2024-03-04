@@ -1,8 +1,9 @@
 ﻿using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Promact.CustomerSuccess.Platform.Entities
 {
-    public class VersionHistory:Entity<Guid>
+    public class VersionHistory: AuditedEntity<Guid>
     {
         public int Version { get; set; }
         public string Type { get; set; }

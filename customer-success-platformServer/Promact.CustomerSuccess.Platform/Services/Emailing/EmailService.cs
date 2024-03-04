@@ -2,7 +2,6 @@
 using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Volo.Abp.Emailing;
 
@@ -28,6 +27,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
             var fromAddress = _configuration["EmailSettings:FromAddress"];
 
 
+
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(fromAddress));
             email.To.Add(MailboxAddress.Parse(request.To));
@@ -37,12 +37,19 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
                 Text =request.Body
             };
 
-            using (var client = new SmtpClient())
+            try
             {
-                client.Connect(smtpServer, port, SecureSocketOptions.StartTls);
-                client.Authenticate(username, password);
-                client.Send(email);
-                client.Disconnect(true);
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpServer, port, SecureSocketOptions.StartTls);
+                    client.Authenticate(username, password);
+                    client.Send(email);
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
     }
