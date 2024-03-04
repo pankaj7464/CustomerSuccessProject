@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -10,24 +9,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class PhaseMilestoneComponent implements OnInit {
   form!: FormGroup;
-  statuses: string[] = [
-    'NotStarted',
-    'InProgress',
-    'Completed',
-    'OnHold',
-    'Cancelled',
-    'Deferred',
-    'Delayed',
-    'OnTrack',
-    'SignOffPending',
-    'InvoicePending',
-    'PaymentPending',
-    'PaymentReceived',
-    'PaymentDelayed',
-  ];
+  statuses: string[] =this.apiService.phaseMilestoneStatus
 
   displayedColumns: string[] = [
-    'projectId',
+   
     'title',
     'startDate',
     'endDate',
@@ -38,6 +23,7 @@ export class PhaseMilestoneComponent implements OnInit {
   ];
   dataSource!: any[];
   projects: any[] = [];
+  editDataId!:string
   constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
   ngOnInit() {
@@ -63,15 +49,24 @@ export class PhaseMilestoneComponent implements OnInit {
   submitForm(): void {
     if (this.form.valid) {
       console.log(this.form.value);
+     if(this.editDataId){
+      this.apiService.updatePhaseMilestone(this.editDataId,{...this.form.value,sprints:[]}).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast("Phase/Milestone Updated Successfully");
+      });
+     }
+     else{
       this.apiService.postPhaseMilestone({...this.form.value,sprints:[]}).subscribe((res) => {
         console.log(res);
         this.apiService.showSuccessToast("Phase/Milestone Added Successfully");
       });
+     }
     } else {
       this.form.markAllAsTouched();
     }
   }
   editItem(data : any) {
+    this.editDataId = data.id
     this.form.patchValue(data);
   }
   deleteItem(id: any) {

@@ -4,7 +4,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
 {
     public class UpdateSprintDto
     {
-        public Guid Id { get; set; }
+     
         public Guid PhaseMilestoneId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

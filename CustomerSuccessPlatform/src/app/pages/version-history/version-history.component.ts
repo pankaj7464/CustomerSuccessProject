@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-version-history-table',
@@ -8,6 +9,7 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./version-history.component.css'],
 })
 export class VersionHistoryComponent implements OnInit {
+
   displayedColumns: string[] = [
     'version',
     'type',
@@ -20,9 +22,22 @@ export class VersionHistoryComponent implements OnInit {
     'Actions',
   ];
   dataSource!: any[];
-  form: any;
+  form: FormGroup;
+  editDataId!:string;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService,private fb:FormBuilder) {
+    this.form = this.fb.group({
+      version: ['', Validators.required],
+      type: ['', Validators.required],
+      change: ['', Validators.required],
+      changeReason: ['', Validators.required],
+      createdBy: ['', Validators.required],
+      revisionDate: ['', Validators.required],
+      approvalDate: ['', Validators.required],
+      approvedBy: ['', Validators.required]
+    });
+
+  }
 
   ngOnInit() {
     this.apiService.getAllVersionHistory().subscribe((res) => {
@@ -41,7 +56,34 @@ export class VersionHistoryComponent implements OnInit {
       }
     );
   }
+
+  submitForm(){
+    console.log('Submit', this.form.value)
+    if (this.form.valid) {
+      console.log(this.form.value);
+    if(this.editDataId){
+      this.apiService.updateVersionHistory(this.editDataId,this.form.value).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast(
+          'Version History Updated Successfully'
+        );
+      });
+    }
+    else{
+      this.apiService.postStakeholder(this.form.value).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast(
+          'Version History Added Successfully'
+        );
+      });
+    }
+    } else {
+      this.form.markAllAsTouched();
+    }
+  }
+
   editItem(data: any) {
+    this.editDataId = data.id
     this.form.patchValue(data);
   }
 }

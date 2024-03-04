@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, forkJoin, throwError } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
-import { ProjectBudget } from '../models/project-budget';
 import { ApiResponse } from '../models/api-response';
 
 @Injectable({
@@ -13,7 +12,44 @@ export class ApiService {
   private apiUrl = 'https://localhost:44347/api/app/';
   private loading: boolean = false;
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+  escalationType: string[] = ['Operational', ' Financial', 'Technical'];
+  levels: string[] = ['Level1', 'Level2', 'Level3', 'Level4', 'Level5'];
+  phaseMilestoneStatus: string[] = [
+    'NotStarted',
+    'InProgress',
+    'Completed',
+    'OnHold',
+    'Cancelled',
+    'Deferred',
+    'Delayed',
+    'OnTrack',
+    'SignOffPending',
+    'InvoicePending',
+    'PaymentPending',
+    'PaymentReceived',
+    'PaymentDelayed',
+  ];
+  projectType: string[] = ['FixedBidget', 'ManMonth']
+
+  riskTypes: string[] = [
+    'Financial',
+    'Operational',
+    'Technical',
+    'HumanResource',
+    'External',
+    'Legal',
+    'Reputational',
+  ];
+  severities: string[] = ['Low', 'Medium', 'High'];
+  impacts: string[] = ['Low', 'Medium', 'High'];
+  sprintStatuses: string[] = [
+    "InProgress",
+    "Completed",
+    "Delayed",
+    "OnTrack",
+    "SignOffPending"
+];
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) { }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred';
@@ -77,7 +113,7 @@ export class ApiService {
   deleteAuditHistory(id: string): Observable<any> {
     this.showLoader();
     return this.http
-      .put<any>(this.apiUrl + 'audit-history/' + id, {
+      .delete<any>(this.apiUrl + 'audit-history/' + id, {
         responseType: 'text' as 'json',
       })
       .pipe(this.handleLoader());
@@ -208,6 +244,7 @@ export class ApiService {
 
   // Post API Services
   postAuditHistory(data: any): Observable<any> {
+    console.log(data);
     this.showLoader();
     return this.http
       .post<any>(this.apiUrl + 'audit-history', data, {
@@ -274,50 +311,59 @@ export class ApiService {
 
   // Get API Service
   getProjectBudgets(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'project-budget'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'project-budget')
+      .pipe(this.handleLoader());
   }
   getAllAuditHistory(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'audit-history'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'audit-history')
+      .pipe(this.handleLoader());
   }
   getAllVersionHistory(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'version-history'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'version-history')
+      .pipe(this.handleLoader());
   }
   getAllStakeholder(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'stakeholder'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'stakeholder')
+      .pipe(this.handleLoader());
   }
 
   getAllPhaseMilestone(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'phase-milestone'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'phase-milestone')
+      .pipe(this.handleLoader());
   }
   getAllEscalationMatrix(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'escalation-matrix'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'escalation-matrix')
+      .pipe(this.handleLoader());
   }
   getAllRiskProfile(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'risk-profile'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'risk-profile')
+      .pipe(this.handleLoader());
   }
   getAllSprint(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'sprint'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'sprint')
+      .pipe(this.handleLoader());
   }
   getAllProject(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      this.apiUrl + 'project'
-    );
+    this.showLoader();
+    return this.http
+      .get<ApiResponse>(this.apiUrl + 'project')
+      .pipe(this.handleLoader());
   }
 
   getAllDataForPdf(): Observable<any> {
@@ -351,23 +397,25 @@ export class ApiService {
           riskProfile,
           sprint,
         ]: [
-          ApiResponse,
-          ApiResponse,
-          ApiResponse,
-          ApiResponse,
-          ApiResponse,
-          ApiResponse,
-          ApiResponse,
-          ApiResponse
-        ]) => {
-          console.log( projectBudgets,
+            ApiResponse,
+            ApiResponse,
+            ApiResponse,
+            ApiResponse,
+            ApiResponse,
+            ApiResponse,
+            ApiResponse,
+            ApiResponse
+          ]) => {
+          console.log(
+            projectBudgets,
             auditHistory,
             versionHistory,
             stakeholder,
             phaseMilestone,
             escalationMatrix,
             riskProfile,
-            sprint)
+            sprint
+          );
 
           return {
             projectBudgets,

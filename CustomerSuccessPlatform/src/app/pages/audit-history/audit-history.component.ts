@@ -27,6 +27,14 @@ export class AuditHistoryComponent {
   ];
   form: FormGroup;
 
+  Users:{name:string,id:string}[] = [{
+    name:"Pankaj Kumar",
+    id:"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  }]
+
+  editDataId!: string;
+  
+
   constructor(private apiService: ApiService, private fb: FormBuilder) {
     this.form = this.fb.group({
       dateOfAudit: ['', Validators.required],
@@ -42,14 +50,24 @@ export class AuditHistoryComponent {
     this.apiService.getAllAuditHistory().subscribe((res) => {
       this.dataSource = res.items;
     });
+
+    
   }
 
   submitForm(): void {
     if (this.form.valid) {
+     if(!this.editDataId){ 
       this.apiService.postAuditHistory(this.form.value).subscribe((res) => {
         console.log(res);
         this.apiService.showSuccessToast('Audit History Added Successfully');
       });
+    }
+      else{
+        this.apiService.updateAuditHistory(this.editDataId,this.form.value).subscribe((res) => {
+          console.log(res);
+          this.apiService.showSuccessToast('Audit History updated Successfully');
+        });
+      }
     } else {
       this.form.markAllAsTouched();
     }
@@ -66,6 +84,7 @@ export class AuditHistoryComponent {
     );
   }
   editItem(data: any) {
+    this.editDataId =data.id
     this.form.patchValue(data);
   }
 }

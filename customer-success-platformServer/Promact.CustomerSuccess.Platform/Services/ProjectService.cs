@@ -23,6 +23,8 @@ namespace Promact.CustomerSuccess.Platform.Services
         public ProjectService(IRepository<Project, Guid> projectRepository, IEmailService emailService) : base(projectRepository)
         {
             _emailService = emailService;
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<ProjectDto> CreateAsync(CreateProjectDto input)

@@ -3,6 +3,9 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
 {
     public static class Template
     {
+        public static string Useremail = "pankajkumarnikk@gmail.com";
+        public static string Username = "Pankaj Kumar";
+
         public static string GetEmailTemplate(string stakeholder)
         {
             return $@"

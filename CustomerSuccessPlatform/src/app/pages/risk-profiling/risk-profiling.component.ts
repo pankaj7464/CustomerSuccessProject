@@ -11,7 +11,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class RiskProfileComponent implements OnInit {
   
   displayedColumns: string[] = [
-    'projectId',
     'riskType',
     'severity',
     'impact',
@@ -21,18 +20,10 @@ export class RiskProfileComponent implements OnInit {
   dataSource!: any[];
   form!: FormGroup;
   projects: any[] = [];
-  riskTypes: string[] = [
-    'Financial',
-    'Operational',
-    'Technical',
-    'HumanResource',
-    'External',
-    'Legal',
-    'Reputational',
-  ];
-  severities: string[] = ['Low', 'Medium', 'High'];
-  impacts: string[] = ['Low', 'Medium', 'High'];
-
+  riskTypes: string[] = this.apiService.riskTypes;
+  severities: string[] = this.apiService.severities;
+  impacts: string[] = this.apiService.impacts;
+  editDataId!:string;
   constructor(private apiService: ApiService, private fb: FormBuilder) {}
 
   ngOnInit() {
@@ -41,7 +32,7 @@ export class RiskProfileComponent implements OnInit {
       riskType: ['', Validators.required],
       severity: ['', Validators.required],
       impact: ['', Validators.required],
-      remediationSteps: ['', Validators.required],
+      remediationSteps: ['Test'],
     });
 
     this.apiService.getAllRiskProfile().subscribe((res) => {
@@ -56,10 +47,19 @@ export class RiskProfileComponent implements OnInit {
 
   submitForm(): void {
     if (this.form.valid) {
+      this.form.value.remediationSteps = []
+    if(this.editDataId){
+      this.apiService.updateRiskProfile(this.editDataId,this.form.value).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast('Risk Profile Updated Successfully');
+      });
+    }
+    else{
       this.apiService.postRiskProfile(this.form.value).subscribe((res) => {
         console.log(res);
         this.apiService.showSuccessToast('Risk Profile Added Successfully');
       });
+    }
     } else {
       this.form.markAllAsTouched();
     }
@@ -76,6 +76,7 @@ export class RiskProfileComponent implements OnInit {
     );
   }
   editItem(data: any) {
+    this.editDataId = data.id
     this.form.patchValue(data);
   }
 }

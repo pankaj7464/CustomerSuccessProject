@@ -13,15 +13,10 @@ export class SprintComponent implements OnInit {
   displayedColumns: string[] = ['phaseMilestoneId', 'startDate', 'endDate', 'status', 'comments', 'goals', 'sprintNumber', 'action'];
   dataSource!: any[];
   form!: FormGroup;
+  editDataId!:string
   constructor(private apiService: ApiService, private fb: FormBuilder) { }
   phaseMilestone: any = []
-  statuses: string[] = [
-    "InProgress",
-    "Completed",
-    "Delayed",
-    "OnTrack",
-    "SignOffPending"
-];
+  statuses: string[] =this.apiService.sprintStatuses
   ngOnInit() {
 
     this.form = this.fb.group({
@@ -55,15 +50,24 @@ export class SprintComponent implements OnInit {
     );
   }
   editItem(data: any) {
+    this.editDataId = data.id
     this.form.patchValue(data);
   }
 
   submitForm(): void {
     if (this.form.valid) {
-      this.apiService.postSprint(this.form.value).subscribe((res) => {
-        console.log(res);
-        this.apiService.showSuccessToast("Audit History Added Successfully");
-      });
+      if(this.editDataId){
+        this.apiService.updateSprint(this.editDataId,this.form.value).subscribe((res) => {
+          console.log(res);
+          this.apiService.showSuccessToast("Audit History Updated Successfully");
+        });
+      }
+      else {
+        this.apiService.postSprint(this.form.value).subscribe((res) => {
+          console.log(res);
+          this.apiService.showSuccessToast("Audit History Added Successfully");
+        });
+      }
     } else {
       this.form.markAllAsTouched();
     }

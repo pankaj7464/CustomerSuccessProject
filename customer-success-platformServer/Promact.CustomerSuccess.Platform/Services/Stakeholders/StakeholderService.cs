@@ -16,12 +16,14 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
                                 IStakeholderService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail = "pankajkumarnikk@gmail.com";
-        private readonly string Username = "Pankaj Kumar";
+        private readonly string Useremail;
+        private readonly string Username ;
 
         public StakeholderService(IRepository<Stakeholder, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<StakeholderDto> CreateAsync(CreateStakeholderDto input)

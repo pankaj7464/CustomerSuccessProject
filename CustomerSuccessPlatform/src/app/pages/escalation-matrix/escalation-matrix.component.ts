@@ -9,30 +9,43 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./escalation-matrix.component.css'],
 })
 export class EscalationMatrixComponent implements OnInit {
-  [x: string]: any;
+
   displayedColumns: string[] = [
     'level',
-    'escalationType',
     'responsiblePerson',
     'Actions',
   ];
-  dataSource!: MatTableDataSource<any>;
-  form!: FormGroup;
+  dataSourceForFinantials!:any[];
+  dataSourceForTechnicals!:any[];
+  dataSourceForOperationals!:any[];
 
-  escalationType: string[] = ['Operational', ' Financial', 'Technical'];
-  levels: string[] = ['Level1', 'Level2', 'Level3', 'Level4', 'Level5'];
+  form!: FormGroup;
+  editDataId!: string;
+
+  escalationType: string[] = this.apiService.escalationType;
+  levels: string[] = this.apiService.levels;
   projects: any[] = ['Project 1', 'Project 2'];
 
-  constructor(private apiService: ApiService, private fb: FormBuilder) {}
+  constructor(private apiService: ApiService, private fb: FormBuilder) { }
 
   submitForm(): void {
     if (this.form.valid) {
-      this.apiService.postEscalationMatrix(this.form.value).subscribe((res) => {
-        console.log(res);
-        this.apiService.showSuccessToast(
-          'Escalation Matrix Added Successfully'
-        );
-      });
+      if (this.editDataId) {
+        this.apiService.updateEscalationMatrix(this.editDataId, this.form.value).subscribe((res) => {
+          console.log(res);
+          this.apiService.showSuccessToast(
+            'Escalation Matrix  Successfully'
+          );
+        });
+      }
+      else {
+        this.apiService.postEscalationMatrix(this.form.value).subscribe((res) => {
+          console.log(res);
+          this.apiService.showSuccessToast(
+            'Escalation Matrix Added Successfully'
+          );
+        });
+      }
     } else {
       this.form.markAllAsTouched();
     }
@@ -46,7 +59,9 @@ export class EscalationMatrixComponent implements OnInit {
       projectId: ['', Validators.required],
     });
     this.apiService.getAllEscalationMatrix().subscribe((res) => {
-      this.dataSource = new MatTableDataSource(res.items);
+      this.dataSourceForFinantials = res.items.filter(i=>i.escalationType==0).sort((a, b) => a.level - b.level);
+      this.dataSourceForTechnicals = res.items.filter(i=>i.escalationType==1).sort((a, b) => a.level - b.level);
+      this.dataSourceForOperationals = res.items.filter(i=>i.escalationType==2).sort((a, b) => a.level - b.level);
     });
     this.apiService.getAllProject().subscribe((res) => {
       this.projects = res.items;
@@ -54,6 +69,9 @@ export class EscalationMatrixComponent implements OnInit {
   }
 
   editItem(data: any) {
+
+    this.editDataId = data.id;
+
     this.form.patchValue(data);
   }
   deleteItem(id: any) {

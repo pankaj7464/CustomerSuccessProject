@@ -16,13 +16,15 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
                                 IEscalationMatrixService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail = "pankajkumarnikk@gmail.com"; 
-        private readonly string Username = "Pankaj Kumar";
+        private readonly string Useremail ; 
+        private readonly string Username ;
 
         public EscalationMatrixService(IRepository<EscalationMatrix, Guid> escalationMatrixRepository, IEmailService emailService)
             : base(escalationMatrixRepository)
         {
             _emailService = emailService;
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<EscalationMatrixDto> CreateAsync(CreateEscalationMatrix input)

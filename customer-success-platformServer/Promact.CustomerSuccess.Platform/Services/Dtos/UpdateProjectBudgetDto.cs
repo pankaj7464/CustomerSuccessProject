@@ -2,7 +2,7 @@
 {
     public class UpdateProjectBudgetDto
     {
-        public Guid Id { get; set; }
+    
         public ProjectType Type { get; set; }
         public int? DurationInMonths { get; set; }
         public int? ContractDuration { get; set; }

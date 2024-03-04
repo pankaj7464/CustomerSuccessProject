@@ -16,15 +16,15 @@ export class ProjectBudgetComponent implements OnInit {
     'budgetedHours',
     'budgetedCost',
     'currency',
-    'projectId',
     'Actions',
   ];
   dataSource!: any[];
   form!: FormGroup;
   projects: any[] = [];
-  projectType: string[] = ['FixedBidget', 'ManMonth'];
+  projectType: string[] =this.apiService.projectType;
+  editDataId!: string
 
-  constructor(private apiService: ApiService, private fb: FormBuilder) {}
+  constructor(private apiService: ApiService, private fb: FormBuilder) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -48,16 +48,31 @@ export class ProjectBudgetComponent implements OnInit {
   submitForm(): void {
     if (this.form.valid) {
       console.log(this.form.value);
-      this.apiService.postProjectBudget(this.form.value).subscribe(
-        (res) => {
-          console.log(res);
-          this.apiService.showSuccessToast('Project Budget Added Successfully');
-        },
+      if (this.editDataId) {
+        this.apiService.updateProjectBudget(this.editDataId, this.form.value).subscribe(
+          (res) => {
+            console.log(res);
+            this.apiService.showSuccessToast('Project Budget Updated Successfully');
+          },
 
-        (error) => {
-          console.log(error);
-        }
-      );
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+      else {
+        this.apiService.postProjectBudget(this.form.value).subscribe(
+          (res) => {
+            console.log(res);
+            this.apiService.showSuccessToast('Project Budget Added Successfully');
+          },
+
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+
     } else {
       this.form.markAllAsTouched();
     }
@@ -74,6 +89,7 @@ export class ProjectBudgetComponent implements OnInit {
     );
   }
   editItem(data: any) {
+    this.editDataId = data.id
     this.form.patchValue(data);
   }
 }

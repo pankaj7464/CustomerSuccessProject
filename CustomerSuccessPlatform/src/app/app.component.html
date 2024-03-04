@@ -1,6 +1,7 @@
-<!-- navbar.component.html -->
+<div *ngIf="apiService.isLoading()" class="loader fixed  z-50"></div>
+
 <header
-  class="bg-gray-800 py-3 px-6 flex justify-between items-center gap-10 mb-4"
+  class="bg-[#3f51b5] py-3 px-6 flex justify-between items-center gap-10 mb-4"
 >
   <!-- Left side: Project name -->
   <div class="flex items-center">
@@ -10,7 +11,7 @@
   <!-- Center: Search box -->
   <div class="flex-grow flex items-center justify-center">
     <input
-      class="flex-grow bg-gray-700 text-white rounded py-1 px-3 focus:outline-none"
+      class="flex-grow bg-[#6876c2] text-white rounded py-1 px-3 focus:outline-none"
       type="text"
       placeholder="Search..."
     />
@@ -18,7 +19,7 @@
 
   <!-- Right side: User -->
   <div>
-    <span class="text-white">User</span>
+    <span class="text-white">Admin</span>
   </div>
 </header>
 <mat-drawer-container class="home-container min-h-[50vh]" autosize>
@@ -67,10 +68,10 @@
         Export PDF
       </button>
     </div>
-    <div  class="flex justify-between items-center border-b-2">
+    <div class="flex justify-between items-center border-b-2 overflow-y-auto">
       @for (tab of tabs; track $index) {
       <span
-        class="p-2 cursor-pointer"
+        class="p-2 cursor-pointer whitespace-nowrap"
         [routerLink]="tab.path"
         routerLinkActive="active"
         (click)="navigateTo(tab.path)"

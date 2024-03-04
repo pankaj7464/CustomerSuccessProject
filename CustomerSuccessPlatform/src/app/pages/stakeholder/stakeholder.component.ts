@@ -9,7 +9,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class StakeholderComponent implements OnInit {
   form!: FormGroup;
-projects: any;
+  projects: any[] = [];
+  editDataId!:string
+  constructor(private apiService: ApiService, private fb: FormBuilder) {
+    this.apiService.getAllProject().subscribe((res) => {
+      this.projects = res.items;
+    });
+  }
   deleteItem(id: any) {
     this.apiService.deleteStakeholder(id).subscribe(
       (res) => {
@@ -21,11 +27,11 @@ projects: any;
     );
   }
   editItem(data: any) {
+    this.editDataId  = data.id
     this.form.patchValue(data);
   }
   displayedColumns: string[] = ['title', 'name', 'contact', 'Actions'];
   dataSource!: any[];
-  constructor(private apiService: ApiService,private fb:FormBuilder) {}
 
   ngOnInit() {
 
@@ -33,7 +39,7 @@ projects: any;
       name: ['', Validators.required],
       title: ['', Validators.required],
       contact: ['', Validators.required],
-      projectId: ['', Validators.required ],
+      projectId: ['', Validators.required],
     });
 
 
@@ -46,12 +52,22 @@ projects: any;
     console.log('Submit', this.form.value)
     if (this.form.valid) {
       console.log(this.form.value);
+    if(this.editDataId){
+      this.apiService.updateStakeholder(this.editDataId,this.form.value).subscribe((res) => {
+        console.log(res);
+        this.apiService.showSuccessToast(
+          'Escalation Matrix Updated Successfully'
+        );
+      });
+    }
+    else{
       this.apiService.postStakeholder(this.form.value).subscribe((res) => {
         console.log(res);
         this.apiService.showSuccessToast(
           'Escalation Matrix Added Successfully'
         );
       });
+    }
     } else {
       this.form.markAllAsTouched();
     }

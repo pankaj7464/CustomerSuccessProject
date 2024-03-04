@@ -16,12 +16,14 @@ namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
                                 IRiskProfileService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail = "pankajkumarnikk@gmail.com"; 
-        private readonly string Username = "Pankaj Kumar";
+        private readonly string Useremail; 
+        private readonly string Username;
 
         public RiskProfileService(IRepository<RiskProfile, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<RiskProfileDto> CreateAsync(CreateRiskProfileDto input)

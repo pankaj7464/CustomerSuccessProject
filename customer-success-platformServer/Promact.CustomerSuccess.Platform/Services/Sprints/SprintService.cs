@@ -12,11 +12,13 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
         PagedAndSortedResultRequestDto, CreateSprintDto, UpdateSprintDto>
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail = "pankajkumarnikk@gmail.com";
-        private readonly string Username = "Pankaj Kumar";
+        private readonly string Useremail;
+        private readonly string Username ;
         public SprintService(IRepository<Sprint, Guid> repository,IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
 

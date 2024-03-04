@@ -16,13 +16,15 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
                        IAuditHistoryService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail = "pankajkumarnikk@gmail.com";
-        private readonly string Username = "Pankaj Kumar"; 
+        private readonly string Useremail ;
+        private readonly string Username; 
 
         public AuditHistoryService(IRepository<AuditHistory, Guid> auditHistoryRepository, IEmailService emailService)
             : base(auditHistoryRepository)
         {
             _emailService = emailService;
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<AuditHistoryDto> CreateAsync(CreateAuditHistoryDto input)

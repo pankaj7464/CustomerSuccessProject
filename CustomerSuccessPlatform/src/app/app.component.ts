@@ -11,7 +11,7 @@ import autoTable from 'jspdf-autotable';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router, private apiService: ApiService) {}
+  constructor(public router: Router, public apiService: ApiService) { }
 
   navigateTo(path: any) {
     this.router.navigate([path]);
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     { path: 'phase-milestone', displayName: 'Phase Milestone' },
   ];
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   generatePdf() {
     this.apiService.getAllDataForPdf().subscribe(
@@ -45,23 +45,66 @@ export class AppComponent implements OnInit {
 
         Object.keys(data).forEach((key) => {
           const items = data[key].items;
+          
+
           if (items.length > 0) {
             const tableData = items.map((item: any) => {
               const rowData = [];
-              console.log(item );
+            
+              switch (key) {
+                case "projectBudgets": {
+                  item.type = this.apiService.projectType[item.type]
+                  break;
+
+                }
+                case "auditHistory": {
+                  item.reviewedBy = "Test user"
+                  item.dateOfAudit  = new Date(item.dateOfAudit).toLocaleDateString();
+                  break;
+                }
+                case "phaseMilestone": {
+                  item.endDate  = new Date(item.endDate).toLocaleDateString();
+                  item.startDate  = new Date(item.startDate).toLocaleDateString();
+                  item.status = this.apiService.phaseMilestoneStatus[item.status];
+                  break;
+                }
+                case "escalationMatrix": {
+                 const escalationType:string[] = this.apiService.escalationType;
+                 const  levels: string[] =this.apiService.levels;
+                  item.level = levels[item.level]
+                  item.escalationType = escalationType[item.escalationType]
+
+                  break;
+                }
+                case "riskProfile": {
+                
+                  item.impact = this.apiService.impacts[item.impact]
+                  item.type = this.apiService.riskTypes[item.type]
+                  item.severity = this.apiService.severities[item.severity]
+                  break;
+                }
+                case "sprint": {
+                  item.endDate  = new Date(item.endDate).toLocaleDateString();
+                  item.startDate  = new Date(item.startDate).toLocaleDateString();
+                  item.status = this.apiService.sprintStatuses[item.status];
+                  break;
+                }
+                default:
+                  "test"
+              }
               for (const prop in item) {
-                if (item.hasOwnProperty(prop)) {
-                 
+                if (item.hasOwnProperty(prop) && !prop.toLowerCase().includes('id')) { // Exclude keys containing 'id' substring
                   rowData.push(item[prop]);
                 }
               }
               return rowData;
             });
-            const tableName = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize the first letter of the key
+            const tableName = key.charAt(0).toUpperCase() + key.slice(1);
 
             doc.text(`Table: ${tableName}`, 10, 10);
             autoTable(doc, {
-              head: [Object.keys(items[0])], // Dynamic table headers
+               // Exclude keys containing 'id' substring from header
+              head: [Object.keys(items[0]).filter(key => !key.toLowerCase().includes('id'))],
               body: tableData,
               startY: 20,
             });
@@ -77,5 +120,7 @@ export class AppComponent implements OnInit {
       },
       (err) => console.log(err)
     );
+
+
   }
 }

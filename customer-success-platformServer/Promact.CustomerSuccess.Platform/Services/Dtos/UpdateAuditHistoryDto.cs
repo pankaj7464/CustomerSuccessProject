@@ -2,7 +2,7 @@
 {
     public class UpdateAuditHistoryDto
     {
-        public Guid Id { get; set; }
+   
         public DateTime DateOfAudit { get; set; }
         public Guid ReviewedBy { get; set; }
         public SprintStatus Status { get; set; }

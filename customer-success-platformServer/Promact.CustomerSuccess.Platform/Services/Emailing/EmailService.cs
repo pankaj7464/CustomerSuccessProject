@@ -37,8 +37,6 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
                 Text =request.Body
             };
 
-            try
-            {
                 using (var client = new SmtpClient())
                 {
                     client.Connect(smtpServer, port, SecureSocketOptions.StartTls);
@@ -46,11 +44,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
                     client.Send(email);
                     client.Disconnect(true);
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+           
         }
     }
 }
