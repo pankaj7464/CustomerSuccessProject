@@ -43,14 +43,18 @@ export class AppComponent implements OnInit {
       (data) => {
         const doc = new jsPDF();
 
-        Object.keys(data).forEach((key) => {
-          const items = data[key].items;
-          
 
+        Object.keys(data).forEach((key) => {
+          let items = data[key].items;
+          if(key=="escalationMatrix"){
+          
+            items = items.sort((a:any,b:any)=>a.level-b.level)
+         
+          }
           if (items.length > 0) {
             const tableData = items.map((item: any) => {
               const rowData = [];
-            
+
               switch (key) {
                 case "projectBudgets": {
                   item.type = this.apiService.projectType[item.type]
@@ -59,39 +63,39 @@ export class AppComponent implements OnInit {
                 }
                 case "auditHistory": {
                   item.reviewedBy = "Test user"
-                  item.dateOfAudit  = new Date(item.dateOfAudit).toLocaleDateString();
+                  item.dateOfAudit = new Date(item.dateOfAudit).toLocaleDateString();
                   break;
                 }
                 case "phaseMilestone": {
-                  item.endDate  = new Date(item.endDate).toLocaleDateString();
-                  item.startDate  = new Date(item.startDate).toLocaleDateString();
+                  item.endDate = new Date(item.endDate).toLocaleDateString();
+                  item.startDate = new Date(item.startDate).toLocaleDateString();
                   item.status = this.apiService.phaseMilestoneStatus[item.status];
                   break;
                 }
                 case "escalationMatrix": {
-                 const escalationType:string[] = this.apiService.escalationType;
-                 const  levels: string[] =this.apiService.levels;
+                  const escalationType: string[] = this.apiService.escalationType;
+                  const levels: string[] = this.apiService.levels;
                   item.level = levels[item.level]
                   item.escalationType = escalationType[item.escalationType]
 
                   break;
                 }
                 case "riskProfile": {
-                
+
                   item.impact = this.apiService.impacts[item.impact]
                   item.type = this.apiService.riskTypes[item.type]
                   item.severity = this.apiService.severities[item.severity]
                   break;
                 }
                 case "versionHistory": {
-                  item.approvalDate  = new Date(item.approvalDate).toLocaleDateString();
-                  item.revisionDate  = new Date(item.revisionDate).toLocaleDateString();
+                  item.approvalDate = new Date(item.approvalDate).toLocaleDateString();
+                  item.revisionDate = new Date(item.revisionDate).toLocaleDateString();
                   item.status = this.apiService.sprintStatuses[item.status];
                   break;
                 }
                 case "sprint": {
-                  item.endDate  = new Date(item.endDate).toLocaleDateString();
-                  item.startDate  = new Date(item.startDate).toLocaleDateString();
+                  item.endDate = new Date(item.endDate).toLocaleDateString();
+                  item.startDate = new Date(item.startDate).toLocaleDateString();
                   item.status = this.apiService.sprintStatuses[item.status];
                   break;
                 }
@@ -99,7 +103,7 @@ export class AppComponent implements OnInit {
                   "test"
               }
               for (const prop in item) {
-                if (item.hasOwnProperty(prop) && !prop.toLowerCase().includes('id')) { 
+                if (item.hasOwnProperty(prop) && !prop.toLowerCase().includes('id')) {
                   rowData.push(item[prop]);
                 }
               }
@@ -109,7 +113,7 @@ export class AppComponent implements OnInit {
 
             doc.text(`Table: ${tableName}`, 10, 10);
             autoTable(doc, {
-               // Exclude keys containing 'id' substring from header
+              // Exclude keys containing 'id' substring from header
               head: [Object.keys(items[0]).filter(key => !key.toLowerCase().includes('id'))],
               body: tableData,
               startY: 20,

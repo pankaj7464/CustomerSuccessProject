@@ -27,14 +27,14 @@ export class AuditHistoryComponent {
   ];
   form: FormGroup;
 
-  Users: { name: string, id: string }[] = [{
-    name: "Pankaj Kumar",
-    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  Users:{name:string,id:string}[] = [{
+    name:"Pankaj Kumar",
+    id:"3fa85f64-5717-4562-b3fc-2c963f66afa6"
   }]
 
   editDataId!: string;
-
-
+  
+   
   constructor(private apiService: ApiService, private fb: FormBuilder) {
     this.form = this.fb.group({
       dateOfAudit: ['', Validators.required],
@@ -51,40 +51,32 @@ export class AuditHistoryComponent {
       this.dataSource = res.items;
     });
 
-
+    
   }
 
   submitForm(): void {
     if (this.form.valid) {
-      let isSuccess = false
-      if (!this.editDataId) {
+      if (!this.editDataId) { 
         this.apiService.postAuditHistory(this.form.value).subscribe((res) => {
-          isSuccess = true
+          
           this.apiService.showSuccessToast('Audit History Added Successfully');
         });
       } else {
         this.apiService.updateAuditHistory(this.editDataId, this.form.value).subscribe((res) => {
-          isSuccess = true
+        
           this.apiService.showSuccessToast('Audit History updated Successfully');
         });
       }
-      if (isSuccess) {
-        this.apiService.getAllAuditHistory().subscribe((res) => {
-          this.dataSource = res.items;
-          isSuccess = false
-        });
-      }
-
     } else {
       this.form.markAllAsTouched();
     }
   }
-
+  
 
   deleteItem(id: any) {
     this.apiService.deleteAuditHistory(id).subscribe(
       (res) => {
-        this.dataSource = this.dataSource.filter(i => i.id != id);
+        this.dataSource = this.dataSource.filter(i=>i.id!=id);
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {
@@ -93,7 +85,7 @@ export class AuditHistoryComponent {
     );
   }
   editItem(data: any) {
-    this.editDataId = data.id
+    this.editDataId =data.id
     this.form.patchValue(data);
   }
 }
