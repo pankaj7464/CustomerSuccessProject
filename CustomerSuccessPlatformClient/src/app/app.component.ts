@@ -4,20 +4,20 @@ import { ApiService } from './services/api.service';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import autoTable from 'jspdf-autotable';
-
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  constructor(public router: Router, public apiService: ApiService) { }
+export class AppComponent{
+  constructor(public router: Router, public apiService: ApiService,private cdr: ChangeDetectorRef) { 
+    
+  }
 
   navigateTo(path: any) {
     this.router.navigate([path]);
   }
-
-  showFiller = false;
 
   Navigations = [
     { path: 'project', displayName: 'Project' },
@@ -36,7 +36,6 @@ export class AppComponent implements OnInit {
     { path: 'phase-milestone', displayName: 'Phase Milestone' },
   ];
 
-  ngOnInit(): void { }
 
   generatePdf() {
     this.apiService.getAllDataForPdf().subscribe(
@@ -130,9 +129,11 @@ export class AppComponent implements OnInit {
         });
 
         doc.save('Report.pdf');
+        this.cdr.detectChanges();
         this.apiService.showSuccessToast('Report downloaded successfully');
       },
       (err) => console.log(err)
+      
     );
 
 

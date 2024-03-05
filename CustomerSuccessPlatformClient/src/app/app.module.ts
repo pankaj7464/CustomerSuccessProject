@@ -13,7 +13,7 @@ import { SprintComponent } from './pages/sprint/sprint.component';
 import { EscalationMatrixComponent } from './pages/escalation-matrix/escalation-matrix.component';
 import { RiskProfileComponent } from './pages/risk-profiling/risk-profiling.component';
 import { PhaseMilestoneComponent } from './pages/phase-milestone/phase-milestone.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
@@ -50,7 +50,8 @@ import { MatTableModule } from '@angular/material/table'
   ],
   providers: [
     provideClientHydration(),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    provideHttpClient(),
   ],
   bootstrap: [AppComponent]
 })
