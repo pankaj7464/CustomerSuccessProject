@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, forkJoin, throwError } from 'rxjs';
+import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response';
 import { environment } from '../../environments/environment.development';
@@ -49,7 +49,7 @@ export class ApiService {
     "Delayed",
     "OnTrack",
     "SignOffPending"
-];
+  ];
   constructor(private http: HttpClient, private snackBar: MatSnackBar) { }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
@@ -368,27 +368,27 @@ export class ApiService {
   }
 
   getAllDataForPdf(): Observable<any> {
-    const projectBudgets$ = this.getProjectBudgets();
-    const auditHistory$ = this.getAllAuditHistory();
-    const versionHistory$ = this.getAllVersionHistory();
-    const stakeholder$ = this.getAllStakeholder();
-    const phaseMilestone$ = this.getAllPhaseMilestone();
-    const escalationMatrix$ = this.getAllEscalationMatrix();
-    const riskProfile$ = this.getAllRiskProfile();
-    const sprint$ = this.getAllSprint();
+    const apiCalls = [
+      this.getProjectBudgets(),
+      this.getAllAuditHistory(),
+      this.getAllVersionHistory(),
+      this.getAllStakeholder(),
+      this.getAllPhaseMilestone(),
+      this.getAllEscalationMatrix(),
+      this.getAllRiskProfile(),
+      this.getAllSprint()
+    ];
 
-    return forkJoin([
-      projectBudgets$,
-      auditHistory$,
-      versionHistory$,
-      stakeholder$,
-      phaseMilestone$,
-      escalationMatrix$,
-      riskProfile$,
-      sprint$,
-    ]).pipe(
-      map(
-        ([
+    return forkJoin(apiCalls.map(apiCall =>
+      apiCall.pipe(
+        catchError(error => {
+          console.error('Error fetching data:', error);
+          return of(null);
+        })
+      )
+    )).pipe(
+      map(([projectBudgets, auditHistory, versionHistory, stakeholder, phaseMilestone, escalationMatrix, riskProfile, sprint]) => {
+        return {
           projectBudgets,
           auditHistory,
           versionHistory,
@@ -397,38 +397,8 @@ export class ApiService {
           escalationMatrix,
           riskProfile,
           sprint,
-        ]: [
-            ApiResponse,
-            ApiResponse,
-            ApiResponse,
-            ApiResponse,
-            ApiResponse,
-            ApiResponse,
-            ApiResponse,
-            ApiResponse
-          ]) => {
-          console.log(
-            projectBudgets,
-            auditHistory,
-            versionHistory,
-            stakeholder,
-            phaseMilestone,
-            escalationMatrix,
-            riskProfile,
-            sprint
-          );
-
-          return {
-            projectBudgets,
-            auditHistory,
-            versionHistory,
-            stakeholder,
-            phaseMilestone,
-            escalationMatrix,
-            riskProfile,
-            sprint,
-          };
-        }
+        };
+      }
       )
     );
   }
