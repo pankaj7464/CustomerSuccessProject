@@ -30,7 +30,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
             var emailDto = new EmailDto
             {
                 To = Useremail,
-                Subject = "Audit Created alert",
+                Subject = "Sprint Created alert",
                 Body = Template.GetEmailTemplate(Username)
             };
             _emailService.SendEmail(emailDto);
@@ -45,7 +45,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
             var emailDto = new EmailDto
             {
                 To =Useremail,
-                Subject = "Project Updated alert",
+                Subject = "Sprint Updated alert",
                 Body = Template.GetEmailTemplate(Username)
             };
             _emailService.SendEmail(emailDto);
@@ -59,7 +59,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
             var emailDto = new EmailDto
             {
                 To = Useremail,
-                Subject = "Audit deleted alert",
+                Subject = "Sprint deleted alert",
                 Body = Template.GetEmailTemplate(Username)
             };
             _emailService.SendEmail(emailDto);
