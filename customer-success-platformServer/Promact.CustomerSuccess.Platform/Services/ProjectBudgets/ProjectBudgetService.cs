@@ -21,13 +21,16 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
         private readonly IEmailService _emailService;
         private readonly string Useremail;
         private readonly string Username; 
+        private readonly IRepository<ProjectBudget> _repository;
 
-        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService)
+
+        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService, IRepository<ProjectBudget> repository)
             : base(projectBudgetRepository)
         {
             _emailService = emailService;
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
+
         }
 
         public override async Task<ProjectBudgetDto> CreateAsync(CreateProjectBudgetDto input)

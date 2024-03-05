@@ -49,6 +49,8 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Promact.CustomerSuccess.Platform;
 
@@ -159,6 +161,8 @@ namespace Promact.CustomerSuccess.Platform;
             context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 
         }
+
+
 
         ConfigureAuthentication(context);
         ConfigureBundles();
@@ -352,6 +356,9 @@ namespace Promact.CustomerSuccess.Platform;
 
     }
 
+
+
+
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var app = context.GetApplicationBuilder();
@@ -368,8 +375,22 @@ namespace Promact.CustomerSuccess.Platform;
         if (!env.IsDevelopment())
         {
             app.UseErrorPage();
-        }
+            try
+            {
+                using (var scope = app.ApplicationServices.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<PlatformDbContext>();
+                    db.Database.Migrate();
+                    Log.Information("Mirgated Successfully");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
 
+        }
+        
         app.UseCorrelationId();
         app.UseStaticFiles();
         app.UseRouting();
@@ -381,6 +402,8 @@ namespace Promact.CustomerSuccess.Platform;
         {
             app.UseMultiTenancy();
         }
+
+        
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();
