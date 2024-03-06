@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Observable, forkJoin, of, throwError } from 'rxjs';
+import { Observable, Subject, forkJoin, of, throwError } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response';
 import { environment } from '../../environments/environment.development';
@@ -11,7 +11,8 @@ import { environment } from '../../environments/environment.development';
 })
 export class ApiService {
   private apiUrl = `${environment.apiUrl}/api/app/`;
-  private loading: boolean = false;
+  private loadingSubject: Subject<boolean> = new Subject<boolean>();
+
 
   escalationType: string[] = ['Operational', ' Financial', 'Technical'];
   levels: string[] = ['Level1', 'Level2', 'Level3', 'Level4', 'Level5'];
@@ -50,56 +51,19 @@ export class ApiService {
     "OnTrack",
     "SignOffPending"
   ];
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) { }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An error occurred';
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = error.error.message;
-    } else {
-      // Server-side error
-      if (
-        error.status === 400 &&
-        error.headers.get('content-type')?.startsWith('text/plain')
-      ) {
-        // If the response is text/plain, handle it differently
-        errorMessage = error.error;
-      } else {
-        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-      }
-    }
-    this.snackBar.open(errorMessage, 'Close', {
-      duration: 5000,
-      panelClass: ['error-snackbar'],
-    });
-    return throwError(errorMessage);
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) { 
   }
 
+ 
   private showLoader(): void {
-    this.loading = true;
+    this.loadingSubject.next(true);
   }
-
+  
   private hideLoader(): void {
-    this.loading = false;
+    this.loadingSubject.next(false);
   }
-
-  isLoading() {
-    return this.loading;
-  }
-
-  private handleLoader<T>(): (source: Observable<T>) => Observable<T> {
-    return (source: Observable<T>) => {
-      return source.pipe(
-        catchError((error) => {
-          this.hideLoader();
-          return this.handleError(error);
-        }),
-        finalize(() => {
-          this.hideLoader();
-        })
-      );
-    };
+  isLoading(): Observable<boolean> {
+    return this.loadingSubject.asObservable();
   }
 
   showSuccessToast(message: string): void {
@@ -117,7 +81,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'audit-history/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deleteVersionHistory(id: string): Observable<any> {
     this.showLoader();
@@ -125,7 +91,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'version-history/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deleteEscalationMatrix(id: string): Observable<any> {
     this.showLoader();
@@ -133,7 +101,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'escalation-matrix/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deletePhaseMilestone(id: string): Observable<any> {
     this.showLoader();
@@ -141,7 +111,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'phase-milestone/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deleteProjectBudget(id: string): Observable<any> {
     this.showLoader();
@@ -149,7 +121,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'project-budget/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deleteRiskProfile(id: string): Observable<any> {
     this.showLoader();
@@ -157,7 +131,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'risk-profile/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deleteSprint(id: string): Observable<any> {
     this.showLoader();
@@ -165,7 +141,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'sprint/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   deleteStakeholder(id: string): Observable<any> {
     this.showLoader();
@@ -173,7 +151,9 @@ export class ApiService {
       .delete<any>(this.apiUrl + 'stakeholder/' + id, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
 
   // Update API services
@@ -184,7 +164,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'audit-history/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updateVersionHistory(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -192,7 +174,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'version-history/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updateEscalationMatrix(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -200,7 +184,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'escalation-matrix/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updatePhaseMilestone(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -208,7 +194,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'phase-milestone/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updateProjectBudget(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -216,7 +204,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'project-budget/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updateRiskProfile(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -224,7 +214,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'risk-profile/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updateSprint(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -232,7 +224,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'sprint/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   updateStakeholder(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -240,7 +234,9 @@ export class ApiService {
       .put<any>(this.apiUrl + 'stakeholder/' + id, data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
 
   // Post API Services
@@ -251,7 +247,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'audit-history', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postVersionHistory(data: any): Observable<any> {
     this.showLoader();
@@ -259,7 +257,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'version-history', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postEscalationMatrix(data: any): Observable<any> {
     this.showLoader();
@@ -267,7 +267,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'escalation-matrix', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postPhaseMilestone(data: any): Observable<any> {
     this.showLoader();
@@ -275,7 +277,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'phase-milestone', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postProjectBudget(data: any): Observable<any> {
     this.showLoader();
@@ -283,7 +287,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'project-budget', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postRiskProfile(data: any): Observable<any> {
     this.showLoader();
@@ -291,7 +297,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'risk-profile', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postSprint(data: any): Observable<any> {
     this.showLoader();
@@ -299,7 +307,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'sprint', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   postStakeholder(data: any): Observable<any> {
     this.showLoader();
@@ -307,7 +317,9 @@ export class ApiService {
       .post<any>(this.apiUrl + 'stakeholder', data, {
         responseType: 'text' as 'json',
       })
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
 
   // Get API Service
@@ -315,56 +327,74 @@ export class ApiService {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'project-budget')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllAuditHistory(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'audit-history')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllVersionHistory(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'version-history')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllStakeholder(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'stakeholder')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
 
   getAllPhaseMilestone(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'phase-milestone')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllEscalationMatrix(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'escalation-matrix')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllRiskProfile(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'risk-profile')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllSprint(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'sprint')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
   getAllProject(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'project')
-      .pipe(this.handleLoader());
+      .pipe(finalize(() => {
+          this.hideLoader();
+        }));
   }
 
   getAllDataForPdf(): Observable<any> {

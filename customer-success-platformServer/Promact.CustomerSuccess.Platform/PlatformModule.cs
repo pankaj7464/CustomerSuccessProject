@@ -51,6 +51,8 @@ using Volo.Abp.VirtualFileSystem;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 
 namespace Promact.CustomerSuccess.Platform;
 
@@ -146,7 +148,11 @@ namespace Promact.CustomerSuccess.Platform;
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "a2a5a8af-14c6-4374-a8f3-908165814c47");
+                //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "a2a5a8af-14c6-4374-a8f3-908165814c47");
+                serverBuilder.AddEncryptionCertificate(
+                    GetEncryptionCertificate(hostingEnvironment, context.Services.GetConfiguration()));
+                serverBuilder.AddSigningCertificate(
+                        GetSigningCertificate(hostingEnvironment, context.Services.GetConfiguration()));
             });
         }
     }
@@ -185,6 +191,65 @@ namespace Promact.CustomerSuccess.Platform;
         {
             options.IsDynamicClaimsEnabled = true;
         });
+    }
+
+
+    private X509Certificate2 GetSigningCertificate(IWebHostEnvironment hostingEnv,
+                            IConfiguration configuration)
+    {
+        var fileName = $"cert-signing.pfx";
+        var passPhrase = configuration["MyAppCertificate:X590:PassPhrase"];
+        var file = Path.Combine(hostingEnv.ContentRootPath, fileName);
+        if (File.Exists(file))
+        {
+            var created = File.GetCreationTime(file);
+            var days = (DateTime.Now - created).TotalDays;
+            if (days > 180)
+                File.Delete(file);
+            else
+                return new X509Certificate2(file, passPhrase,
+                             X509KeyStorageFlags.MachineKeySet);
+        }
+        // file doesn't exist or was deleted because it expired
+        using var algorithm = RSA.Create(keySizeInBits: 2048);
+        var subject = new X500DistinguishedName("CN=Fabrikam Signing Certificate");
+        var request = new CertificateRequest(subject, algorithm,
+                            HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        request.CertificateExtensions.Add(new X509KeyUsageExtension(
+                            X509KeyUsageFlags.DigitalSignature, critical: true));
+        var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow,
+                            DateTimeOffset.UtcNow.AddYears(2));
+        File.WriteAllBytes(file, certificate.Export(X509ContentType.Pfx, string.Empty));
+        return new X509Certificate2(file, passPhrase,
+                            X509KeyStorageFlags.MachineKeySet);
+    }
+    private X509Certificate2 GetEncryptionCertificate(IWebHostEnvironment hostingEnv,
+                                 IConfiguration configuration)
+    {
+        var fileName = $"cert-encryption.pfx";
+        var passPhrase = configuration["MyAppCertificate:X590:PassPhrase"];
+        var file = Path.Combine(hostingEnv.ContentRootPath, fileName);
+        if (File.Exists(file))
+        {
+            var created = File.GetCreationTime(file);
+            var days = (DateTime.Now - created).TotalDays;
+            if (days > 180)
+                File.Delete(file);
+            else
+                return new X509Certificate2(file, passPhrase,
+                                X509KeyStorageFlags.MachineKeySet);
+        }
+        // file doesn't exist or was deleted because it expired
+        using var algorithm = RSA.Create(keySizeInBits: 2048);
+        var subject = new X500DistinguishedName("CN=Fabrikam Encryption Certificate");
+        var request = new CertificateRequest(subject, algorithm,
+                            HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        request.CertificateExtensions.Add(new X509KeyUsageExtension(
+                            X509KeyUsageFlags.KeyEncipherment, critical: true));
+        var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow,
+                            DateTimeOffset.UtcNow.AddYears(2));
+        File.WriteAllBytes(file, certificate.Export(X509ContentType.Pfx, string.Empty));
+        return new X509Certificate2(file, passPhrase, X509KeyStorageFlags.MachineKeySet);
     }
 
     private void ConfigureBundles()

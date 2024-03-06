@@ -10,11 +10,17 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent{
+export class AppComponent implements OnInit {
+  isLoading: boolean;
   constructor(public router: Router, public apiService: ApiService,private cdr: ChangeDetectorRef) { 
-    
+    this.isLoading = false;
   }
 
+ngOnInit(): void {
+  this.apiService.isLoading().subscribe(isLoading => {
+    this.isLoading = isLoading;
+  });
+}
   navigateTo(path: any) {
     this.router.navigate([path]);
   }
