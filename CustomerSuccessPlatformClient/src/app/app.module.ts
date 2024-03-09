@@ -16,12 +16,16 @@ import { PhaseMilestoneComponent } from './pages/phase-milestone/phase-milestone
 import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
+// Auth 0
+import { AuthModule } from '@auth0/auth0-angular';
 
 // angualr material
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table'
+import { LoginComponent } from './login/login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 @NgModule({
@@ -34,7 +38,9 @@ import { MatTableModule } from '@angular/material/table'
     SprintComponent,
     EscalationMatrixComponent,
     RiskProfileComponent,
-    PhaseMilestoneComponent
+    PhaseMilestoneComponent,
+    LoginComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +51,19 @@ import { MatTableModule } from '@angular/material/table'
     MatInputModule,
     MatSidenavModule,
     MatTableModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+
+
+
+   
+    // Import the module into the application, with configuration
+    AuthModule.forRoot({
+      domain: 'dev-w2cpuspyl8y04bzh.us.auth0.com',
+      clientId: 'l6AoZ9MlugUZmmFY83P58BA2YQargRJ3',
+      authorizationParams: {
+        redirect_uri: "http://localhost:4200/dashboard"
+      }
+    }),
     
   ],
   providers: [

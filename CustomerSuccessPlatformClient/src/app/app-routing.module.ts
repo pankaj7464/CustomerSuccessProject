@@ -8,19 +8,32 @@ import { ProjectBudgetComponent } from './pages/project-budget/project-budget.co
 import { EscalationMatrixComponent } from './pages/escalation-matrix/escalation-matrix.component';
 import { RiskProfileComponent } from './pages/risk-profiling/risk-profiling.component';
 import { PhaseMilestoneComponent } from './pages/phase-milestone/phase-milestone.component';
+import { LoginComponent } from './login/login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './services/AuthGuard';
 
 const routes: Routes = [
-  { path: 'audit-history', component: AuditHistoryComponent },
-  { path: 'sprint', component: SprintComponent },
-  { path: 'stakeholder', component: StakeholderComponent },
-  { path: 'version-history', component: VersionHistoryComponent },
-  { path: 'project-budget', component: ProjectBudgetComponent },
-  { path: 'escalation-matrix', component: EscalationMatrixComponent },
-  { path: 'risk-profiling', component: RiskProfileComponent },
-  { path: 'phase-milestone', component: PhaseMilestoneComponent },
+  { path: "login", component: LoginComponent },
 
-  { path: '', redirectTo: '/audit-history', pathMatch: 'full' }, // Default redirect to audit-history
-  { path: '**', redirectTo: '/audit-history', pathMatch: 'full' } // Wildcard route for undefined routes
+  {
+    path: 'dashboard',
+    canActivate: [AuthGuard],
+    component: DashboardComponent,
+    children: [
+      { path: 'audit-history', component: AuditHistoryComponent },
+      { path: 'sprint', component: SprintComponent },
+      { path: 'stakeholder', component: StakeholderComponent },
+      { path: 'version-history', component: VersionHistoryComponent },
+      { path: 'project-budget', component: ProjectBudgetComponent },
+      { path: 'escalation-matrix', component: EscalationMatrixComponent },
+      { path: 'risk-profiling', component: RiskProfileComponent },
+      { path: 'phase-milestone', component: PhaseMilestoneComponent },
+      { path: '**', redirectTo: '/dashboard/audit-history', pathMatch: 'full' } 
+    ]
+  },
+
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login', pathMatch: 'full' } 
 ];
 
 @NgModule({
