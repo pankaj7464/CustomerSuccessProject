@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-sprint-table',
@@ -13,10 +14,10 @@ export class SprintComponent implements OnInit {
   displayedColumns: string[] = ['phaseMilestoneId', 'startDate', 'endDate', 'status', 'comments', 'goals', 'sprintNumber', 'action'];
   dataSource!: any[];
   form!: FormGroup;
-  editDataId!:string
-  constructor(private apiService: ApiService, private fb: FormBuilder) { }
+  editDataId!: string
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) { }
   phaseMilestone: any = []
-  statuses: string[] =this.apiService.sprintStatuses
+  statuses: string[] = this.apiService.sprintStatuses
   ngOnInit() {
 
     this.form = this.fb.group({
@@ -29,7 +30,7 @@ export class SprintComponent implements OnInit {
       sprintNumber: ['', Validators.required]
     });
     this.getAllSprint();
-   
+
     this.apiService.getAllPhaseMilestone().subscribe(res => {
       console.log(res)
       this.phaseMilestone = res.items;
@@ -37,7 +38,7 @@ export class SprintComponent implements OnInit {
 
   }
 
-  getAllSprint(){
+  getAllSprint() {
     this.apiService.getAllSprint().subscribe(res => {
       console.log(res)
       this.dataSource = res.items;
@@ -62,8 +63,8 @@ export class SprintComponent implements OnInit {
 
   submitForm(): void {
     if (this.form.valid) {
-      if(this.editDataId){
-        this.apiService.updateSprint(this.editDataId,this.form.value).subscribe((res) => {
+      if (this.editDataId) {
+        this.apiService.updateSprint(this.editDataId, this.form.value).subscribe((res) => {
           this.getAllSprint();
           this.apiService.showSuccessToast("Sprint Updated Successfully");
         });
@@ -77,5 +78,9 @@ export class SprintComponent implements OnInit {
     } else {
       this.form.markAllAsTouched();
     }
+  }
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
   }
 }

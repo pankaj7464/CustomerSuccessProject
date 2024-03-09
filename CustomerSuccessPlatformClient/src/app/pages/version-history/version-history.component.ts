@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-version-history-table',
@@ -25,7 +26,7 @@ export class VersionHistoryComponent implements OnInit {
   form: FormGroup;
   editDataId!:string;
 
-  constructor(private apiService: ApiService,private fb:FormBuilder) {
+  constructor(private apiService: ApiService,private fb:FormBuilder,private authorizationService:AuthorizationService) {
     this.form = this.fb.group({
       version: ['', Validators.required],
       type: ['', Validators.required],
@@ -89,5 +90,10 @@ export class VersionHistoryComponent implements OnInit {
   editItem(data: any) {
     this.editDataId = data.id
     this.form.patchValue(data);
+  }
+
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
   }
 }

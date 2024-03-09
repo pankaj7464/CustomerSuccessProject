@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { ProjectBudget } from '../../models/project-budget';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 @Component({
   selector: 'app-audit-history',
   templateUrl: './audit-history.component.html',
@@ -35,7 +36,7 @@ export class AuditHistoryComponent {
   editDataId!: string;
   
    
-  constructor(private apiService: ApiService, private fb: FormBuilder) {
+  constructor(private apiService: ApiService, private fb: FormBuilder,private authorizationService:AuthorizationService) {
     this.form = this.fb.group({
       dateOfAudit: ['', Validators.required],
       reviewedBy: ['', Validators.required],
@@ -90,5 +91,10 @@ export class AuditHistoryComponent {
     this.editDataId =data.id
     console.log(data)
     this.form.patchValue(data);
+  }
+
+  isAuditorOrAdmin(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Auditor || userRole === Role.Admin;
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-escalation-matrix-table',
@@ -26,7 +27,7 @@ export class EscalationMatrixComponent implements OnInit {
   levels: string[] = this.apiService.levels;
   projects: any[] = ['Project 1', 'Project 2'];
   dataSource!: any[]
-  constructor(private apiService: ApiService, private fb: FormBuilder) { }
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) { }
 
   submitForm(): void {
     if (this.form.valid) {
@@ -92,5 +93,9 @@ export class EscalationMatrixComponent implements OnInit {
         this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
       }
     );
+  }
+  isAdmin(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Admin;
   }
 }

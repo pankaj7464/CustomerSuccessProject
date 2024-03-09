@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-phase-milestone-table',
@@ -24,7 +25,7 @@ export class PhaseMilestoneComponent implements OnInit {
   dataSource!: any[];
   projects: any[] = [];
   editDataId!:string
-  constructor(private apiService: ApiService, private fb: FormBuilder) {}
+  constructor(private apiService: ApiService, private fb: FormBuilder,private authorizationService:AuthorizationService) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -83,5 +84,10 @@ getAllPhaseMilestone(){
         this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
       }
     );
+  }
+
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
   }
 }

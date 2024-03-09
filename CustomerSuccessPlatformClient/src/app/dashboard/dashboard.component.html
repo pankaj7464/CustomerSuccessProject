@@ -1,9 +1,9 @@
-<ul *ngIf="authService.user$ | async as user">
+<!-- <ul *ngIf="authService.user$ | async as user">
   <li>{{ user.name }}</li>
   <li>{{ user.email }}</li>
 </ul>
 
-<button (click)="logout()">Log out</button>
+<button (click)="logout()">Log out</button> -->
 
 <header
   class="bg-[#3f51b5] py-3 px-6 flex justify-between items-center gap-10 mb-4"
@@ -28,7 +28,7 @@
   </div>
 </header>
 <mat-drawer-container class="home-container min-h-[50vh]" autosize>
-  <mat-drawer #drawer mode="side">
+  <mat-drawer #drawer mode="side" opened>
     <!-- Center: Buttons -->
     <div class="flex gap-4 flex-col m-2">
       <!-- Button 1: Create Project -->
@@ -52,38 +52,7 @@
   </mat-drawer>
 
   <div class="m-2 p-2">
-    <div class="flex justify-between">
-      <button
-        mat-raised-button
-        type="button"
-        mat-button
-        (click)="drawer.toggle()"
-      >
-        Toggle
-      </button>
-      <!-- Submit Button -->
-      <button
-        mat-raised-button
-        color="primary"
-        background
-        type="button"
-        class="mat-primary"
-        (click)="generatePdf()"
-      >
-        Export PDF
-      </button>
-    </div>
-    <div class="flex justify-between items-center border-b-2 overflow-y-auto">
-      @for (tab of tabs; track $index) {
-      <span
-        class="p-2 cursor-pointer whitespace-nowrap"
-        [routerLink]="tab.path"
-        routerLinkActive="active"
-        (click)="navigateTo(tab.path)"
-        >{{ tab.displayName }}</span
-      >
-      }
-    </div>
+
     <router-outlet></router-outlet>
   </div>
 </mat-drawer-container>

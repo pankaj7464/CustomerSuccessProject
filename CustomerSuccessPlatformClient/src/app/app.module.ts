@@ -24,8 +24,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table'
+
+
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ApprovedTeamComponent } from './pages/approved-team/approved-team.component';
+import { ResourcesComponent } from './pages/resources/resources.component';
+import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.component';
+import { ClientFeedbackComponent } from './pages/client-feedback/client-feedback.component';
+import { ProjectUpdateComponent } from './pages/project-update/project-update.component';
+import { ProjectComponent } from './pages/project/project.component';
+import { TabComponent } from './components/tab/tab.component';
 
 
 @NgModule({
@@ -40,7 +49,14 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     RiskProfileComponent,
     PhaseMilestoneComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    ApprovedTeamComponent,
+    ResourcesComponent,
+    MinuteMeetingComponent,
+    ClientFeedbackComponent,
+    ProjectUpdateComponent,
+    ProjectComponent,
+    TabComponent
   ],
   imports: [
     BrowserModule,

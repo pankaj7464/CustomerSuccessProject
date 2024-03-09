@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-stakeholder-table',
@@ -14,7 +15,7 @@ export class StakeholderComponent implements OnInit {
   displayedColumns: string[] = ['title', 'name', 'contact', 'Actions'];
   dataSource!: any[];
 
-  constructor(private apiService: ApiService, private fb: FormBuilder) {
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       title: ['', Validators.required],
@@ -72,4 +73,9 @@ export class StakeholderComponent implements OnInit {
       this.form.markAllAsTouched();
     }
   }
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
+  }
+
 }

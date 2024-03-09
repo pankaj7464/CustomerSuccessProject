@@ -10,6 +10,7 @@ namespace Promact.CustomerSuccess.Platform.Entities
         public virtual Project? Project { get; set; }
         [ForeignKey("Resource")]
         public Guid ResourceId { get; set; }
+        public virtual Resources? Resources { get; set; }
         public virtual Guid Resource { get; set; }
         public double AllocationPercentage { get; set; }
         public DateTime Start { get; set; }

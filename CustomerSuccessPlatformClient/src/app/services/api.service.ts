@@ -13,6 +13,10 @@ export class ApiService {
   private apiUrl = `${environment.apiUrl}/api/app/`;
   private loadingSubject: Subject<boolean> = new Subject<boolean>();
 
+  menu:{role:string[], path:string}[] =[
+   
+  ]
+
 
   escalationType: string[] = ['Operational', ' Financial', 'Technical'];
   levels: string[] = ['Level1', 'Level2', 'Level3', 'Level4', 'Level5'];

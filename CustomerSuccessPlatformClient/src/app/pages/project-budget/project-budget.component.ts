@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-project-budget-table',
@@ -24,7 +25,7 @@ export class ProjectBudgetComponent implements OnInit {
   projectType: string[] =this.apiService.projectType;
   editDataId!: string
 
-  constructor(private apiService: ApiService, private fb: FormBuilder) { }
+  constructor(private apiService: ApiService, private fb: FormBuilder,private authorizationService:AuthorizationService) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -97,5 +98,10 @@ this.getAllProjectBudget()
   editItem(data: any) {
     this.editDataId = data.id
     this.form.patchValue(data);
+  }
+
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
   }
 }

@@ -1,7 +1,9 @@
+<app-tab></app-tab>
 <form
   [formGroup]="form"
   (ngSubmit)="submitForm()"
   class="flex gap-2 flex-wrap m-4"
+  *ngIf="isManager()"
 >
   <div class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4">
     <!-- Version -->
@@ -143,10 +145,10 @@
     <ng-container matColumnDef="Actions">
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let element" class="flex items-center">
-        <button mat-icon-button (click)="editItem(element)">
+        <button  [disabled]="!isManager()" mat-icon-button (click)="editItem(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteItem(element.id)">
+        <button [disabled]="!isManager()" mat-icon-button (click)="deleteItem(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

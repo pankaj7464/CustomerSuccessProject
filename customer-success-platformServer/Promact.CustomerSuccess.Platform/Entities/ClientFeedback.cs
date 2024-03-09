@@ -7,9 +7,9 @@ namespace Promact.CustomerSuccess.Platform.Entities
     {
         [ForeignKey("Project")]
         public Guid ProjectId { get; set; }
+        public virtual Project? Project { get; set; }
         public DateTime FeedbackDate { get; set; }
         public FeedbackType FeedbackType { get; set; }
         public required string Details { get; set; }
-        public virtual Project? Project { get; set; }
     }
 }

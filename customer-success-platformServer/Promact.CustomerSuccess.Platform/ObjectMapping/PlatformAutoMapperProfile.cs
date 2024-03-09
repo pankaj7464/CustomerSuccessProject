@@ -46,7 +46,7 @@ public class PlatformAutoMapperProfile : Profile
         //Done
         CreateMap<CreateRiskProfileDto, RiskProfile>();
         CreateMap<UpdateRiskProfileDto, RiskProfile>();
-        CreateMap<RiskProfile, Services.Dtos.RiskProfileDto>().ReverseMap();
+        CreateMap<RiskProfile, RiskProfileDto>().ReverseMap();
 
 
         //Done
@@ -58,13 +58,37 @@ public class PlatformAutoMapperProfile : Profile
         CreateMap<CreatePhaseMilestoneDto, PhaseMilestone>();
         CreateMap<UpdatePhaseMilestoneDto, PhaseMilestone>();
         CreateMap<PhaseMilestone, PhaseMilestoneDto>().ReverseMap();
-        
 
 
 
+        //Pending
+        CreateMap<CreateUpdateResourcesDto, Resources>();
+        CreateMap<CreateUpdateResourcesDto, Resources>();
+        CreateMap<Resources, ResourcesDto>().ReverseMap();
         
+        //Pending
+        CreateMap<CreateUpdateMeetingMinuteDto, MeetingMinute>();
+        CreateMap<CreateUpdateMeetingMinuteDto, MeetingMinute>();
+        CreateMap<MeetingMinute, MeetingMinuteDto>().ReverseMap();
         
-       
+        //Pending
+        CreateMap<CreateUpdateApprovedTeamDto, ApprovedTeam>();
+        CreateMap<CreateUpdateApprovedTeamDto, ApprovedTeam>();
+        CreateMap<ApprovedTeam, ApprovedTeamDto>().ReverseMap();
+
+        //Pending
+        CreateMap<CreateUpdateProjectUpdateDto, ProjectUpdate>();
+        CreateMap<CreateUpdateProjectUpdateDto, ProjectUpdate>();
+        CreateMap<ProjectUpdate, ProjectUpdateDto>().ReverseMap();
+
+
+
+
+
+
+
+
+
 
 
     }

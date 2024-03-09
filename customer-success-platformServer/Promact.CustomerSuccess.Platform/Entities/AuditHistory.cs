@@ -5,6 +5,7 @@ namespace Promact.CustomerSuccess.Platform.Entities
 {
     public class AuditHistory:Entity<Guid>
     {
+
         public DateTime DateOfAudit { get; set; }
 
         [ForeignKey(nameof(ApplicationUser))]
@@ -13,5 +14,9 @@ namespace Promact.CustomerSuccess.Platform.Entities
         public string ReviewedSection { get; set; }
         public string? CommentOrQueries { get; set; }
         public string? ActionItem { get; set; }
+
+        [ForeignKey(nameof(Project))]
+        public required Guid ProjectId { get; set; }
+        public virtual Project? Project { get; set; }
     }
 }

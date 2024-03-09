@@ -19,6 +19,10 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
     {
     }
 
+    public DbSet<Resources> Resources { get; set; } /*Added*/
+    public DbSet<ProjectUpdate> ProjectUpdate { get; set; } /*added*/
+    public DbSet<ApprovedTeam> ApprovedTeams { get; set; } /*added*/
+
     public DbSet<Stakeholder> Stakeholders    { get; set; }
     public DbSet<VersionHistory> VersionHistories    { get; set; }
     public DbSet<AuditHistory> AuditHistories    { get; set; }
@@ -28,6 +32,7 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
     public DbSet<Organization> Organizations { get; set; }
     public DbSet<ClientFeedback> ClientFeedbacks { get; set; }
     public DbSet<ProjectBudget> ProjectBudgets { get; set; }
+   
     public DbSet<PhaseMilestone> PhaseMilestones { get; set; }
     public DbSet<ProjectResources> ProjectResources { get; set; }
     public DbSet<RiskProfile> RiskProfiles { get; set; }
@@ -52,6 +57,18 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
         builder.ConfigureTenantManagement();
 
         /* Configure your own entities here */
+        builder.Entity<Resources>(resouces =>
+        {
+            resouces.ConfigureByConvention();
+        });
+        builder.Entity<ProjectUpdate>(projectUpdate =>
+        {
+            projectUpdate.ConfigureByConvention();
+        });
+        builder.Entity<ApprovedTeam>(approveTeam =>
+        {
+            approveTeam.ConfigureByConvention();
+        });
         builder.Entity<AuditHistory>(auditHistory =>
         {
             auditHistory.ConfigureByConvention();

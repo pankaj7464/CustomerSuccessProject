@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
 
 @Component({
   selector: 'app-risk-profile-table',
@@ -24,7 +25,7 @@ export class RiskProfileComponent implements OnInit {
   severities: string[] = this.apiService.severities;
   impacts: string[] = this.apiService.impacts;
   editDataId!: string;
-  constructor(private apiService: ApiService, private fb: FormBuilder) { }
+  constructor(private apiService: ApiService, private fb: FormBuilder,private authorizationService:AuthorizationService) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -84,5 +85,10 @@ export class RiskProfileComponent implements OnInit {
   editItem(data: any) {
     this.editDataId = data.id
     this.form.patchValue(data);
+  }
+
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
   }
 }

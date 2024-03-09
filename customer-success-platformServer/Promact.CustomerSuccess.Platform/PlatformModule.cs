@@ -168,8 +168,6 @@ namespace Promact.CustomerSuccess.Platform;
 
         }
 
-
-
         ConfigureAuthentication(context);
         ConfigureBundles();
         ConfigureMultiTenancy();

@@ -11,15 +11,22 @@ import { PhaseMilestoneComponent } from './pages/phase-milestone/phase-milestone
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './services/AuthGuard';
+import { ResourcesComponent } from './pages/resources/resources.component';
+import { ClientFeedbackComponent } from './pages/client-feedback/client-feedback.component';
+import { ApprovedTeamComponent } from './pages/approved-team/approved-team.component';
+import { ProjectUpdateComponent } from './pages/project-update/project-update.component';
+import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.component';
+import { ProjectComponent } from './pages/project/project.component';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
 
   {
     path: 'dashboard',
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     component: DashboardComponent,
     children: [
+      { path: 'project', component: ProjectComponent },
       { path: 'audit-history', component: AuditHistoryComponent },
       { path: 'sprint', component: SprintComponent },
       { path: 'stakeholder', component: StakeholderComponent },
@@ -28,12 +35,17 @@ const routes: Routes = [
       { path: 'escalation-matrix', component: EscalationMatrixComponent },
       { path: 'risk-profiling', component: RiskProfileComponent },
       { path: 'phase-milestone', component: PhaseMilestoneComponent },
-      { path: '**', redirectTo: '/dashboard/audit-history', pathMatch: 'full' } 
+      { path: 'resources', component: ResourcesComponent },
+      { path: 'client-feedback', component: ClientFeedbackComponent },
+      { path: 'approved-team', component: ApprovedTeamComponent },
+      { path: 'project-update', component: ProjectUpdateComponent },
+      { path: 'minute-meeting', component: MinuteMeetingComponent },
+      { path: '**', redirectTo: '/dashboard/audit-history', pathMatch: 'full' }
     ]
   },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login', pathMatch: 'full' } 
+  { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
 
 @NgModule({

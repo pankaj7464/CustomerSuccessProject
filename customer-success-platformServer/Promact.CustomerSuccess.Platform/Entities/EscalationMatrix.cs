@@ -7,7 +7,8 @@ namespace Promact.CustomerSuccess.Platform.Entities
     {      
         public required string ResponsiblePerson { get; set; }
         public EscalationMatrixLevels Level { get; set; }
-        public EscalationType EscalationType { get; set; }        
+        public EscalationType EscalationType { get; set; }     
+        
         [ForeignKey("Project")]
         public required Guid ProjectId { get; set; }
         public virtual Project? Project { get; set; }        
