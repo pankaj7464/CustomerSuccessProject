@@ -35,15 +35,6 @@
       <input matInput formControlName="responsiblePerson" />
     </mat-form-field>
 
-    <!-- Project ID -->
-    <mat-form-field class="flex-1 w-full">
-      <mat-label>Project ID</mat-label>
-      <mat-select formControlName="projectId">
-        <mat-option *ngFor="let project of projects" [value]="project.id">{{
-          project.name
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
   </div>
 
   <!-- Submit Button -->

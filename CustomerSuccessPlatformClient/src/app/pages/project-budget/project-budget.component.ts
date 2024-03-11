@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-project-budget-table',
@@ -22,12 +23,14 @@ export class ProjectBudgetComponent implements OnInit {
   dataSource!: any[];
   form!: FormGroup;
   projects: any[] = [];
-  projectType: string[] =this.apiService.projectType;
+  projectType: string[] = this.apiService.projectType;
   editDataId!: string
 
-  constructor(private apiService: ApiService, private fb: FormBuilder,private authorizationService:AuthorizationService) { }
-
-  ngOnInit() {
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.projectId = id;
+    }
     this.form = this.fb.group({
       type: ['', Validators.required],
       durationInMonths: ['', Validators.required],
@@ -35,18 +38,25 @@ export class ProjectBudgetComponent implements OnInit {
       budgetedHours: ['', Validators.required],
       budgetedCost: ['', Validators.required],
       currency: ['', Validators.required],
-      projectId: ['', Validators.required],
-    });
-this.getAllProjectBudget()
-    this.apiService.getAllProject().subscribe((res) => {
-      console.log(res);
-      this.projects = res.items;
+      projectId: [id ? id : '', Validators.required],
     });
   }
 
-  getAllProjectBudget(){
-    this.apiService.getProjectBudgets().subscribe((res) => {
-      this.dataSource = res.items;
+
+  projectId!: string;
+  ngOnInit() {
+    this.apiService.getAllProject().subscribe((res) => {
+      console.log(res);
+      this.projects = res;
+    });
+    this.getAllProjectBudget(this.projectId)
+  }
+
+
+
+  getAllProjectBudget(id: string) {
+    this.apiService.getProjectBudgets(id).subscribe((res) => {
+      this.dataSource = res;
     });
   }
 
@@ -57,7 +67,7 @@ this.getAllProjectBudget()
       if (this.editDataId) {
         this.apiService.updateProjectBudget(this.editDataId, this.form.value).subscribe(
           (res) => {
-            this.getAllProjectBudget()
+            this.getAllProjectBudget(this.projectId)
             this.apiService.showSuccessToast('Project Budget Updated Successfully');
           },
 
@@ -69,7 +79,7 @@ this.getAllProjectBudget()
       else {
         this.apiService.postProjectBudget(this.form.value).subscribe(
           (res) => {
-            this.getAllProjectBudget()
+            this.getAllProjectBudget(this.projectId)
             this.apiService.showSuccessToast('Project Budget Added Successfully');
           },
 
@@ -87,7 +97,7 @@ this.getAllProjectBudget()
   deleteItem(id: any) {
     this.apiService.deleteProjectBudget(id).subscribe(
       (res) => {
-        this.getAllProjectBudget()
+        this.getAllProjectBudget(this.projectId)
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {

@@ -116,10 +116,10 @@
     <ng-container matColumnDef="Actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let element" class="flex items-center">
-        <button [disabled]="isAuditorOrAdmin()" mat-icon-button (click)="editItem(element)">
+        <button [disabled]="!isAuditorOrAdmin()" mat-icon-button (click)="editItem(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button [disabled]="isAuditorOrAdmin()" mat-icon-button (click)="deleteItem(element.id)">
+        <button [disabled]="!isAuditorOrAdmin()" mat-icon-button (click)="deleteItem(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

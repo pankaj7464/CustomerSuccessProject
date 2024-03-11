@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-risk-profile-table',
@@ -25,29 +26,34 @@ export class RiskProfileComponent implements OnInit {
   severities: string[] = this.apiService.severities;
   impacts: string[] = this.apiService.impacts;
   editDataId!: string;
-  constructor(private apiService: ApiService, private fb: FormBuilder,private authorizationService:AuthorizationService) { }
-
-  ngOnInit() {
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.projectId = id;
+    }
     this.form = this.fb.group({
-      projectId: ['', Validators.required],
+      projectId: [id ? id : '', Validators.required],
       riskType: ['', Validators.required],
       severity: ['', Validators.required],
       impact: ['', Validators.required],
       remediationSteps: ['Test'],
     });
-    this.getAllRiskProfile()
+  }
 
+  projectId!: string;
+  ngOnInit() {
+    this.getAllRiskProfile(this.projectId)
     this.apiService.getAllProject().subscribe((res) => {
       console.log(res);
-      this.projects = res.items;
+      this.projects = res;
     });
   }
 
-  getAllRiskProfile() {
 
-    this.apiService.getAllRiskProfile().subscribe((res) => {
+  getAllRiskProfile(id: string) {
+    this.apiService.getAllRiskProfile(id).subscribe((res) => {
       console.log(res);
-      this.dataSource = res.items;
+      this.dataSource = res;
     });
   }
 
@@ -56,13 +62,13 @@ export class RiskProfileComponent implements OnInit {
       this.form.value.remediationSteps = []
       if (this.editDataId) {
         this.apiService.updateRiskProfile(this.editDataId, this.form.value).subscribe((res) => {
-          this.getAllRiskProfile()
+          this.getAllRiskProfile(this.projectId)
           this.apiService.showSuccessToast('Risk Profile Updated Successfully');
         });
       }
       else {
         this.apiService.postRiskProfile(this.form.value).subscribe((res) => {
-          this.getAllRiskProfile()
+          this.getAllRiskProfile(this.projectId)
           this.apiService.showSuccessToast('Risk Profile Added Successfully');
         });
       }
@@ -74,7 +80,7 @@ export class RiskProfileComponent implements OnInit {
   deleteItem(id: string) {
     this.apiService.deleteRiskProfile(id).subscribe(
       (res) => {
-        this.getAllRiskProfile();
+        this.getAllRiskProfile(this.projectId);
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {

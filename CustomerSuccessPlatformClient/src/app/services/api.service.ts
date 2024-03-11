@@ -3,8 +3,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, Subject, forkJoin, of, throwError } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
-import { ApiResponse } from '../models/api-response';
 import { environment } from '../../environments/environment.development';
+import { ApiResponse } from '../models/api-response';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +13,8 @@ export class ApiService {
   private apiUrl = `${environment.apiUrl}/api/app/`;
   private loadingSubject: Subject<boolean> = new Subject<boolean>();
 
-  menu:{role:string[], path:string}[] =[
-   
+  menu: { role: string[], path: string }[] = [
+
   ]
 
 
@@ -55,14 +55,14 @@ export class ApiService {
     "OnTrack",
     "SignOffPending"
   ];
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) { 
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
   }
 
- 
+
   private showLoader(): void {
     this.loadingSubject.next(true);
   }
-  
+
   private hideLoader(): void {
     this.loadingSubject.next(false);
   }
@@ -79,6 +79,56 @@ export class ApiService {
 
   // Update API services
 
+  deleteProject(id: string): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'project/' + id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  deleteApprovedTeam(id: string): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'approved-team/' + id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  deleteProjectUpdate(id: string): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'project-update/' + id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  deleteMeetingMinute(id: string): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'meeting-minute/' + id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  deleteResources(id: string): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'resource/' + id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
   deleteAuditHistory(id: string): Observable<any> {
     this.showLoader();
     return this.http
@@ -86,8 +136,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deleteVersionHistory(id: string): Observable<any> {
     this.showLoader();
@@ -96,8 +146,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deleteEscalationMatrix(id: string): Observable<any> {
     this.showLoader();
@@ -106,8 +156,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deletePhaseMilestone(id: string): Observable<any> {
     this.showLoader();
@@ -116,8 +166,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deleteProjectBudget(id: string): Observable<any> {
     this.showLoader();
@@ -126,8 +176,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deleteRiskProfile(id: string): Observable<any> {
     this.showLoader();
@@ -136,8 +186,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deleteSprint(id: string): Observable<any> {
     this.showLoader();
@@ -146,8 +196,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   deleteStakeholder(id: string): Observable<any> {
     this.showLoader();
@@ -156,8 +206,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
 
   // Update API services
@@ -169,8 +219,48 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
+  }
+  updateApprovedTeam(id: string, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'approved-team/' + id, data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  updateResources(id: string, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'resource/' + id, data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  updateMeetingMinute(id: string, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'meeting-minute/' + id, data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  updateProjectUpdate(id: string, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'project-update/' + id, data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
   }
   updateVersionHistory(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -179,8 +269,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   updateEscalationMatrix(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -189,8 +279,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   updatePhaseMilestone(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -199,8 +289,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   updateProjectBudget(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -209,8 +299,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   updateRiskProfile(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -219,8 +309,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   updateSprint(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -229,8 +319,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   updateStakeholder(id: string, data: any): Observable<any> {
     this.showLoader();
@@ -239,11 +329,67 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
 
   // Post API Services
+  postMeetingMenute(data: any): Observable<any> {
+    console.log(data);
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'meeting-minute', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+
+  postClientFeedback(data: any): Observable<any> {
+    console.log(data);
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'client-feedback', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  postProjectUdpate(data: any): Observable<any> {
+    console.log(data);
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'project-update', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  postResources(data: any): Observable<any> {
+    console.log(data);
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'resource', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  postApprovedTeam(data: any): Observable<any> {
+    console.log(data);
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'approved-team', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
   postAuditHistory(data: any): Observable<any> {
     console.log(data);
     this.showLoader();
@@ -252,8 +398,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postVersionHistory(data: any): Observable<any> {
     this.showLoader();
@@ -262,8 +408,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postEscalationMatrix(data: any): Observable<any> {
     this.showLoader();
@@ -272,8 +418,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postPhaseMilestone(data: any): Observable<any> {
     this.showLoader();
@@ -282,8 +428,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postProjectBudget(data: any): Observable<any> {
     this.showLoader();
@@ -292,8 +438,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postRiskProfile(data: any): Observable<any> {
     this.showLoader();
@@ -302,8 +448,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postSprint(data: any): Observable<any> {
     this.showLoader();
@@ -312,8 +458,8 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
   postStakeholder(data: any): Observable<any> {
     this.showLoader();
@@ -322,94 +468,144 @@ export class ApiService {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
 
   // Get API Service
-  getProjectBudgets(): Observable<ApiResponse> {
+  getResources(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<ApiResponse>(this.apiUrl + 'project-budget')
+      .get<any[]>(this.apiUrl + 'resource/resources-by-project-id/' + id)
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
-  getAllAuditHistory(): Observable<ApiResponse> {
+  getProjectUpdate(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<ApiResponse>(this.apiUrl + 'audit-history')
+      .get<any[]>(this.apiUrl + 'project-update/project-updates-by-project-id/' + id)
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
-  getAllVersionHistory(): Observable<ApiResponse> {
+  getMeetingMenute(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<ApiResponse>(this.apiUrl + 'version-history')
+      .get<any[]>(this.apiUrl + 'meeting-minute/meeting-minute-by-project-id/' + id)
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
-  getAllStakeholder(): Observable<ApiResponse> {
+  getClientFeedback(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<ApiResponse>(this.apiUrl + 'stakeholder')
+      .get<any[]>(this.apiUrl + 'client-feedback/client-feedback-by-project-id/' + id)
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
-
-  getAllPhaseMilestone(): Observable<ApiResponse> {
+  getApprovedTeam(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<ApiResponse>(this.apiUrl + 'phase-milestone')
+      .get<any[]>(this.apiUrl + 'approved-team/get-aproved-team-project-id/' + id)
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
   }
-  getAllEscalationMatrix(): Observable<ApiResponse> {
-    this.showLoader();
-    return this.http
-      .get<ApiResponse>(this.apiUrl + 'escalation-matrix')
-      .pipe(finalize(() => {
-          this.hideLoader();
-        }));
-  }
-  getAllRiskProfile(): Observable<ApiResponse> {
-    this.showLoader();
-    return this.http
-      .get<ApiResponse>(this.apiUrl + 'risk-profile')
-      .pipe(finalize(() => {
-          this.hideLoader();
-        }));
-  }
-  getAllSprint(): Observable<ApiResponse> {
-    this.showLoader();
-    return this.http
-      .get<ApiResponse>(this.apiUrl + 'sprint')
-      .pipe(finalize(() => {
-          this.hideLoader();
-        }));
-  }
-  getAllProject(): Observable<ApiResponse> {
+  getProject(): Observable<ApiResponse> {
     this.showLoader();
     return this.http
       .get<ApiResponse>(this.apiUrl + 'project')
       .pipe(finalize(() => {
-          this.hideLoader();
-        }));
+        this.hideLoader();
+      }));
+  }
+  getProjectBudgets(id: string): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'project-budget/project-budget-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllAuditHistory(id: string): Observable<any[]> {
+    console.log(this.apiUrl + 'audit-history/audit-histories-by-project-id/' + id);
+    console.log(id);
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'audit-history/audit-histories-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllVersionHistory(id: string): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'version-history/version-histories-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllStakeholder(id: string): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'stakeholder/stakeholders-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
   }
 
-  getAllDataForPdf(): Observable<any> {
+  getAllPhaseMilestone(id: string): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'phase-milestone/phase-milestones-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllEscalationMatrix(id: string): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'escalation-matrix/escalationmatrices-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllRiskProfile(id: string): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'risk-profile/risk-profiles-by-project-id/' + id)
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllSprint(): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'sprint')
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllProject(): Observable<any[]> {
+    this.showLoader();
+    return this.http
+      .get<any[]>(this.apiUrl + 'project')
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+
+  getAllDataForPdf(id: string): Observable<any> {
     const apiCalls = [
-      this.getProjectBudgets(),
-      this.getAllAuditHistory(),
-      this.getAllVersionHistory(),
-      this.getAllStakeholder(),
-      this.getAllPhaseMilestone(),
-      this.getAllEscalationMatrix(),
-      this.getAllRiskProfile(),
+      this.getProjectBudgets(id),
+      this.getAllAuditHistory(id),
+      this.getAllVersionHistory(id),
+      this.getAllStakeholder(id),
+      this.getAllPhaseMilestone(id),
+      this.getAllEscalationMatrix(id),
+      this.getAllRiskProfile(id),
       this.getAllSprint()
     ];
 

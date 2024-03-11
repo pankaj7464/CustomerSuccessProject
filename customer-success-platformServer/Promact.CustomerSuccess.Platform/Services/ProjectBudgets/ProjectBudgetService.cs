@@ -21,15 +21,16 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
         private readonly IEmailService _emailService;
         private readonly string Useremail;
         private readonly string Username; 
-        private readonly IRepository<ProjectBudget> _repository;
+        private readonly IRepository<ProjectBudget,Guid> _projectBudgetRepository;
 
 
-        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService, IRepository<ProjectBudget> repository)
+        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService)
             : base(projectBudgetRepository)
         {
             _emailService = emailService;
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
+            _projectBudgetRepository = projectBudgetRepository;
 
         }
 
@@ -75,5 +76,11 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
 
             await base.DeleteAsync(id);
         }
+
+        public async Task<List<ProjectBudget>> GetProjectBudgetByProjectId(Guid projectId)
+        {
+            return await _projectBudgetRepository.GetListAsync(ah => ah.ProjectId == projectId);
+        }
+
     }
 }

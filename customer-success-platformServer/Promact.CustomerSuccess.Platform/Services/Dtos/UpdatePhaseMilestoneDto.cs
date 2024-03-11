@@ -12,6 +12,5 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
         public string Description { get; set; }
         public string Comments { get; set; }
         public MilestoneOrPhaseStatus Status { get; set; }
-        public ICollection<Sprint> Sprints { get; set; }
     }
 }

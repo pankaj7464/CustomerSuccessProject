@@ -3,7 +3,7 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Promact.CustomerSuccess.Platform.Entities
 {
-    public class RiskProfile : AuditedAggregateRootWithUser<Guid, ApplicationUser>
+    public class RiskProfile : AuditedEntity<Guid>
     {
 
         [ForeignKey("Project")]

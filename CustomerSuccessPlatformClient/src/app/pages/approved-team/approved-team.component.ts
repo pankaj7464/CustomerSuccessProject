@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ApiService } from '../../services/api.service';
 export interface Resource {
   noOfResources: number;
   role: string;
@@ -22,26 +23,37 @@ export class ApprovedTeamComponent {
   ];
 
   displayedColumns: string[] = ['noOfResources', 'role', 'phaseNo', 'duration', 'availability', 'action'];
+  projects!: any[];
 
 
 
-  constructor(private fb: FormBuilder,private authorizationService:AuthorizationService) { }
-
-  ngOnInit(): void {
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
     this.form = this.fb.group({
       noOfResources: ['', [Validators.required, Validators.min(1)]],
       role: ['', Validators.required],
       phaseNo: ['', [Validators.required, Validators.min(1)]],
       duration: ['', [Validators.required, Validators.min(1)]],
       availability: ['', Validators.required],
-      action: ['', Validators.required]
+      projectId: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.apiService.getApprovedTeam("sdsdf").subscribe(team => {
+      this.dataSource = team;
+    });
+    this.apiService.getAllProject().subscribe((res) => {
+      this.projects = res;
     });
   }
 
   submitForm() {
     if (this.form.valid) {
       // Submit the form data
-      console.log(this.form.value);
+      this.apiService.postApprovedTeam(this.form.value).subscribe(data => {
+        console.log(data);
+      })
+
     } else {
 
 

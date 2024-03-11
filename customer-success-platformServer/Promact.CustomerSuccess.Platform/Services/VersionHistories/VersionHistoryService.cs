@@ -68,5 +68,10 @@ namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
 
             await base.DeleteAsync(id);
         }
+        public async Task<List<VersionHistoryDto>> GetVersionHistoriesByProjectIdAsync(Guid projectId)
+        {
+            var versionHistories = await Repository.GetListAsync(vh => vh.ProjectId == projectId);
+            return ObjectMapper.Map<List<VersionHistory>, List<VersionHistoryDto>>(versionHistories);
+        }
     }
 }

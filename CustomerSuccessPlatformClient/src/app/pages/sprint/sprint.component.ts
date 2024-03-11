@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sprint-table',
@@ -15,10 +16,8 @@ export class SprintComponent implements OnInit {
   dataSource!: any[];
   form!: FormGroup;
   editDataId!: string
-  constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) { }
-  phaseMilestone: any = []
-  statuses: string[] = this.apiService.sprintStatuses
-  ngOnInit() {
+  projectId!: string;
+  constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService, private route: ActivatedRoute) {
 
     this.form = this.fb.group({
       phaseMilestoneId: ['', Validators.required],
@@ -29,19 +28,27 @@ export class SprintComponent implements OnInit {
       goals: ['', Validators.required],
       sprintNumber: ['', Validators.required]
     });
-    this.getAllSprint();
+  }
+  phaseMilestone: any = []
+  statuses: string[] = this.apiService.sprintStatuses
+  ngOnInit() {
 
-    this.apiService.getAllPhaseMilestone().subscribe(res => {
-      console.log(res)
-      this.phaseMilestone = res.items;
-    })
+    this.getAllSprint();
+    this.route.params.subscribe(params => {
+      this.projectId = params['projectId'];
+      this.apiService.getAllPhaseMilestone(this.projectId).subscribe(res => {
+        console.log(res)
+        this.phaseMilestone = res;
+      })
+    });
+
 
   }
 
   getAllSprint() {
     this.apiService.getAllSprint().subscribe(res => {
       console.log(res)
-      this.dataSource = res.items;
+      this.dataSource = res;
     })
   }
 

@@ -17,6 +17,7 @@ import { ApprovedTeamComponent } from './pages/approved-team/approved-team.compo
 import { ProjectUpdateComponent } from './pages/project-update/project-update.component';
 import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.component';
 import { ProjectComponent } from './pages/project/project.component';
+import { ProjectIdGuard } from './services/ProjectIdGuard';
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -27,7 +28,7 @@ const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: 'project', component: ProjectComponent },
-      { path: 'audit-history', component: AuditHistoryComponent },
+      { path: 'audit-history', component: AuditHistoryComponent ,canActivate: [ProjectIdGuard]},
       { path: 'sprint', component: SprintComponent },
       { path: 'stakeholder', component: StakeholderComponent },
       { path: 'version-history', component: VersionHistoryComponent },

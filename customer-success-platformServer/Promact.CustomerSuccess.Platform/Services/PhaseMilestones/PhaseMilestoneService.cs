@@ -17,13 +17,14 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
     {
         private readonly IEmailService _emailService;
         private readonly string Useremail; 
-        private readonly string Username; 
-
+        private readonly string Username;
+        IRepository<PhaseMilestone, Guid> _phaseMilestoneRepository;
         public PhaseMilestoneService(IRepository<PhaseMilestone, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
+            _phaseMilestoneRepository = repository;
         }
 
         public override async Task<PhaseMilestoneDto> CreateAsync(CreatePhaseMilestoneDto input)
@@ -68,5 +69,12 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
 
             await base.DeleteAsync(id);
         }
+
+
+        public async Task<List<PhaseMilestone>> GetPhaseMilestoneByProjectIdAsync(Guid projectId)
+        {
+            return await _phaseMilestoneRepository.GetListAsync(ah => ah.ProjectId == projectId);
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 export interface Resources {
   name: string;
   role: string;
@@ -22,17 +24,31 @@ export class ResourcesComponent {
 
   displayedColumns: string[] = ['name', 'role', 'startDate', 'endDate', 'comment', 'action'];
   form!: FormGroup;
+  editDataId: any;
 
-  constructor(private fb: FormBuilder,private authorizationService:AuthorizationService) { }
-
-  ngOnInit(): void {
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem('projectId');
+    if(id){
+      this.projectId = id;
+    }
+    this.getResources(this.projectId);
     this.form = this.fb.group({
       name: ['', Validators.required],
       role: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       comment: ['', Validators.required],
-   
+
+    });
+  }
+
+  projectId!: string;
+  ngOnInit() {
+
+  }
+  getResources(projectId: string) {
+    this.apiService.getResources(projectId).subscribe((res) => {
+      this.dataSource = res;
     });
   }
 
@@ -41,26 +57,26 @@ export class ResourcesComponent {
       // Submit the form data
       console.log(this.form.value);
     } else {
-   
+
     }
   }
 
   editItem(data: any) {
 
-    // this.editDataId = data.id;
+    this.editDataId = data.id;
 
     this.form.patchValue(data);
   }
   deleteItem(id: any) {
-    // this.apiService.deleteEscalationMatrix(id).subscribe(
-    //   (res) => {
-    //     this.getAllEscalationMatrix()
-    //     this.apiService.showSuccessToast('Deleted Successfully');
-    //   },
-    //   (error) => {
-    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-    //   }
-    // );
+    this.apiService.deleteEscalationMatrix(id).subscribe(
+      (res) => {
+        this.getResources(this.projectId)
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
 
   isManager(): boolean {

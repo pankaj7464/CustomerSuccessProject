@@ -21,16 +21,7 @@
       <mat-label>Contact</mat-label>
       <input matInput formControlName="contact" />
     </mat-form-field>
-    <mat-form-field class="flex-1 w-full">
-      <mat-label>Project</mat-label>
-      <mat-select formControlName="projectId">
-        <mat-option value="" disabled>Select</mat-option>
-        <!-- Add your options here -->
-        <mat-option *ngFor="let project of projects" [value]="project.id">{{
-          project.name
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+
   </div>
   <!-- Submit Button -->
   <button

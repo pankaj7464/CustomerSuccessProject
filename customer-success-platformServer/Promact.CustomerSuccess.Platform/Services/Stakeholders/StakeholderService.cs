@@ -18,12 +18,13 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
         private readonly IEmailService _emailService;
         private readonly string Useremail;
         private readonly string Username ;
-
+        private readonly IRepository<Stakeholder, Guid> _stakeholderRepository;
         public StakeholderService(IRepository<Stakeholder, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
+            _stakeholderRepository = repository;
         }
 
         public override async Task<StakeholderDto> CreateAsync(CreateStakeholderDto input)
@@ -67,6 +68,12 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
             _emailService.SendEmail(emailDto);
 
             await base.DeleteAsync(id);
+        }
+
+        public async Task<List<StakeholderDto>> GetStakeholdersByProjectIdAsync(Guid projectId)
+        {
+            var stakeholders = await _stakeholderRepository.GetListAsync(s => s.ProjectId == projectId);
+            return ObjectMapper.Map<List<Stakeholder>, List<StakeholderDto>>(stakeholders);
         }
     }
 }

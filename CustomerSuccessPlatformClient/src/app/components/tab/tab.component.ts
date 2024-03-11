@@ -25,13 +25,11 @@ export class TabComponent {
 
 
   navigateTo(path: any) {
-    console.log("/dashboard/" + path);
-    this.router.navigate(["/dashboard/" + path]);
+    this.router.navigateByUrl("/dashboard/" + path);
   }
 
 
   tabs: { path: string; displayName: string }[] = [
-    { path: 'project', displayName: 'Project' },
     { path: 'audit-history', displayName: 'Audit History' },
     { path: 'sprint', displayName: 'Sprint' },
     { path: 'stakeholder', displayName: 'Stakeholder' },
@@ -49,7 +47,8 @@ export class TabComponent {
 
 
   generatePdf() {
-    this.apiService.getAllDataForPdf().subscribe(
+    let id:string = 'sd' 
+    this.apiService.getAllDataForPdf(id).subscribe(
       (data) => {
         const doc = new jsPDF();
 

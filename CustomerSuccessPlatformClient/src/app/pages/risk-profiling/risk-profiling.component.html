@@ -6,15 +6,6 @@
   *ngIf="isManager()"
 >
   <div class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4">
-    <!-- Project ID -->
-    <mat-form-field class="flex-1 w-full">
-      <mat-label>Project ID</mat-label>
-      <mat-select formControlName="projectId">
-        <mat-option *ngFor="let project of projects" [value]="project.id">{{
-          project.name
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
 
     <!-- Risk Type -->
     <mat-form-field class="flex-1 w-full">

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 export interface MeetingMinute {
   meetingDate: Date;
   moMLink: string;
@@ -22,14 +24,30 @@ export class MinuteMeetingComponent {
   displayedColumns: string[] = ['meetingDate', 'moMLink', 'comments', 'action'];
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authorizationService: AuthorizationService) { }
+  constructor(private apiService:ApiService,private route:ActivatedRoute,private fb: FormBuilder, private authorizationService: AuthorizationService) { 
+    let id = localStorage.getItem('projectId');
+    if(id) {
+      this.projectId = id;
+      this.getMoMs(this.projectId)
+    }
 
-  ngOnInit(): void {
     this.form = this.fb.group({
       meetingDate: ['', Validators.required],
       moMLink: ['', Validators.required],
       comments: ['', Validators.required],
       action: ['', Validators.required]
+    });
+  }
+
+ 
+
+  projectId!: string;
+  ngOnInit() {
+
+  }
+  getMoMs(projectId: string) {
+    this.apiService.getMeetingMenute(projectId).subscribe((res) => {
+      this.dataSource = res;
     });
   }
 

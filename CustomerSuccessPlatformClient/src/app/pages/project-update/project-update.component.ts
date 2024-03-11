@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ApiService } from '../../services/api.service';
+import { ActivatedRoute } from '@angular/router';
 export interface ProjectUpdate {
   date: Date;
   generalUpdate: string;
@@ -21,23 +23,36 @@ export class ProjectUpdateComponent {
   displayedColumns: string[] = ['date', 'generalUpdate', 'action'];
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder,private authorizationService:AuthorizationService) { }
-
-  ngOnInit(): void {
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.projectId = id;
+    }
+    this.getProjectUdpate(this.projectId)
     this.form = this.fb.group({
       date: ['', Validators.required],
       generalUpdate: ['', Validators.required],
-      action: ['', Validators.required]
+      projectId: [id ? id : '', Validators.required],
     });
   }
 
+
+  projectId!: string;
+  ngOnInit() {
+
+  }
+  getProjectUdpate(projectId: string) {
+    this.apiService.getProjectUpdate(projectId).subscribe((res) => {
+      this.dataSource = res;
+    });
+  }
   submitForm() {
     if (this.form.valid) {
       // Submit the form data
       console.log(this.form.value);
     } else {
       // Mark all fields as touched to trigger validation messages
-   
+
     }
   }
   editItem(data: any) {

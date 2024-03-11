@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 export interface ClientFeedback {
   feedbackDate: Date;
   feedbackType: FeedbackType;
@@ -25,10 +27,14 @@ export class ClientFeedbackComponent {
 
 
   form!: FormGroup;
+  constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) { }
 
-  constructor(private fb: FormBuilder,private authorizationService:AuthorizationService) { }
-
+  token!: string;
   ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.token = params['token'];
+      this.getClientData(this.token);
+    });
     this.form = this.fb.group({
       feedbackDate: ['', Validators.required],
       feedbackType: ['', Validators.required],
@@ -36,35 +42,42 @@ export class ClientFeedbackComponent {
       action: ['', Validators.required]
     });
   }
+  getClientData(token: string) {
+    this.apiService.getClientFeedback(token).subscribe(data => {
+      this.dataSource = data;
+      console.log(data);
 
-  submitForm() {
-    if (this.form.valid) {
-      // Submit the form data
-      console.log(this.form.value);
-    } else {
-      // Mark all fields as touched to trigger validation messages
+  });
+}
 
-    }
-  }
-  editItem(data: any) {
+submitForm() {
+  if (this.form.valid) {
+    // Submit the form data
+    console.log(this.form.value);
+  } else {
+    // Mark all fields as touched to trigger validation messages
 
-    // this.editDataId = data.id;
+  }
+}
+editItem(data: any) {
 
-    this.form.patchValue(data);
-  }
-  deleteItem(id: any) {
-    // this.apiService.deleteEscalationMatrix(id).subscribe(
-    //   (res) => {
-    //     this.getAllEscalationMatrix()
-    //     this.apiService.showSuccessToast('Deleted Successfully');
-    //   },
-    //   (error) => {
-    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-    //   }
-    // );
-  }
-  isClient(): boolean {
-    const userRole = this.authorizationService.getCurrentUser()?.role;
-    return userRole === Role.Client;
-  }
+  // this.editDataId = data.id;
+
+  this.form.patchValue(data);
+}
+deleteItem(id: any) {
+  // this.apiService.deleteEscalationMatrix(id).subscribe(
+  //   (res) => {
+  //     this.getAllEscalationMatrix()
+  //     this.apiService.showSuccessToast('Deleted Successfully');
+  //   },
+  //   (error) => {
+  //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+  //   }
+  // );
+}
+isClient(): boolean {
+  const userRole = this.authorizationService.getCurrentUser()?.role;
+  return userRole === Role.Client;
+}
 }

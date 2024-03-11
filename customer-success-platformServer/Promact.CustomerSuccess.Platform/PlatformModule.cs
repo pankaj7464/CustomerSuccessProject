@@ -7,7 +7,6 @@ using Promact.CustomerSuccess.Platform.Data;
 using Promact.CustomerSuccess.Platform.Localization;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
-using Volo.Abp.Uow;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.MultiTenancy;
@@ -167,6 +166,12 @@ namespace Promact.CustomerSuccess.Platform;
             context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 
         }
+
+        context.Services.AddAuthentication().AddJwtBearer(options =>
+        {
+            options.Authority = configuration["Authentication:JwtBearer:Authority"];
+            options.Audience = configuration["Authentication:JwtBearer:Audience"];
+        });
 
         ConfigureAuthentication(context);
         ConfigureBundles();

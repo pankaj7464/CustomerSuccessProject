@@ -8,5 +8,6 @@
         public string ReviewedSection { get; set; }
         public string? CommentOrQueries { get; set; }
         public string? ActionItem { get; set; }
+        public required Guid ProjectId { get; set; }
     }
 }

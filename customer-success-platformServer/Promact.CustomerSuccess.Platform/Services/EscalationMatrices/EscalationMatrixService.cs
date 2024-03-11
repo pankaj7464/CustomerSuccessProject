@@ -1,6 +1,6 @@
 ﻿using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
-using Promact.CustomerSuccess.Platform.Services.Emailing; // Import the email service namespace
+using Promact.CustomerSuccess.Platform.Services.Emailing; 
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -18,13 +18,16 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
         private readonly IEmailService _emailService;
         private readonly string Useremail ; 
         private readonly string Username ;
-
+        IRepository<EscalationMatrix, Guid> _escalationMatrixRepository;
         public EscalationMatrixService(IRepository<EscalationMatrix, Guid> escalationMatrixRepository, IEmailService emailService)
             : base(escalationMatrixRepository)
         {
             _emailService = emailService;
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
+            _escalationMatrixRepository = escalationMatrixRepository;
+
+
         }
 
         public override async Task<EscalationMatrixDto> CreateAsync(CreateEscalationMatrix input)
@@ -69,5 +72,11 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
 
             await base.DeleteAsync(id);
         }
+
+        public async Task<List<EscalationMatrix>> GetEscalationmatricesByProjectIdAsync(Guid projectId)
+        {
+            return await _escalationMatrixRepository.GetListAsync(ah => ah.ProjectId == projectId);
+        }
+
     }
 }

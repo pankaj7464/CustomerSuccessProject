@@ -13,6 +13,8 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
         public DateTime RevisionDate { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public string ApprovedBy { get; set; }
+
+        public Guid ProjectId { get; set; }
         public Guid Id { get; set; }
 
         public object?[] GetKeys()

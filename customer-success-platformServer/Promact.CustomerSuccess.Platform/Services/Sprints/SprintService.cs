@@ -14,6 +14,8 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
         private readonly IEmailService _emailService;
         private readonly string Useremail;
         private readonly string Username ;
+        private readonly IRepository<Sprint, Guid> _sprintRepository;
+
         public SprintService(IRepository<Sprint, Guid> repository,IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
@@ -66,6 +68,11 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
 
             await base.DeleteAsync(id);
         }
+        //public async Task<List<SprintDto>> GetSprintsByProjectIdAsync(Guid projectId)
+        //{
+        //    var sprints = await _sprintRepository.GetListAsync(s => s.ProjectId == projectId);
+        //    return ObjectMapper.Map<List<Sprint>, List<SprintDto>>(sprints);
+        //}
 
 
     }

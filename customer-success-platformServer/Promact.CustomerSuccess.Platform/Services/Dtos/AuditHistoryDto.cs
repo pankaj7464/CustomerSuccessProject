@@ -9,6 +9,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
         public string Status { get; set; }
         public string ReviewedSection { get; set; }
         public string? CommentOrQueries { get; set; }
+        public required Guid ProjectId { get; set; }
         public string? ActionItem { get; set; }
     }
 }

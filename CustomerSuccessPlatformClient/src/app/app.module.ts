@@ -76,6 +76,7 @@ import { TabComponent } from './components/tab/tab.component';
     AuthModule.forRoot({
       domain: 'dev-w2cpuspyl8y04bzh.us.auth0.com',
       clientId: 'l6AoZ9MlugUZmmFY83P58BA2YQargRJ3',
+      
       authorizationParams: {
         redirect_uri: "http://localhost:4200/dashboard"
       }
