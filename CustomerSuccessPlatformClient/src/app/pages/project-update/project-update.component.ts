@@ -48,7 +48,9 @@ export class ProjectUpdateComponent {
   }
   submitForm() {
     if (this.form.valid) {
-      // Submit the form data
+      this.apiService.postProjectUdpate(this.form.value).subscribe(res => {
+        this.apiService.showSuccessToast("Project Upddate Success Added");
+      })
       console.log(this.form.value);
     } else {
       // Mark all fields as touched to trigger validation messages

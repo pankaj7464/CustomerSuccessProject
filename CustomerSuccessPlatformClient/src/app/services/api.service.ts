@@ -471,6 +471,16 @@ export class ApiService {
         this.hideLoader();
       }));
   }
+  postProject(data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'project', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
 
   // Get API Service
   getResources(id: string): Observable<any[]> {
@@ -508,7 +518,7 @@ export class ApiService {
   getApprovedTeam(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<any[]>(this.apiUrl + 'approved-team/get-aproved-team-project-id/' + id)
+      .get<any[]>(this.apiUrl + 'approved-team/approved-teams-by-project-id/' + id)
       .pipe(finalize(() => {
         this.hideLoader();
       }));
@@ -559,7 +569,7 @@ export class ApiService {
   getAllPhaseMilestone(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<any[]>(this.apiUrl + 'phase-milestone/phase-milestones-by-project-id/' + id)
+      .get<any[]>(this.apiUrl + 'phase-milestone/phase-milestone-by-project-id/' + id)
       .pipe(finalize(() => {
         this.hideLoader();
       }));

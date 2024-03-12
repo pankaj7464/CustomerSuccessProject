@@ -31,15 +31,16 @@ export class ClientFeedbackComponent {
 
   token!: string;
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.token = params['token'];
-      this.getClientData(this.token);
-    });
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.token = id;
+    }
+    this.getClientData(this.token);
     this.form = this.fb.group({
       feedbackDate: ['', Validators.required],
       feedbackType: ['', Validators.required],
       details: ['', Validators.required],
-      action: ['', Validators.required]
+      projectId: [id || '', Validators.required]
     });
   }
   getClientData(token: string) {
@@ -47,37 +48,37 @@ export class ClientFeedbackComponent {
       this.dataSource = data;
       console.log(data);
 
-  });
-}
-
-submitForm() {
-  if (this.form.valid) {
-    // Submit the form data
-    console.log(this.form.value);
-  } else {
-    // Mark all fields as touched to trigger validation messages
-
+    });
   }
-}
-editItem(data: any) {
 
-  // this.editDataId = data.id;
+  submitForm() {
+    if (this.form.valid) {
+      // Submit the form data
+      console.log(this.form.value);
+    } else {
+      // Mark all fields as touched to trigger validation messages
 
-  this.form.patchValue(data);
-}
-deleteItem(id: any) {
-  // this.apiService.deleteEscalationMatrix(id).subscribe(
-  //   (res) => {
-  //     this.getAllEscalationMatrix()
-  //     this.apiService.showSuccessToast('Deleted Successfully');
-  //   },
-  //   (error) => {
-  //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-  //   }
-  // );
-}
-isClient(): boolean {
-  const userRole = this.authorizationService.getCurrentUser()?.role;
-  return userRole === Role.Client;
-}
+    }
+  }
+  editItem(data: any) {
+
+    // this.editDataId = data.id;
+
+    this.form.patchValue(data);
+  }
+  deleteItem(id: any) {
+    // this.apiService.deleteEscalationMatrix(id).subscribe(
+    //   (res) => {
+    //     this.getAllEscalationMatrix()
+    //     this.apiService.showSuccessToast('Deleted Successfully');
+    //   },
+    //   (error) => {
+    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+    //   }
+    // );
+  }
+  isClient(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Client;
+  }
 }

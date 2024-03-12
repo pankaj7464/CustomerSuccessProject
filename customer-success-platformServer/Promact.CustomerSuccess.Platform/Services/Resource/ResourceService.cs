@@ -3,28 +3,27 @@ using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ProjectResource;
 
 namespace Promact.CustomerSuccess.Platform.Services.Resource
 {
-    public class ResourceService : CrudAppService<Resources, ResourcesDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateResourcesDto, CreateUpdateResourcesDto>
+    public class ResourceService : CrudAppService<ProjectResources, ProjectResourcesDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateProjectResourceDto, CreateUpdateProjectResourceDto>
     {
         private readonly IEmailService _emailService;
         private readonly string Useremail;
         private readonly string Username;
-        private readonly IRepository<Resources, Guid> _resourceRepository;
+        private readonly IRepository<ProjectResources, Guid> _resourceRepository;
 
-        public ResourceService(IRepository<Resources, Guid> repository, IEmailService emailService) : base(repository)
+        public ResourceService(IRepository<ProjectResources, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
             _resourceRepository = repository;
-            // Initialize Useremail and Username here if needed
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
-        public override async Task<ResourcesDto> CreateAsync(CreateUpdateResourcesDto input)
+        public override async Task<ProjectResourcesDto> CreateAsync(CreateUpdateProjectResourceDto input)
         {
             var resourceDto = await base.CreateAsync(input);
 
@@ -40,7 +39,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             return resourceDto;
         }
 
-        public override async Task<ResourcesDto> UpdateAsync(Guid id, CreateUpdateResourcesDto input)
+        public override async Task<ProjectResourcesDto> UpdateAsync(Guid id, CreateUpdateProjectResourceDto input)
         {
             var resourceDto = await base.UpdateAsync(id, input);
 
@@ -69,15 +68,15 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             {
                 To = Useremail,
                 Subject = "Resource Deleted Alert",
-                Body = $"Resource with ID {id} and Name '{resource.Name}' has been deleted."
+                Body = $"Resource with ID {id} and Name has been deleted."
             };
             _emailService.SendEmail(emailDto);
         }
 
-        public async Task<List<ResourcesDto>> GetResourcesByProjectIdAsync(Guid projectId)
+        public async Task<List<ProjectResourcesDto>> GetResourcesByProjectIdAsync(Guid projectId)
         {
             var resources = await _resourceRepository.GetListAsync(r => r.ProjectId == projectId);
-            return ObjectMapper.Map<List<Resources>, List<ResourcesDto>>(resources);
+            return ObjectMapper.Map<List<ProjectResources>, List<ProjectResourcesDto>>(resources);
         }
     }
 }

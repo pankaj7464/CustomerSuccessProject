@@ -3,7 +3,7 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Promact.CustomerSuccess.Platform.Entities
 {
-    public class MeetingMinute : AuditedAggregateRootWithUser<Guid, ApplicationUser>
+    public class MeetingMinute : AuditedEntity<Guid>
     {
         [ForeignKey("Project")]
         public Guid ProjectId { get; set; }

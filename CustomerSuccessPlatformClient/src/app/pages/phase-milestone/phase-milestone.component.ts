@@ -27,8 +27,12 @@ export class PhaseMilestoneComponent implements OnInit {
   projects: any[] = [];
   editDataId!: string
   constructor(private route: ActivatedRoute, private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.projectId = id;
+    }
     this.form = this.fb.group({
-      projectId: ['', Validators.required],
+      projectId: [id || '', Validators.required],
       title: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
@@ -41,17 +45,11 @@ export class PhaseMilestoneComponent implements OnInit {
 
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      this.projectId = params['projectId'];
-      this.getAllPhaseMilestone(this.projectId)
-    });
-    this.apiService.getAllProject().subscribe((res) => {
-      console.log(res);
-      this.projects = res;
-    });
+    this.getAllPhaseMilestone(this.projectId)
+  
   }
 
-  getAllPhaseMilestone(id:string) {
+  getAllPhaseMilestone(id: string) {
     this.apiService.getAllPhaseMilestone(id).subscribe((res) => {
       console.log(res);
       this.dataSource = res;

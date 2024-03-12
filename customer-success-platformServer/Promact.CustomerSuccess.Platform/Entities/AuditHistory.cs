@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Promact.CustomerSuccess.Platform.Entities.Constants;
 using Volo.Abp.Domain.Entities;
 
 namespace Promact.CustomerSuccess.Platform.Entities
@@ -7,8 +8,6 @@ namespace Promact.CustomerSuccess.Platform.Entities
     {
 
         public DateTime DateOfAudit { get; set; }
-
-        [ForeignKey(nameof(ApplicationUser))]
         public Guid ReviewedBy { get; set; }
         public SprintStatus Status { get; set; }    
         public string ReviewedSection { get; set; }

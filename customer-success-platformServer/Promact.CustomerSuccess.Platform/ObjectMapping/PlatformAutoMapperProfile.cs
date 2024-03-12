@@ -1,6 +1,20 @@
 ﻿using AutoMapper;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ApprovedTeam;
+using Promact.CustomerSuccess.Platform.Services.Dtos.AuditHistory;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ClientFeedback;
+using Promact.CustomerSuccess.Platform.Services.Dtos.EscalationMatrix;
+using Promact.CustomerSuccess.Platform.Services.Dtos.MeetingMinute;
+using Promact.CustomerSuccess.Platform.Services.Dtos.PhaseMilestone;
+using Promact.CustomerSuccess.Platform.Services.Dtos.Project;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ProjectBudget;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ProjectResource;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ProjectUpdate;
+using Promact.CustomerSuccess.Platform.Services.Dtos.RiskProfile;
+using Promact.CustomerSuccess.Platform.Services.Dtos.sprint;
+using Promact.CustomerSuccess.Platform.Services.Dtos.Stakeholder;
+using Promact.CustomerSuccess.Platform.Services.Dtos.VersionHistory;
 
 namespace Promact.CustomerSuccess.Platform.ObjectMapping;
 
@@ -62,9 +76,9 @@ public class PlatformAutoMapperProfile : Profile
 
 
         //Pending
-        CreateMap<CreateUpdateResourcesDto, Resources>();
-        CreateMap<CreateUpdateResourcesDto, Resources>();
-        CreateMap<Resources, ResourcesDto>().ReverseMap();
+        CreateMap<CreateUpdateProjectResourceDto, ProjectResources>();
+        CreateMap<CreateUpdateProjectResourceDto, ProjectResources>();
+        CreateMap<ProjectResources, ProjectResourcesDto>().ReverseMap();
         
         //Pending
         CreateMap<CreateUpdateMeetingMinuteDto, MeetingMinute>();
@@ -80,6 +94,11 @@ public class PlatformAutoMapperProfile : Profile
         CreateMap<CreateUpdateProjectUpdateDto, ProjectUpdate>();
         CreateMap<CreateUpdateProjectUpdateDto, ProjectUpdate>();
         CreateMap<ProjectUpdate, ProjectUpdateDto>().ReverseMap();
+        
+        //Pending
+        CreateMap<CreateUpdateCLientFeedback, ClientFeedback>();
+        CreateMap<CreateUpdateCLientFeedback, ClientFeedback>();
+        CreateMap<ClientFeedback, ClientFeedbackDto>().ReverseMap();
 
 
 

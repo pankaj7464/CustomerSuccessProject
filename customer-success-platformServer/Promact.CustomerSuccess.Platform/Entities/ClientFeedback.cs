@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Promact.CustomerSuccess.Platform.Entities.Constants;
 using Volo.Abp.Domain.Entities;
 
 namespace Promact.CustomerSuccess.Platform.Entities

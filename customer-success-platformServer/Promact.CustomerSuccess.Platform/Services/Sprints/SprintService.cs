@@ -1,6 +1,7 @@
 ﻿using Castle.Core.Smtp;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Dtos.sprint;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -68,11 +69,11 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
 
             await base.DeleteAsync(id);
         }
-        //public async Task<List<SprintDto>> GetSprintsByProjectIdAsync(Guid projectId)
-        //{
-        //    var sprints = await _sprintRepository.GetListAsync(s => s.ProjectId == projectId);
-        //    return ObjectMapper.Map<List<Sprint>, List<SprintDto>>(sprints);
-        //}
+        public async Task<List<SprintDto>> GetSprintsByProjectIdAsync(Guid projectId)
+        {
+            var sprints = await _sprintRepository.GetListAsync(s => s.ProjectId == projectId);
+            return ObjectMapper.Map<List<Sprint>, List<SprintDto>>(sprints);
+        }
 
 
     }

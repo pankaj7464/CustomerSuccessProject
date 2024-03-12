@@ -28,7 +28,7 @@ export class ResourcesComponent {
 
   constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) {
     let id = localStorage.getItem('projectId');
-    if(id){
+    if (id) {
       this.projectId = id;
     }
     this.getResources(this.projectId);
@@ -38,7 +38,7 @@ export class ResourcesComponent {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       comment: ['', Validators.required],
-
+      projectId: [id || '', Validators.required],
     });
   }
 
@@ -55,6 +55,10 @@ export class ResourcesComponent {
   submitForm() {
     if (this.form.valid) {
       // Submit the form data
+      this.apiService.postResources(this.form.value).subscribe(res => {
+        console.log(res);
+        this.apiService.showSuccessToast("Resource Added Successfully")
+      });
       console.log(this.form.value);
     } else {
 

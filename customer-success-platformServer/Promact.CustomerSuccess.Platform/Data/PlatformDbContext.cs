@@ -19,7 +19,7 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
     {
     }
 
-    public DbSet<Resources> Resources { get; set; } /*Added*/
+    public DbSet<ProjectResources> Resources { get; set; } /*Added*/
     public DbSet<ProjectUpdate> ProjectUpdate { get; set; } /*added*/
     public DbSet<ApprovedTeam> ApprovedTeams { get; set; } /*added*/
 
@@ -57,7 +57,7 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
         builder.ConfigureTenantManagement();
 
         /* Configure your own entities here */
-        builder.Entity<Resources>(resouces =>
+        builder.Entity<ProjectResources>(resouces =>
         {
             resouces.ConfigureByConvention();
         });

@@ -26,32 +26,38 @@ export class ApprovedTeamComponent {
   projects!: any[];
 
 
-
+  projectId!: string
   constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.projectId = id;
+    }
     this.form = this.fb.group({
       noOfResources: ['', [Validators.required, Validators.min(1)]],
       role: ['', Validators.required],
       phaseNo: ['', [Validators.required, Validators.min(1)]],
       duration: ['', [Validators.required, Validators.min(1)]],
       availability: ['', Validators.required],
-      projectId: ['', Validators.required]
+      projectId: [id || '', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.apiService.getApprovedTeam("sdsdf").subscribe(team => {
-      this.dataSource = team;
-    });
-    this.apiService.getAllProject().subscribe((res) => {
-      this.projects = res;
-    });
+    this.getApprovedTeam()
+
   }
 
+  getApprovedTeam() {
+    this.apiService.getApprovedTeam(this.projectId).subscribe(team => {
+      this.dataSource = team;
+    });
+  }
   submitForm() {
     if (this.form.valid) {
-      // Submit the form data
+
       this.apiService.postApprovedTeam(this.form.value).subscribe(data => {
         console.log(data);
+        this.apiService.showSuccessToast("Approved team successfully");
       })
 
     } else {
@@ -68,15 +74,15 @@ export class ApprovedTeamComponent {
     this.form.patchValue(data);
   }
   deleteItem(id: any) {
-    // this.apiService.deleteEscalationMatrix(id).subscribe(
-    //   (res) => {
-    //     this.getAllEscalationMatrix()
-    //     this.apiService.showSuccessToast('Deleted Successfully');
-    //   },
-    //   (error) => {
-    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-    //   }
-    // );
+    this.apiService.deleteApprovedTeam(id).subscribe(
+      (res) => {
+        this.getApprovedTeam()
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
 
   isManager(): boolean {

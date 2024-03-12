@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Dtos.AuditHistory;
 using Promact.CustomerSuccess.Platform.Services.Emailing; // Import the email service namespace
 using System.Linq;
 using Volo.Abp.Application.Dtos;

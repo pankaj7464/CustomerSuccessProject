@@ -7,6 +7,9 @@ using Volo.Abp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ApprovedTeam;
+using Microsoft.AspNetCore.Authorization;
+using static Volo.Abp.Identity.IdentityPermissions;
 
 namespace Promact.CustomerSuccess.Platform.Services.ApprovedTeams
 {
@@ -40,7 +43,6 @@ namespace Promact.CustomerSuccess.Platform.Services.ApprovedTeams
 
             return approvedTeamDto;
         }
-
         public override async Task<ApprovedTeamDto> UpdateAsync(Guid id, CreateUpdateApprovedTeamDto input)
         {
             var approvedTeamDto = await base.UpdateAsync(id, input);

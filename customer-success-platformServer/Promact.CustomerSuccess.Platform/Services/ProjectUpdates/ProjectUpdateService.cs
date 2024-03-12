@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ProjectUpdate;
 
 namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
 {
@@ -21,7 +22,8 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
         {
             _emailService = emailService;
             _projectUpdateRepository = repository;
-            // Initialize Useremail and Username here if needed
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<ProjectUpdateDto> CreateAsync(CreateUpdateProjectUpdateDto input)

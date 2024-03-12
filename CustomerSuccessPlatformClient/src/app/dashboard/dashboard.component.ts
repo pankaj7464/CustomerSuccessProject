@@ -21,6 +21,13 @@ export class DashboardComponent {
       localStorage.setItem('user', JSON.stringify(user));
       router.navigate(['/dashboard/project']);
     });
+
+    console.log(this.authService.user$);
+    console.log(this.authService.isAuthenticated$)
+    this.authService.isAuthenticated$.subscribe(res => {
+      console.log("Working");
+      console.log(res);
+    })
     this.isLoading = false;
   }
   ngOnInit(): void {

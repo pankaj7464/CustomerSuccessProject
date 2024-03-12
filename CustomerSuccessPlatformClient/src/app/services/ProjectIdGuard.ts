@@ -9,8 +9,8 @@ export class ProjectIdGuard implements CanActivate {
     constructor(private router: Router) { }
 
     canActivate(): boolean {
-        const projectId = localStorage.getItem('projectId');
-        if (projectId) {
+        const user = localStorage.getItem('user');
+        if (user) {
             return true;
         } else {
             this.router.navigate(['dashboard/project']);

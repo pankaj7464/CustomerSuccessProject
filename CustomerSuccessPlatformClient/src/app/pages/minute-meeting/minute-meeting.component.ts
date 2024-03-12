@@ -35,7 +35,7 @@ export class MinuteMeetingComponent {
       meetingDate: ['', Validators.required],
       moMLink: ['', Validators.required],
       comments: ['', Validators.required],
-      action: ['', Validators.required]
+      projectId:[id||'',Validators.required]
     });
   }
 
@@ -53,7 +53,10 @@ export class MinuteMeetingComponent {
 
   submitForm() {
     if (this.form.valid) {
-      // Submit the form data
+      this.apiService.postMeetingMenute(this.form.value).subscribe(res=> {
+        this.apiService.showSuccessToast("Meeting Menute added successfully")
+        this
+      });
       console.log(this.form.value);
     } else {
 
@@ -68,15 +71,15 @@ export class MinuteMeetingComponent {
     this.form.patchValue(data);
   }
   deleteItem(id: any) {
-    // this.apiService.deleteEscalationMatrix(id).subscribe(
-    //   (res) => {
-    //     this.getAllEscalationMatrix()
-    //     this.apiService.showSuccessToast('Deleted Successfully');
-    //   },
-    //   (error) => {
-    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-    //   }
-    // );
+    this.apiService.deleteEscalationMatrix(id).subscribe(
+      (res) => {
+        this.getMoMs(this.projectId)
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
 
   isManager(): boolean {

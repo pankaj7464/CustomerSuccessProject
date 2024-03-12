@@ -21,12 +21,12 @@ export class ProjectComponent {
   ];
 
   displayedColumns: string[] = ['name', 'description', 'action'];
-  constructor(private fb: FormBuilder, private authorizationService: AuthorizationService,private router:Router,private apiService:ApiService) { 
+  constructor(private fb: FormBuilder, private authorizationService: AuthorizationService, private router: Router, private apiService: ApiService) {
     this.getProject()
   }
 
-  getProject(){
-    this.apiService.getProject().subscribe(project =>{
+  getProject() {
+    this.apiService.getProject().subscribe(project => {
       console.log(project)
       this.dataSource = project.items;
     });
@@ -35,14 +35,16 @@ export class ProjectComponent {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      action: ['', Validators.required]
     });
   }
 
   submitForm() {
+    console.log("Submit Form");
     if (this.form.valid) {
-      // Submit the form data
-      console.log(this.form.value);
+      this.apiService.postProject(this.form.value).subscribe(data=>{
+        console.log(data)
+        this.getProject()
+      })
     } else {
 
     }
@@ -71,7 +73,9 @@ export class ProjectComponent {
   }
 
   navigateTo(id: any) {
+    console.log("navigateTo")
     localStorage.setItem('projectId', id)
-   this.router.navigate(["dashboard/project/auditor"]);
+    this.router.navigate(["dashboard/audit-history"]);
+    console.log("nexrt")
   }
 }

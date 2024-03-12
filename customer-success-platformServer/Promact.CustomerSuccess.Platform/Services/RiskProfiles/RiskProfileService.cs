@@ -7,6 +7,7 @@ using Volo.Abp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Promact.CustomerSuccess.Platform.Services.Dtos.RiskProfile;
 
 namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
 {
@@ -27,7 +28,8 @@ namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
         {
             _emailService = emailService;
             _riskProfileRepository = repository;
-            // Initialize Useremail and Username here if needed
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<RiskProfileDto> CreateAsync(CreateRiskProfileDto input)

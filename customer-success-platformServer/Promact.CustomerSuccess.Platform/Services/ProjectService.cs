@@ -1,6 +1,7 @@
 ﻿using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
-using Promact.CustomerSuccess.Platform.Services.Emailing; 
+using Promact.CustomerSuccess.Platform.Services.Dtos.Project;
+using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -26,7 +27,6 @@ namespace Promact.CustomerSuccess.Platform.Services
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
         }
-
         public override async Task<ProjectDto> CreateAsync(CreateProjectDto input)
         {
             var projectDto = await base.CreateAsync(input);

@@ -1,5 +1,6 @@
 ﻿using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Dtos.MeetingMinute;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -18,7 +19,8 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
         {
             _emailService = emailService;
             _meetingMinuteRepository = repository;
-            // Initialize Useremail and Username here if needed
+            this.Useremail = Template.Useremail;
+            this.Username = Template.Username;
         }
 
         public override async Task<MeetingMinuteDto> CreateAsync(CreateUpdateMeetingMinuteDto input)

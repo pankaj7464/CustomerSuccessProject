@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Promact.CustomerSuccess.Platform.Entities.Constants;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Promact.CustomerSuccess.Platform.Entities
 {
-    public class ProjectBudget : AuditedEntityWithUser<Guid, ApplicationUser>
+    public class ProjectBudget : AuditedEntity<Guid>
     {        
         public ProjectType Type { get; set; }
         public int? DurationInMonths { get; set; }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Promact.CustomerSuccess.Platform.Services.Dtos.ProjectBudget;
 using Promact.CustomerSuccess.Platform.Services.Emailing; // Import the email service namespace
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
