@@ -32,13 +32,14 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
         {
             var phaseMilestoneDto = await base.CreateAsync(input);
 
-            var emailDto = new EmailDto
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Phase Milestone Created alert",
-                Body = Template.GetEmailTemplate(Username) 
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return phaseMilestoneDto;
         }
@@ -47,26 +48,31 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
         {
             var phaseMilestoneDto = await base.UpdateAsync(id, input);
 
-            var emailDto = new EmailDto
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Phase Milestone Updated alert",
-                Body = Template.GetEmailTemplate(Username)
+                Subject = "Phase milestone Updated alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return phaseMilestoneDto;
         }
 
         public override async Task DeleteAsync(Guid id)
         {
-            var emailDto = new EmailDto
+
+            var phaseMilestone= await _phaseMilestoneRepository.GetAsync(id);
+
+            var projectId = phaseMilestone.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Phase Milestone Deleted alert",
-                Body = Template.GetEmailTemplate(Username)
+                Subject = "Approved Team Created alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             await base.DeleteAsync(id);
         }

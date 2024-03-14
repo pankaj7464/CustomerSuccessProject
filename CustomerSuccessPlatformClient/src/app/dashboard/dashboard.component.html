@@ -24,7 +24,24 @@
 
   <!-- Right side: User -->
   <div>
-    <span class="text-white">Admin</span>
+    <div [matMenuTriggerFor]="menu" class="flex items-center cursor-pointer">
+      <img
+        class="w-8 h-8 rounded-full mr-2"
+        [src]="userDetail.picture"
+        alt=""
+      />
+      <div class="flex flex-col">
+        <span class="text-[.8rem] font-bold">{{ userDetail.nickname }}</span>
+        <span class="text-[.8rem]">
+          {{ authorizationService.getCurrentUser().role }}
+        </span>
+      </div>
+    </div>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logout()">Logout</button>
+      <button (click)="openDialog()" mat-menu-item>Profile</button>
+    </mat-menu>
   </div>
 </header>
 <mat-drawer-container class="home-container min-h-[50vh]" autosize>
@@ -54,7 +71,9 @@
   </mat-drawer>
 
   <div class="m-2 p-2">
-
+    <div *ngIf="isProjectPage()">
+      <app-tab></app-tab>
+    </div>
     <router-outlet></router-outlet>
   </div>
 </mat-drawer-container>

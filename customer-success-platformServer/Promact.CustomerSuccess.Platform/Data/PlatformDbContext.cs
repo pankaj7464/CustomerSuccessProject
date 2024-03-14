@@ -39,7 +39,7 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
     public DbSet<MeetingMinute> MeetingMinutes { get; set; }
     public DbSet<EscalationMatrix> EscalationMatrices { get; set; }
     public DbSet<Sprint> Sprints { get; set; }
-    public DbSet<ApplicationUser> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -121,7 +121,7 @@ public class PlatformDbContext : AbpDbContext<PlatformDbContext>
         {
             Document.ConfigureByConvention();
         });
-        builder.Entity<ApplicationUser>(ApplicationUser =>
+        builder.Entity<User>(ApplicationUser =>
         {
             ApplicationUser.ConfigureByConvention();
         });

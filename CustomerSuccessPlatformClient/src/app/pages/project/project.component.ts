@@ -19,39 +19,71 @@ export class ProjectComponent {
     { name: 'Project 1', description: 'Description for Project 1' },
     { name: 'Project 2', description: 'Description for Project 2' },
   ];
-
+  editDataId!: string;
   displayedColumns: string[] = ['name', 'description', 'action'];
+  users!: any[];
+  userDetails!: any;
   constructor(private fb: FormBuilder, private authorizationService: AuthorizationService, private router: Router, private apiService: ApiService) {
     this.getProject()
+
+    this.getAllUsers()
+
   }
 
-  getProject() {
-    this.apiService.getProject().subscribe(project => {
-      console.log(project)
-      this.dataSource = project.items;
+  getAllUsers() {
+    this.apiService.getAllUsers().subscribe(users => {
+      console.log(users)
+      users = JSON.parse(users)
+      this.users = users.items;
     });
+  }
+  getProject() {
+    let user = localStorage.getItem('user')
+    if (user) {
+      this.userDetails = user;
+    }
+    if (this.isAdmin()) {
+      this.apiService.getProject().subscribe(project => {
+        this.dataSource = project
+      });
+    } else {
+      console.log(this.userDetails.id)
+      this.apiService.getProject(this.userDetails.id).subscribe(project => {
+        this.dataSource = project
+      });
+    }
+
   }
   ngOnInit(): void {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
+      userId: ['', Validators.required],
     });
   }
 
   submitForm() {
     console.log("Submit Form");
     if (this.form.valid) {
-      this.apiService.postProject(this.form.value).subscribe(data=>{
-        console.log(data)
-        this.getProject()
-      })
+      if (!this.editDataId) {
+        this.apiService.postProject(this.form.value).subscribe(data => {
+          console.log(data)
+          this.getProject()
+        })
+      }
+      else {
+        this.apiService.updateProject(this.editDataId, this.form.value).subscribe(data => {
+          this.apiService.showSuccessToast('Project successfully');
+          this.getProject()
+        });
+      }
     } else {
 
     }
   }
   editItem(data: any) {
 
-    // this.editDataId = data.id;
+    this.editDataId = data.id;
 
     this.form.patchValue(data);
   }
@@ -67,6 +99,10 @@ export class ProjectComponent {
     );
   }
 
+  isAdmin(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Admin;
+  }
   isAuditor(): boolean {
     const userRole = this.authorizationService.getCurrentUser()?.role;
     return userRole === Role.Auditor || userRole === Role.Admin;

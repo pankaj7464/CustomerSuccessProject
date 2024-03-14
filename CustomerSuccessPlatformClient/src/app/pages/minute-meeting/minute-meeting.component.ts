@@ -40,7 +40,7 @@ export class MinuteMeetingComponent {
   }
 
  
-
+  editDataId!: string;
   projectId!: string;
   ngOnInit() {
 
@@ -53,10 +53,18 @@ export class MinuteMeetingComponent {
 
   submitForm() {
     if (this.form.valid) {
+     if(!this.editDataId){
       this.apiService.postMeetingMenute(this.form.value).subscribe(res=> {
         this.apiService.showSuccessToast("Meeting Menute added successfully")
-        this
+        this.getMoMs(this.projectId);
       });
+     }
+     else{
+      this.apiService.updateMeetingMinute(this.editDataId,this.form.value).subscribe(res=> {
+        this.apiService.showSuccessToast("MoM added successfully")
+        this.getMoMs(this.projectId);
+      });
+     }
       console.log(this.form.value);
     } else {
 
@@ -66,7 +74,7 @@ export class MinuteMeetingComponent {
 
   editItem(data: any) {
 
-    // this.editDataId = data.id;
+    this.editDataId = data.id;
 
     this.form.patchValue(data);
   }

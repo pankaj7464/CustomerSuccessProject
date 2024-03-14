@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Promact.CustomerSuccess.Platform.Data;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Promact.CustomerSuccess.Platform.Migrations
 {
     [DbContext(typeof(PlatformDbContext))]
-    partial class PlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240314093020_added")]
+    partial class added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,7 +73,7 @@ namespace Promact.CustomerSuccess.Platform.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("ApplicationUser");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Promact.CustomerSuccess.Platform.Entities.ApprovedTeam", b =>
@@ -791,7 +794,7 @@ namespace Promact.CustomerSuccess.Platform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Promact.CustomerSuccess.Platform.Entities.VersionHistory", b =>

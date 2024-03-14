@@ -1,6 +1,8 @@
-﻿using Promact.CustomerSuccess.Platform.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Project;
+using Promact.CustomerSuccess.Platform.Services.Dtos.RiskProfile;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -18,26 +20,17 @@ namespace Promact.CustomerSuccess.Platform.Services
                                 IProjectService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail = "pankajkumarnikk@gmail.com"; 
-        private readonly string Username = "Pankaj Kumar";
-
+        
+        private readonly IRepository<Project,Guid> _projectRepository;
         public ProjectService(IRepository<Project, Guid> projectRepository, IEmailService emailService) : base(projectRepository)
         {
             _emailService = emailService;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
+            _projectRepository = projectRepository;
         }
         public override async Task<ProjectDto> CreateAsync(CreateProjectDto input)
         {
             var projectDto = await base.CreateAsync(input);
 
-            var emailDto = new EmailDto
-            {
-                To = Useremail,
-                Subject = "Project Created alert",
-                Body = Template.GetEmailTemplate(Username) 
-            };
-            _emailService.SendEmail(emailDto);
 
             return projectDto;
         }
@@ -46,28 +39,30 @@ namespace Promact.CustomerSuccess.Platform.Services
         {
             var projectDto = await base.UpdateAsync(id, input);
 
-            var emailDto = new EmailDto
-            {
-                To = Useremail,
-                Subject = "Project Updated alert",
-                Body = Template.GetEmailTemplate(Username)
-            };
-            _emailService.SendEmail(emailDto);
 
             return projectDto;
         }
 
         public override async Task DeleteAsync(Guid id)
         {
-            var emailDto = new EmailDto
-            {
-                To = Useremail,
-                Subject = "Project Deleted alert",
-                Body = Template.GetEmailTemplate(Username)
-            };
-            _emailService.SendEmail(emailDto);
-
             await base.DeleteAsync(id);
         }
+
+        [HttpGet("projects")]
+        public async Task<List<ProjectDto>> GetProjectsByUserIdAsync([FromQuery] Guid? UserId)
+        {
+            List<Project> projects;
+            if (UserId.HasValue)
+            {
+                projects = await _projectRepository.GetListAsync(p => p.UserId == UserId);
+            }
+            else
+            {
+                projects = await _projectRepository.GetListAsync();
+            }
+
+            return ObjectMapper.Map<List<Project>, List<ProjectDto>>(projects);
+        }
+
     }
 }

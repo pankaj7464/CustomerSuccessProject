@@ -11,16 +11,12 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
     public class MeetingMinuteService : CrudAppService<MeetingMinute, MeetingMinuteDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateMeetingMinuteDto, CreateUpdateMeetingMinuteDto>, IMeetingMinuteService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail;
-        private readonly string Username;
         private readonly IRepository<MeetingMinute, Guid> _meetingMinuteRepository;
 
         public MeetingMinuteService(IRepository<MeetingMinute, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
             _meetingMinuteRepository = repository;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
         }
 
         public override async Task<MeetingMinuteDto> CreateAsync(CreateUpdateMeetingMinuteDto input)
@@ -28,13 +24,16 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
             var meetingMinuteDto = await base.CreateAsync(input);
 
             // Send email notification
-            var emailDto = new EmailDto
+           
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Meeting Minute Created Alert",
-                Body = $"Meeting minute with ID {meetingMinuteDto.Id} has been created."
+                Subject = "Minute meeting Created alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return meetingMinuteDto;
         }
@@ -44,13 +43,15 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
             var meetingMinuteDto = await base.UpdateAsync(id, input);
 
             // Send email notification
-            var emailDto = new EmailDto
+       
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Meeting Minute Updated Alert",
-                Body = $"Meeting minute with ID {meetingMinuteDto.Id} has been updated."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return meetingMinuteDto;
         }
@@ -64,13 +65,15 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
             await base.DeleteAsync(id);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = meetingMinute.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Meeting Minute Deleted Alert",
-                Body = $"Meeting minute with ID {id} and Title  has been deleted."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
         }
 
         public async Task<List<MeetingMinute>> GetMeetingMinuteByProjectIdAsync(Guid projectId)

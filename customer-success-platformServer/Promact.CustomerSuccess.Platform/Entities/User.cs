@@ -1,12 +1,13 @@
-﻿using Volo.Abp.Domain.Entities.Auditing;
+﻿using Promact.CustomerSuccess.Platform.Entities.Constants;
+using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Promact.CustomerSuccess.Platform.Entities
 {
-    public class User: AuditedEntity<Guid>
+    public class User:AuditedEntity<Guid>
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
         public string Password { get; set; }
+        public string Email { get; set; }
+        public Roles Role { get; set; }
 
     }
 }

@@ -71,7 +71,6 @@ import { TabComponent } from './components/tab/tab.component';
 
 
 
-   
     // Import the module into the application, with configuration
     AuthModule.forRoot({
       domain: 'dev-w2cpuspyl8y04bzh.us.auth0.com',

@@ -23,15 +23,16 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
         private readonly string Useremail;
         private readonly string Username; 
         private readonly IRepository<ProjectBudget,Guid> _projectBudgetRepository;
-
-
-        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService)
+        
+        public ProjectBudgetService(IRepository<ProjectBudget, Guid> projectBudgetRepository, IEmailService emailService,IRepository
+            <Stakeholder,Guid> stakeholderRepository)
             : base(projectBudgetRepository)
         {
             _emailService = emailService;
             this.Useremail = Template.Useremail;
             this.Username = Template.Username;
             _projectBudgetRepository = projectBudgetRepository;
+            
 
         }
 
@@ -39,13 +40,16 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
         {
             var projectBudgetDto = await base.CreateAsync(input);
 
-            var emailDto = new EmailDto
+            // Get the project ID from the input
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Project Budget Created alert",
-                Body = Template.GetEmailTemplate(Username) 
+                Subject = "Test",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail)) ;
 
             return projectBudgetDto;
         }
@@ -54,26 +58,36 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
         {
             var projectBudgetDto = await base.UpdateAsync(id, input);
 
-            var emailDto = new EmailDto
-            {
-                To = Useremail,
-                Subject = "Project Budget Updated alert",
-                Body = Template.GetEmailTemplate(Username)
-            };
-            _emailService.SendEmail(emailDto);
+            var projectId = input.ProjectId;
 
+            var projectDetail = new EmailToStakeHolderDto
+            {
+                Subject = "Project Budget Updated alert",
+                ProjectId = projectId,
+            };
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
             return projectBudgetDto;
         }
 
         public override async Task DeleteAsync(Guid id)
         {
-            var emailDto = new EmailDto
+            var projectBudget =await _projectBudgetRepository.GetAsync(id);
+
+            if (projectBudget == null)
             {
-                To = Useremail,
+                // Handle case where project is not found
+                // For example, throw an exception or log an error
+                return;
+            }
+
+            var projectDetail = new EmailToStakeHolderDto
+            {
                 Subject = "Project Budget Deleted alert",
-                Body = Template.GetEmailTemplate(Username)
+                ProjectId = projectBudget.ProjectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
+
+
 
             await base.DeleteAsync(id);
         }

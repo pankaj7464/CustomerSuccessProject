@@ -11,16 +11,12 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
     public class ResourceService : CrudAppService<ProjectResources, ProjectResourcesDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateProjectResourceDto, CreateUpdateProjectResourceDto>
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail;
-        private readonly string Username;
         private readonly IRepository<ProjectResources, Guid> _resourceRepository;
 
         public ResourceService(IRepository<ProjectResources, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
             _resourceRepository = repository;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
         }
 
         public override async Task<ProjectResourcesDto> CreateAsync(CreateUpdateProjectResourceDto input)
@@ -28,13 +24,15 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             var resourceDto = await base.CreateAsync(input);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Resource Created Alert",
-                Body = $"Resource with ID {resourceDto.Id} has been created."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return resourceDto;
         }
@@ -44,13 +42,15 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             var resourceDto = await base.UpdateAsync(id, input);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Resource Updated Alert",
-                Body = $"Resource with ID {resourceDto.Id} has been updated."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return resourceDto;
         }
@@ -64,13 +64,17 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             await base.DeleteAsync(id);
 
             // Send email notification
-            var emailDto = new EmailDto
+            // Send email notification
+
+            var projectId = resource.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Resource Deleted Alert",
-                Body = $"Resource with ID {id} and Name has been deleted."
+                Subject = "Project Update Created Alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
+ 
         }
 
         public async Task<List<ProjectResourcesDto>> GetResourcesByProjectIdAsync(Guid projectId)

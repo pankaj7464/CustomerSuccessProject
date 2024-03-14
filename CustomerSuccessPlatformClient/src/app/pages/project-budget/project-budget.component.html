@@ -1,4 +1,4 @@
-<app-tab></app-tab>
+
 <form
   [formGroup]="form"
   (ngSubmit)="submitForm()"
@@ -119,7 +119,7 @@
         <button
           [disabled]="!isManager()"
           mat-icon-button
-          (click)="deleteItem(element)"
+          (click)="deleteItem(element.id)"
         >
           <mat-icon>delete</mat-icon>
         </button>

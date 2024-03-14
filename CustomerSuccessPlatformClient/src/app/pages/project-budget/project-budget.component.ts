@@ -95,6 +95,7 @@ export class ProjectBudgetComponent implements OnInit {
   }
 
   deleteItem(id: any) {
+    console.log(id)
     this.apiService.deleteProjectBudget(id).subscribe(
       (res) => {
         this.getAllProjectBudget(this.projectId)

@@ -12,15 +12,18 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SprintComponent implements OnInit {
 
-  displayedColumns: string[] = ['phaseMilestoneId', 'startDate', 'endDate', 'status', 'comments', 'goals', 'sprintNumber', 'action'];
+  displayedColumns: string[] = ['startDate', 'endDate', 'status', 'comments', 'goals', 'sprintNumber', 'action'];
   dataSource!: any[];
   form!: FormGroup;
   editDataId!: string
   projectId!: string;
   constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService, private route: ActivatedRoute) {
-
+    let id = localStorage.getItem('projectId');
+    if (id) {
+      this.projectId = id;
+    }
     this.form = this.fb.group({
-      phaseMilestoneId: ['', Validators.required],
+      projectId: [id || '', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       status: ['', Validators.required],
@@ -32,21 +35,12 @@ export class SprintComponent implements OnInit {
   phaseMilestone: any = []
   statuses: string[] = this.apiService.sprintStatuses
   ngOnInit() {
-
-    this.getAllSprint();
-    this.route.params.subscribe(params => {
-      this.projectId = params['projectId'];
-      this.apiService.getAllPhaseMilestone(this.projectId).subscribe(res => {
-        console.log(res)
-        this.phaseMilestone = res;
-      })
-    });
-
+    this.getAllSprint()
 
   }
 
   getAllSprint() {
-    this.apiService.getAllSprint().subscribe(res => {
+    this.apiService.getAllSprint(this.projectId).subscribe(res => {
       console.log(res)
       this.dataSource = res;
     })

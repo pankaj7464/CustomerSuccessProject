@@ -22,11 +22,10 @@ export class ClientFeedbackComponent {
     { feedbackDate: new Date('2023-01-15'), feedbackType: FeedbackType.Suggestion, details: 'Some feedback details' },
     { feedbackDate: new Date('2023-02-20'), feedbackType: FeedbackType.Complaint, details: 'More feedback details' },
   ];
-
   displayedColumns: string[] = ['feedbackDate', 'feedbackType', 'details', 'action'];
-
-
+  editDataId!: string;
   form!: FormGroup;
+  feedbacks: any = ["Bug Found", "Project Deadline"]
   constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) { }
 
   token!: string;
@@ -53,8 +52,21 @@ export class ClientFeedbackComponent {
 
   submitForm() {
     if (this.form.valid) {
-      // Submit the form data
-      console.log(this.form.value);
+      if (!this.editDataId) {
+
+        this.apiService.postClientFeedback(this.form.value).subscribe(data => {
+          console.log(data);
+          this.getClientData(this.token);
+          this.apiService.showSuccessToast("Client Feedback added successfully");
+        });
+      }
+      else {
+        this.apiService.updateClientFeedback(this.editDataId, this.form.value).subscribe(data => {
+          console.log(data);
+          this.getClientData(this.token);
+          this.apiService.showSuccessToast("Client Feedback updated successfully");
+        });
+      }
     } else {
       // Mark all fields as touched to trigger validation messages
 
@@ -62,7 +74,7 @@ export class ClientFeedbackComponent {
   }
   editItem(data: any) {
 
-    // this.editDataId = data.id;
+    this.editDataId = data.id;
 
     this.form.patchValue(data);
   }

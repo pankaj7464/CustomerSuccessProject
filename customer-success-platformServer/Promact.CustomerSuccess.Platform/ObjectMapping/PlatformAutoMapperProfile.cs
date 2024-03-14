@@ -100,6 +100,11 @@ public class PlatformAutoMapperProfile : Profile
         CreateMap<CreateUpdateCLientFeedback, ClientFeedback>();
         CreateMap<ClientFeedback, ClientFeedbackDto>().ReverseMap();
 
+          //Pending
+        CreateMap<CreateUpdateUserDto, User>();
+        CreateMap<CreateUpdateUserDto, User>();
+        CreateMap<User, UserDto>().ReverseMap();
+
 
 
 

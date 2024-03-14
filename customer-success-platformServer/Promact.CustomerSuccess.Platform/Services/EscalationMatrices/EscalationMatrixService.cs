@@ -35,13 +35,15 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
         {
             var escalationMatrixDto = await base.CreateAsync(input);
 
-            var emailDto = new EmailDto
+            
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Escalation Matrix Created alert",
-                Body = Template.GetEmailTemplate(Username) 
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return escalationMatrixDto;
         }

@@ -22,9 +22,8 @@ export class ResourcesComponent {
     // Add more data objects as needed
   ];
 
-  displayedColumns: string[] = ['name', 'role', 'startDate', 'endDate', 'comment', 'action'];
+  displayedColumns: string[] = ['role', 'start', 'end', 'allocationPercentage', 'action'];
   form!: FormGroup;
-  editDataId: any;
 
   constructor(private apiService: ApiService, private route: ActivatedRoute, private fb: FormBuilder, private authorizationService: AuthorizationService) {
     let id = localStorage.getItem('projectId');
@@ -33,15 +32,14 @@ export class ResourcesComponent {
     }
     this.getResources(this.projectId);
     this.form = this.fb.group({
-      name: ['', Validators.required],
       role: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      comment: ['', Validators.required],
+      start: ['', Validators.required],
+      end: ['', Validators.required],
+      allocationPercentage: ['', Validators.required],
       projectId: [id || '', Validators.required],
     });
   }
-
+  editDataId!: string;
   projectId!: string;
   ngOnInit() {
 
@@ -49,16 +47,26 @@ export class ResourcesComponent {
   getResources(projectId: string) {
     this.apiService.getResources(projectId).subscribe((res) => {
       this.dataSource = res;
+      console.log(this.dataSource);
     });
   }
 
   submitForm() {
+    console.log(this.form.value)
     if (this.form.valid) {
       // Submit the form data
-      this.apiService.postResources(this.form.value).subscribe(res => {
-        console.log(res);
-        this.apiService.showSuccessToast("Resource Added Successfully")
-      });
+      if (!this.editDataId) {
+        this.apiService.postResources(this.form.value).subscribe(res => {
+          this.getResources(this.projectId)
+          this.apiService.showSuccessToast("Resource Added Successfully")
+        });
+      }
+      else {
+        this.apiService.updateResources(this.editDataId, this.form.value).subscribe(res => {
+          this.getResources(this.projectId)
+          this.apiService.showSuccessToast("Resource Updated Successfully")
+        });
+      }
       console.log(this.form.value);
     } else {
 
@@ -82,7 +90,7 @@ export class ResourcesComponent {
       }
     );
   }
-
+  
   isManager(): boolean {
     const userRole = this.authorizationService.getCurrentUser()?.role;
     return userRole === Role.Manager || userRole === Role.Admin;

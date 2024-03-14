@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Promact.CustomerSuccess.Platform.Migrations
 {
     /// <inheritdoc />
-    public partial class DatabaseModifications : Migration
+    public partial class added : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -446,12 +446,13 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Projects",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -459,7 +460,7 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Projects", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -749,6 +750,94 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                         name: "FK_Users_Organizations_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Organizations",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Projects_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpEntityPropertyChanges",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    EntityChangeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NewValue = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    OriginalValue = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
+                    PropertyName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    PropertyTypeFullName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpEntityPropertyChanges", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AbpEntityPropertyChanges_AbpEntityChanges_EntityChangeId",
+                        column: x => x.EntityChangeId,
+                        principalTable: "AbpEntityChanges",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIddictTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    AuthorizationId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    Payload = table.Column<string>(type: "text", nullable: true),
+                    Properties = table.Column<string>(type: "text", nullable: true),
+                    RedemptionDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    ReferenceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
+                    Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
+                        column: x => x.AuthorizationId,
+                        principalTable: "OpenIddictAuthorizations",
                         principalColumn: "Id");
                 });
 
@@ -1114,70 +1203,6 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AbpEntityPropertyChanges",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
-                    EntityChangeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    NewValue = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
-                    OriginalValue = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
-                    PropertyName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    PropertyTypeFullName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AbpEntityPropertyChanges", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AbpEntityPropertyChanges_AbpEntityChanges_EntityChangeId",
-                        column: x => x.EntityChangeId,
-                        principalTable: "AbpEntityChanges",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OpenIddictTokens",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ApplicationId = table.Column<Guid>(type: "uuid", nullable: true),
-                    AuthorizationId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    ExpirationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    Payload = table.Column<string>(type: "text", nullable: true),
-                    Properties = table.Column<string>(type: "text", nullable: true),
-                    RedemptionDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    ReferenceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    Subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
-                    Type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    ExtraProperties = table.Column<string>(type: "text", nullable: false),
-                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
-                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
-                        column: x => x.ApplicationId,
-                        principalTable: "OpenIddictApplications",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
-                        column: x => x.AuthorizationId,
-                        principalTable: "OpenIddictAuthorizations",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DocumentVersions",
                 columns: table => new
                 {
@@ -1495,6 +1520,11 @@ namespace Promact.CustomerSuccess.Platform.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Projects_UserId",
+                table: "Projects",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProjectUpdate_ProjectId",
                 table: "ProjectUpdate",
                 column: "ProjectId");
@@ -1685,6 +1715,9 @@ namespace Promact.CustomerSuccess.Platform.Migrations
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "User");
         }
     }
 }

@@ -17,13 +17,14 @@ import { ProjectUpdateComponent } from './pages/project-update/project-update.co
 import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.component';
 import { ProjectComponent } from './pages/project/project.component';
 import { ProjectIdGuard } from './services/ProjectIdGuard';
-import { AuthGuard } from './services/AuthGuard';
+import { AuthGuard } from '@auth0/auth0-angular';
 const routes: Routes = [
   { path: "login", component: LoginComponent },
 
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate:[AuthGuard],
     children: [
       { path: 'project', component: ProjectComponent },
       { path: 'audit-history', component: AuditHistoryComponent ,canActivate: [ProjectIdGuard]},

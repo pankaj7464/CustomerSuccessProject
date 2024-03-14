@@ -6,6 +6,9 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
+
+
+
 namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
 {
     public class VersionHistoryService : CrudAppService<VersionHistory,
@@ -19,25 +22,28 @@ namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
         private readonly IEmailService _emailService;
         private readonly string Useremail;
         private readonly string Username;
+        private readonly IRepository<VersionHistory,Guid> _repository;
 
         public VersionHistoryService(IRepository<VersionHistory, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
+            _repository = repository;
         }
 
         public override async Task<VersionHistoryDto> CreateAsync(CreateVersionHistoryDto input)
         {
             var versionHistoryDto = await base.CreateAsync(input);
 
-            var emailDto = new EmailDto
+            // Send email notification
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Version History Created alert",
-                Body = Template.GetEmailTemplate(Username)
+                Subject = "Version History Created Alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return versionHistoryDto;
         }
@@ -59,13 +65,17 @@ namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
 
         public override async Task DeleteAsync(Guid id)
         {
-            var emailDto = new EmailDto
+            // Send email notification
+
+            var versionHistory = await _repository.GetAsync(id);
+            var projectId = versionHistory.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Version History Deleted alert",
-                Body = Template.GetEmailTemplate(Username)
+                Subject = "Version History Created Alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             await base.DeleteAsync(id);
         }

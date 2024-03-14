@@ -25,7 +25,7 @@ export class ApprovedTeamComponent {
   displayedColumns: string[] = ['noOfResources', 'role', 'phaseNo', 'duration', 'availability', 'action'];
   projects!: any[];
 
-
+  editDataId!: string;
   projectId!: string
   constructor(private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
     let id = localStorage.getItem('projectId');
@@ -50,15 +50,23 @@ export class ApprovedTeamComponent {
   getApprovedTeam() {
     this.apiService.getApprovedTeam(this.projectId).subscribe(team => {
       this.dataSource = team;
+      console.log(team);
     });
   }
   submitForm() {
+    console.log("Submit form",this.form.value);
     if (this.form.valid) {
-
-      this.apiService.postApprovedTeam(this.form.value).subscribe(data => {
-        console.log(data);
-        this.apiService.showSuccessToast("Approved team successfully");
-      })
+      if (!this.editDataId) {
+        this.apiService.postApprovedTeam(this.form.value).subscribe((res) => {
+          this.getApprovedTeam()
+          this.apiService.showSuccessToast('Team Added Successfully');
+        });
+      } else {
+        this.apiService.updateApprovedTeam(this.editDataId, this.form.value).subscribe((res) => {
+          this.getApprovedTeam()
+          this.apiService.showSuccessToast('Audit History updated Successfully');
+        });
+      }
 
     } else {
 
@@ -69,7 +77,7 @@ export class ApprovedTeamComponent {
 
   editItem(data: any) {
 
-    // this.editDataId = data.id;
+    this.editDataId = data.id;
 
     this.form.patchValue(data);
   }

@@ -77,6 +77,54 @@ export class ApiService {
     });
   }
 
+  // Register API services
+
+  userProfile(): Observable<any> {
+    this.showLoader();
+    return this.http
+      .get<any>(environment.apiUrl + '/api/account/my-profile', {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  // Register API services
+
+  register(data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .post<any>(environment.apiUrl + '/api/account/register', data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  // Login API services
+
+  login(email: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .get<any>(this.apiUrl + 'user/detail-by-email?email=' + email, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  // All user API services
+
+  getAllUsers(): Observable<any> {
+    this.showLoader();
+    return this.http
+      .get<any>(this.apiUrl + 'user', {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
   // Update API services
 
   deleteProject(id: string): Observable<any> {
@@ -332,6 +380,26 @@ export class ApiService {
         this.hideLoader();
       }));
   }
+  updateClientFeedback(id: string, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'client-feedback/' + id, data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  updateProject(id: string, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'project/' + id, data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
 
   // Post API Services
   postMeetingMenute(data: any): Observable<any> {
@@ -499,6 +567,7 @@ export class ApiService {
         this.hideLoader();
       }));
   }
+
   getMeetingMenute(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
@@ -523,10 +592,12 @@ export class ApiService {
         this.hideLoader();
       }));
   }
-  getProject(): Observable<ApiResponse> {
+  getProject(id?: string): Observable<any[]> {
+    id = id || "";
+    console.log(id);
     this.showLoader();
     return this.http
-      .get<ApiResponse>(this.apiUrl + 'project')
+      .get<any[]>(environment.apiUrl + '/projects/' + id)
       .pipe(finalize(() => {
         this.hideLoader();
       }));
@@ -590,10 +661,10 @@ export class ApiService {
         this.hideLoader();
       }));
   }
-  getAllSprint(): Observable<any[]> {
+  getAllSprint(id: string): Observable<any[]> {
     this.showLoader();
     return this.http
-      .get<any[]>(this.apiUrl + 'sprint')
+      .get<any[]>(this.apiUrl + 'sprint/sprints-by-project-id/' + id)
       .pipe(finalize(() => {
         this.hideLoader();
       }));
@@ -616,7 +687,12 @@ export class ApiService {
       this.getAllPhaseMilestone(id),
       this.getAllEscalationMatrix(id),
       this.getAllRiskProfile(id),
-      this.getAllSprint()
+      this.getAllSprint(id),
+      this.getApprovedTeam(id),
+      this.getClientFeedback(id),
+      this.getMeetingMenute(id),
+      this.getResources(id),
+      this.getProjectUpdate(id),
     ];
 
     return forkJoin(apiCalls.map(apiCall =>
@@ -627,7 +703,8 @@ export class ApiService {
         })
       )
     )).pipe(
-      map(([projectBudgets, auditHistory, versionHistory, stakeholder, phaseMilestone, escalationMatrix, riskProfile, sprint]) => {
+      map(([projectBudgets, auditHistory, versionHistory, stakeholder, phaseMilestone,
+        escalationMatrix, riskProfile, sprint, team, clientFeedback, meetingMinute, resource, projectUpdate]) => {
         return {
           projectBudgets,
           auditHistory,
@@ -637,6 +714,8 @@ export class ApiService {
           escalationMatrix,
           riskProfile,
           sprint,
+          team, clientFeedback,
+          meetingMinute, resource, projectUpdate
         };
       }
       )

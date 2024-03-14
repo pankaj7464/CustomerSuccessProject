@@ -22,8 +22,6 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
         {
             _emailService = emailService;
             _projectUpdateRepository = repository;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
         }
 
         public override async Task<ProjectUpdateDto> CreateAsync(CreateUpdateProjectUpdateDto input)
@@ -31,13 +29,15 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
             var projectUpdateDto = await base.CreateAsync(input);
 
             // Send email notification
-            var emailDto = new EmailDto
+            
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Project Update Created Alert",
-                Body = $"Project update with ID {projectUpdateDto.Id} has been created."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return projectUpdateDto;
         }
@@ -47,13 +47,15 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
             var projectUpdateDto = await base.UpdateAsync(id, input);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Project Update Updated Alert",
-                Body = $"Project update with ID {projectUpdateDto.Id} has been updated."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return projectUpdateDto;
         }
@@ -67,13 +69,15 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
             await base.DeleteAsync(id);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = projectUpdate.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Project Update Deleted Alert",
-                Body = $"Project update with ID {id}   has been deleted."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
         }
 
         public async Task<List<ProjectUpdateDto>> GetProjectUpdatesByProjectIdAsync(Guid projectId)

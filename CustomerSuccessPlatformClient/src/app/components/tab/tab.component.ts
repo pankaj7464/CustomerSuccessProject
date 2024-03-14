@@ -17,9 +17,7 @@ import { ApiService } from '../../services/api.service';
 export class TabComponent {
   constructor(public router: Router, public apiService: ApiService, private cdr: ChangeDetectorRef, @Inject(DOCUMENT) public document: Document,
     public authService: AuthService) {
-    this.authService.user$.subscribe(user => {
-      console.log(user);
-    });
+
   }
 
 
@@ -47,21 +45,24 @@ export class TabComponent {
 
 
   generatePdf() {
-    let id:string = 'sd' 
-    this.apiService.getAllDataForPdf(id).subscribe(
+    let id = localStorage.getItem('projectId');
+    let projectId: string = ''
+    if (id) {
+      projectId = id;
+    }
+    this.apiService.getAllDataForPdf(projectId).subscribe(
       (data) => {
         const doc = new jsPDF();
-
-        Object.keys(data).forEach((key) => {
-
+        console.log(data);
+        Object.keys(data).forEach((key,index) => {
+         
           if (data[key]) {
-            let items = data[key].items;
+            let items = data[key];
             if (key == "escalationMatrix") {
-
+              console.log(key)
               items = items.sort((a: any, b: any) => a.level - b.level)
-
             }
-            if (items.length > 0) {
+            if (items?.length > 0) {
               const tableData = items.map((item: any) => {
                 const rowData = [];
 
@@ -126,7 +127,7 @@ export class TabComponent {
                 // Exclude keys containing 'id' substring from header
                 head: [Object.keys(items[0]).filter(key => !key.toLowerCase().includes('id'))],
                 body: tableData,
-                startY: 20,
+                startY: 20 + index * 10, 
               });
 
               // Add a page break after each table except for the last one

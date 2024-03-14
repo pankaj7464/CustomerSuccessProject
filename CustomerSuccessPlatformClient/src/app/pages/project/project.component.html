@@ -16,6 +16,16 @@
       <mat-label>Description</mat-label>
       <textarea matInput formControlName="description" rows="1"></textarea>
     </mat-form-field>
+    <mat-form-field class="flex-1 w-full">
+      <mat-label>Project Manager</mat-label>
+      <mat-select formControlName="userId">
+        <mat-option
+          *ngFor="let user of users; let idx = index"
+          [value]="user.id"
+          >{{ user.email }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <!-- Submit Button -->

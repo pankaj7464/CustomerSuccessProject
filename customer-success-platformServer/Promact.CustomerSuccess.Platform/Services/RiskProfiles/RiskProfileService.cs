@@ -20,16 +20,12 @@ namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
                                 IRiskProfileService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail;
-        private readonly string Username;
         private readonly IRepository<RiskProfile, Guid> _riskProfileRepository;
 
         public RiskProfileService(IRepository<RiskProfile, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
             _riskProfileRepository = repository;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
         }
 
         public override async Task<RiskProfileDto> CreateAsync(CreateRiskProfileDto input)
@@ -37,13 +33,15 @@ namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
             var riskProfileDto = await base.CreateAsync(input);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
                 Subject = "Risk Profile Created Alert",
-                Body = $"Risk profile with ID {riskProfileDto.Id} has been created."
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return riskProfileDto;
         }
@@ -53,13 +51,15 @@ namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
             var riskProfileDto = await base.UpdateAsync(id, input);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Risk Profile Updated Alert",
-                Body = $"Risk profile with ID {riskProfileDto.Id} has been updated."
+                Subject = "Risk Profile Created Alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return riskProfileDto;
         }
@@ -73,13 +73,15 @@ namespace Promact.CustomerSuccess.Platform.Services.RiskProfiles
             await base.DeleteAsync(id);
 
             // Send email notification
-            var emailDto = new EmailDto
+
+            var projectId = riskProfile.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Risk Profile Deleted Alert",
-                Body = $"Risk profile with ID {id} has been deleted."
+                Subject = "Project Update Created Alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
         }
 
         public async Task<List<RiskProfileDto>> GetRiskProfilesByProjectIdAsync(Guid projectId)

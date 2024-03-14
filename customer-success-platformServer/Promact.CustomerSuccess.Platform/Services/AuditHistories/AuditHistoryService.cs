@@ -2,12 +2,10 @@
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.AuditHistory;
-using Promact.CustomerSuccess.Platform.Services.Emailing; // Import the email service namespace
-using System.Linq;
+using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using static Volo.Abp.Identity.IdentityPermissions;
 
 namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
 {
@@ -37,13 +35,14 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
         {
             var auditHistoryDto = await base.CreateAsync(input);
 
-            var emailDto = new EmailDto
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Audit History Created alert",
-                Body = Template.GetEmailTemplate(Username) 
+                Subject = "Audit Created alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return auditHistoryDto;
         }
@@ -52,31 +51,31 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
         {
             var auditHistoryDto = await base.UpdateAsync(id, input);
 
-            var emailDto = new EmailDto
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Audit History Updated alert",
-                Body = Template.GetEmailTemplate(Username)
+                Subject = "Audit Created alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return auditHistoryDto;
         }
-
         public override async Task DeleteAsync(Guid id)
         {
-            var emailDto = new EmailDto
+            var auditnHistory = await _auditHistoryRepository.GetAsync(id);
+            var projectId = auditnHistory.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Audit History Deleted alert",
-                Body = Template.GetEmailTemplate(Username)
+                Subject = "Approved Team Created alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             await base.DeleteAsync(id);
         } 
-     
-        
         public async Task<List<AuditHistory>> GetAuditHistoriesByProjectIdAsync(Guid projectId)
         {
             return await _auditHistoryRepository.GetListAsync(ah => ah.ProjectId == projectId);

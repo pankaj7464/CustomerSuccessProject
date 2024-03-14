@@ -3,18 +3,41 @@ using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
-using Volo.Abp.Emailing;
+using Promact.CustomerSuccess.Platform.Entities;
+using Volo.Abp.Domain.Repositories;
 
 namespace Promact.CustomerSuccess.Platform.Services.Emailing
 {
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-        private readonly IEmailSender emailSender;
-
-        public EmailService(IConfiguration configuration)
+        private readonly IRepository<Stakeholder, Guid> _stakeholderRepository;
+        public EmailService(IConfiguration configuration, IRepository<Stakeholder, Guid> stakeholderRepository)
         {
             _configuration = configuration;
+            _stakeholderRepository = stakeholderRepository;
+        }
+
+        public async void SendEmailToStakeHolder(EmailToStakeHolderDto request)
+        {
+            try
+            {
+                var stakeholders = await _stakeholderRepository.GetListAsync(s => s.ProjectId == request.ProjectId);
+
+                foreach (var stakeholder in stakeholders)
+                {
+                    var emailDto = new EmailDto
+                    {
+                        To = stakeholder.Contact,
+                        Subject = request.Subject,
+                        Body = Template.GetEmailTemplate(stakeholder.Name)
+                    };
+
+                    // Send email asynchronously
+                    Task.Run(() => SendEmail(emailDto));
+                }
+            }
+            catch (Exception ex) { }
         }
 
         public void SendEmail(EmailDto request)
@@ -25,9 +48,6 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
             var username = _configuration["EmailSettings:Username"];
             var password = _configuration["EmailSettings:Password"];
             var fromAddress = _configuration["EmailSettings:FromAddress"];
-
-
-
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(fromAddress));
             email.To.Add(MailboxAddress.Parse(request.To));

@@ -36,7 +36,7 @@ export class ProjectUpdateComponent {
     });
   }
 
-
+  editDataId!: string;
   projectId!: string;
   ngOnInit() {
 
@@ -48,31 +48,39 @@ export class ProjectUpdateComponent {
   }
   submitForm() {
     if (this.form.valid) {
-      this.apiService.postProjectUdpate(this.form.value).subscribe(res => {
-        this.apiService.showSuccessToast("Project Upddate Success Added");
-      })
+      if (!this.editDataId) {
+        this.apiService.postProjectUdpate(this.form.value).subscribe(res => {
+          this.getProjectUdpate(this.projectId)
+          this.apiService.showSuccessToast("Project Upddate Success Added");
+        })
+      }
+      else {
+        this.apiService.updateProjectUpdate(this.editDataId, this.form.value).subscribe(res => {
+          this.getProjectUdpate(this.projectId)
+          this.apiService.showSuccessToast("Project Upddate Successfully editted");
+        })
+      }
       console.log(this.form.value);
     } else {
-      // Mark all fields as touched to trigger validation messages
 
     }
   }
   editItem(data: any) {
 
-    // this.editDataId = data.id;
+    this.editDataId = data.id;
 
     this.form.patchValue(data);
   }
   deleteItem(id: any) {
-    // this.apiService.deleteEscalationMatrix(id).subscribe(
-    //   (res) => {
-    //     this.getAllEscalationMatrix()
-    //     this.apiService.showSuccessToast('Deleted Successfully');
-    //   },
-    //   (error) => {
-    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-    //   }
-    // );
+    this.apiService.deleteProjectUpdate(id).subscribe(
+      (res) => {
+        this.getProjectUdpate(this.projectId)
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
 
   isManager(): boolean {

@@ -29,7 +29,7 @@ export class VersionHistoryComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
     let id = localStorage.getItem("projectId")
-    if(id) {
+    if (id) {
       this.projectId = id
     }
 
@@ -42,24 +42,22 @@ export class VersionHistoryComponent implements OnInit {
       revisionDate: ['', Validators.required],
       approvalDate: ['', Validators.required],
       approvedBy: ['', Validators.required],
-      productId: [id?id:'', Validators.required],
+      productId: [id || '', Validators.required],
     });
 
   }
   projectId!: string;
   ngOnInit() {
 
-    this.route.params.subscribe(params => {
-      this.projectId = params['projectId'];
-      this.getAllVersionHistory(this.projectId)
-    });
+    this.getAllVersionHistory()
+   
   }
 
 
 
 
-  getAllVersionHistory(id: string) {
-    this.apiService.getAllVersionHistory(id).subscribe((res) => {
+  getAllVersionHistory() {
+    this.apiService.getAllVersionHistory(this.projectId).subscribe((res) => {
       console.log(res);
       this.dataSource = res;
     });
@@ -68,7 +66,7 @@ export class VersionHistoryComponent implements OnInit {
   deleteItem(id: any) {
     this.apiService.deleteVersionHistory(id).subscribe(
       (res) => {
-        this.getAllVersionHistory(this.projectId);
+        this.getAllVersionHistory();
         this.apiService.showSuccessToast('Deleted Successfully');
       },
       (error) => {
@@ -82,7 +80,7 @@ export class VersionHistoryComponent implements OnInit {
     if (this.form.valid) {
       if (this.editDataId) {
         this.apiService.updateVersionHistory(this.editDataId, this.form.value).subscribe((res) => {
-          this.getAllVersionHistory(this.projectId);
+          this.getAllVersionHistory();
           this.apiService.showSuccessToast(
             'Version History Updated Successfully'
           );
@@ -90,7 +88,7 @@ export class VersionHistoryComponent implements OnInit {
       }
       else {
         this.apiService.postVersionHistory(this.form.value).subscribe((res) => {
-          this.getAllVersionHistory(this.projectId);
+          this.getAllVersionHistory();
           this.apiService.showSuccessToast(
             'Version History Added Successfully'
           );

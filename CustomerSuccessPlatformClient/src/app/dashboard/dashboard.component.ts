@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import 'jspdf-autotable';
 import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../services/api.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileModalComponent } from '../components/profile-modal/profile-modal.component';
+import { AuthorizationService } from '../services/authorization.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,22 +15,34 @@ import { ApiService } from '../services/api.service';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
-
+  userDetail!: any
   isLoading: boolean;
-  constructor(public router: Router, public apiService: ApiService, private cdr: ChangeDetectorRef, @Inject(DOCUMENT) public document: Document,
-    public authService: AuthService) {
-    this.authService.user$.subscribe(user => {
-      console.log(user);
-      localStorage.setItem('user', JSON.stringify(user));
-      router.navigate(['/dashboard/project']);
-    });
+  constructor(public dialog: MatDialog, public router: Router, public apiService: ApiService, private cdr: ChangeDetectorRef, @Inject(DOCUMENT) public document: Document,
+    public authService: AuthService, public authorizationService: AuthorizationService) {
 
-    console.log(this.authService.user$);
-    console.log(this.authService.isAuthenticated$)
-    this.authService.isAuthenticated$.subscribe(res => {
-      console.log("Working");
-      console.log(res);
-    })
+    this.authService.user$.subscribe(userDetail => {
+      this.userDetail = userDetail;
+      this.apiService.login(this.userDetail.email).subscribe(user => {
+        user = JSON.parse(user);
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("roleId", user.role);
+          this.userDetail = { ...userDetail, roleId: user.role };
+        }
+
+        else {
+          this.authService.logout({
+            logoutParams: {
+              returnTo: "http://localhost:4200/login"
+            }
+          });
+        }
+      },
+        error => {
+          console.log(error);
+        }
+      )
+    });
     this.isLoading = false;
   }
   ngOnInit(): void {
@@ -41,7 +56,10 @@ export class DashboardComponent {
     { path: 'settings', displayName: 'Settings' },
   ];
 
-
+  isProjectPage() {
+    const currentUrl = this.router.url
+    return currentUrl != "/dashboard/project"
+  }
   logout() {
     this.authService.logout({
       logoutParams: {
@@ -50,9 +68,12 @@ export class DashboardComponent {
     });
   }
   navigateTo(path: string) {
-
     // throw new Error('Method not implemented.');
     this.router.navigate([path])
   }
 
+
+  openDialog() {
+    this.dialog.open(ProfileModalComponent);
+  }
 }

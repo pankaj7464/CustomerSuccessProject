@@ -4,20 +4,13 @@ using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Promact.CustomerSuccess.Platform.Services.Dtos.ApprovedTeam;
-using Microsoft.AspNetCore.Authorization;
-using static Volo.Abp.Identity.IdentityPermissions;
-
 namespace Promact.CustomerSuccess.Platform.Services.ApprovedTeams
 {
     public class ApprovedTeamService : CrudAppService<ApprovedTeam, ApprovedTeamDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateApprovedTeamDto, CreateUpdateApprovedTeamDto>
     {
         private readonly IEmailService _emailService;
         private readonly string Useremail;
-        private readonly string Username;
         private readonly IRepository<ApprovedTeam, Guid> _approvedTeamRepository;
 
         public ApprovedTeamService(IRepository<ApprovedTeam, Guid> repository, IEmailService emailService) : base(repository)
@@ -25,36 +18,36 @@ namespace Promact.CustomerSuccess.Platform.Services.ApprovedTeams
             _emailService = emailService;
             _approvedTeamRepository = repository;
             Useremail = Template.Useremail;
-            Username  = Template .Username;
         }
 
         public override async Task<ApprovedTeamDto> CreateAsync(CreateUpdateApprovedTeamDto input)
         {
             var approvedTeamDto = await base.CreateAsync(input);
 
-            // Send email notification
-            var emailDto = new EmailDto
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Approved Team Created Alert",
-                Body = $"Approved Team with ID {approvedTeamDto.Id} has been created."
+                Subject = "Approved Team Created alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return approvedTeamDto;
         }
+
         public override async Task<ApprovedTeamDto> UpdateAsync(Guid id, CreateUpdateApprovedTeamDto input)
         {
             var approvedTeamDto = await base.UpdateAsync(id, input);
 
-            // Send email notification
-            var emailDto = new EmailDto
+            var projectId = input.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Approved Team Updated Alert",
-                Body = $"Approved Team with ID {approvedTeamDto.Id} has been updated."
+                Subject = "Approved Team Updated alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
             return approvedTeamDto;
         }
@@ -68,19 +61,22 @@ namespace Promact.CustomerSuccess.Platform.Services.ApprovedTeams
             await base.DeleteAsync(id);
 
             // Send email notification
-            var emailDto = new EmailDto
+            var projectId = approvedTeam.ProjectId;
+
+            var projectDetail = new EmailToStakeHolderDto
             {
-                To = Useremail,
-                Subject = "Approved Team Deleted Alert",
-                Body = $"Approved Team with ID {id} has been deleted."
+                Subject = "Approved Team Deleted alert",
+                ProjectId = projectId,
             };
-            _emailService.SendEmail(emailDto);
+            Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
         }
+
 
         public async Task<List<ApprovedTeamDto>> GetApprovedTeamsByProjectIdAsync(Guid projectId)
         {
             var approvedTeams = await _approvedTeamRepository.GetListAsync(t => t.ProjectId == projectId);
             return ObjectMapper.Map<List<ApprovedTeam>, List<ApprovedTeamDto>>(approvedTeams);
         }
+
     }
 }
