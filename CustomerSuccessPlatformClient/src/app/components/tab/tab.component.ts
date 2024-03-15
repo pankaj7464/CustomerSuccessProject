@@ -127,11 +127,11 @@ export class TabComponent {
                 // Exclude keys containing 'id' substring from header
                 head: [Object.keys(items[0]).filter(key => !key.toLowerCase().includes('id'))],
                 body: tableData,
-                startY: 20 + index * 10, 
+                startY: 20, 
               });
 
               // Add a page break after each table except for the last one
-              if (key !== Object.keys(data)[Object.keys(data).length - 1]) {
+              if (key !== Object.keys(data)[Object.keys(data).length - 2]) {
                 doc.addPage();
               }
             }

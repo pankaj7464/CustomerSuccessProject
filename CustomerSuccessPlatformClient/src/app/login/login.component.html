@@ -4,35 +4,7 @@
       <!-- login.component.html -->
       <div class="flex justify-center items-center h-screen bg-gray-100">
         <mat-card class="p-8">
-          <h1 class="text-3xl font-bold mb-6">Login</h1>
-          <form [formGroup]="loginForm" (ngSubmit)="ManualLogin()">
-            <div class="flex items-center gap-4">
-              <mat-form-field appearance="fill">
-                <mat-label>userNameOrEmailAddress</mat-label>
-                <input
-                  matInput
-                  type="email"
-                  formControlName="emailAddress"
-                  placeholder="Enter your email"
-                />
-              </mat-form-field>
-              <mat-form-field appearance="fill">
-                <mat-label>Password</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  placeholder="Enter your password"
-                  formControlName="password"
-                />
-              </mat-form-field>
-            </div>
-            <div class="flex justify-between items-center">
-              <button mat-raised-button color="primary">Login</button>
-              <a (click)="changeTab(1)" class="text-blue-500 cursor-pointer"
-                >Don't have an account? Register</a
-              >
-            </div>
-          </form>
+        
           <div class="mt-4">
             <button mat-raised-button color="accent" (click)="Login()">
               Login with Auth0
@@ -42,55 +14,5 @@
       </div>
     </div>
   </mat-tab>
-  <mat-tab label="Register">
-    <div class="example-large-box mat-elevation-z4">
-      <!-- register.component.html -->
-      <div class="flex justify-center items-center h-screen bg-gray-100">
-        <mat-card class="p-8">
-          <h1 class="text-3xl font-bold mb-6">Register</h1>
-          <form
-            class="space-y-4"
-            [formGroup]="registerForm"
-            (ngSubmit)="register()"
-          >
-            <div class="flex items-center gap-4">
-              <mat-form-field appearance="fill">
-                <mat-label>Username</mat-label>
-                <input
-                  formControlName="userName"
-                  matInput
-                  type="text"
-                  placeholder="Enter  username"
-                />
-              </mat-form-field>
-              <mat-form-field appearance="fill">
-                <mat-label>Email</mat-label>
-                <input
-                  matInput
-                  type="email"
-                  formControlName="emailAddress"
-                  placeholder="Enter your password"
-                />
-              </mat-form-field>
-              <mat-form-field appearance="fill">
-                <mat-label> Password</mat-label>
-                <input
-                  matInput
-                  type="password"
-                  placeholder="Enter your password"
-                  formControlName="password"
-                />
-              </mat-form-field>
-            </div>
-            <div class="flex justify-between items-center">
-              <button mat-raised-button color="primary">Register</button>
-              <a (click)="changeTab(0)" class="text-blue-500 cursor-pointer"
-                >Already have an account? Login</a
-              >
-            </div>
-          </form>
-        </mat-card>
-      </div>
-    </div>
-  </mat-tab>
+ 
 </mat-tab-group>

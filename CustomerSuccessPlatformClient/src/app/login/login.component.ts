@@ -53,7 +53,7 @@ export class LoginComponent {
   ManualLogin() {
     console.log('Login Form Submitted!', this.loginForm.value);
     if (this.loginForm.valid) {
-      this.apiService.login(this.loginForm.value).subscribe(data => {
+      this.apiService.login(this.loginForm.value, "Pankaj7464").subscribe(data => {
         data = JSON.parse(data)
         console.log(data);
         if (data.result == 1) {

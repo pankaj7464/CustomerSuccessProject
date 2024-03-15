@@ -3,6 +3,8 @@ using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.ApprovedTeam;
 using Promact.CustomerSuccess.Platform.Services.Dtos.AuditHistory;
+using Promact.CustomerSuccess.Platform.Services.Dtos.Auth;
+using Promact.CustomerSuccess.Platform.Services.Dtos.Auth.Auth;
 using Promact.CustomerSuccess.Platform.Services.Dtos.ClientFeedback;
 using Promact.CustomerSuccess.Platform.Services.Dtos.EscalationMatrix;
 using Promact.CustomerSuccess.Platform.Services.Dtos.MeetingMinute;
@@ -15,6 +17,7 @@ using Promact.CustomerSuccess.Platform.Services.Dtos.RiskProfile;
 using Promact.CustomerSuccess.Platform.Services.Dtos.sprint;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Stakeholder;
 using Promact.CustomerSuccess.Platform.Services.Dtos.VersionHistory;
+using CreateUpdateRoleDto = Promact.CustomerSuccess.Platform.Services.Dtos.Auth.CreateUpdateRoleDto;
 
 namespace Promact.CustomerSuccess.Platform.ObjectMapping;
 
@@ -101,9 +104,19 @@ public class PlatformAutoMapperProfile : Profile
         CreateMap<ClientFeedback, ClientFeedbackDto>().ReverseMap();
 
           //Pending
+        CreateMap<CreateUpdateUserRole, UserRole>();
+        CreateMap<CreateUpdateUserRole, UserRole>();
+        CreateMap<UserRole, UserRoleDto>().ReverseMap();
+
+          //Pending
         CreateMap<CreateUpdateUserDto, User>();
         CreateMap<CreateUpdateUserDto, User>();
         CreateMap<User, UserDto>().ReverseMap();
+
+          //Pending
+        CreateMap<CreateUpdateRoleDto, Role>();
+        CreateMap<CreateUpdateRoleDto, Role>();
+        CreateMap<Role, RoleDto>().ReverseMap();
 
 
 

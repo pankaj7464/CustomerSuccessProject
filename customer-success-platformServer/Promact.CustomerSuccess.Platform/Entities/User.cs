@@ -7,7 +7,8 @@ namespace Promact.CustomerSuccess.Platform.Entities
     {
         public string Password { get; set; }
         public string Email { get; set; }
-        public Roles Role { get; set; }
+        public string UserName { get; set; }
+
 
     }
 }

@@ -48,30 +48,29 @@
   <mat-drawer #drawer mode="side" opened>
     <!-- Center: Buttons -->
     <div class="flex gap-4 flex-col m-2">
-      <!-- Button 1: Create Project -->
-      <button
-        mat-raised-button
-        color="primary"
-        class="h-10 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Create Project
-      </button>
-
-      @for (nav of Navigations; track $index) {
       <button
         color="primary"
         routerLinkActive="active"
-        (click)="navigateTo(nav.path)"
+        
+        (click)="navigateTo(Navigations[0].path)"
+        class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline lg:min-w-[10rem]"
+      >
+        {{ Navigations[0].displayName }}
+      </button>
+      <button
+        *ngIf="isAdmin()"
+        color="primary"
+        routerLinkActive="active"
+        (click)="navigateTo(Navigations[1].path)"
         class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
-        {{ nav.displayName }}
+        {{ Navigations[1].displayName }}
       </button>
-      }
     </div>
   </mat-drawer>
 
   <div class="m-2 p-2">
-    <div *ngIf="isProjectPage()">
+    <div *ngIf="isProjectPage() && isUserManagementPage()">
       <app-tab></app-tab>
     </div>
     <router-outlet></router-outlet>

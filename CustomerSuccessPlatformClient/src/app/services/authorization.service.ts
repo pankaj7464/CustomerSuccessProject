@@ -7,10 +7,10 @@ export interface User {
 }
 
 export enum Role {
-  Admin = 'admin',
-  Manager = 'manager',
-  Auditor = 'auditor',
-  Client = 'client',
+  Admin = 'Admin',
+  Manager = 'Manager',
+  Auditor = 'Auditor',
+  Client = 'Client',
 }
 
 @Injectable({
@@ -36,17 +36,30 @@ export class AuthorizationService {
   getAllUsers(): User[] {
     return this.users;
   }
-  getCurrentUser(): User {
-    let roleId = localStorage.getItem('roleId');
+  getCurrentUser(): any {
+    let user = localStorage.getItem('user') as any;
+    let role = localStorage.getItem('role') as any;
 
-    if (roleId) {
-      let index = this.users.findIndex(user => user.id == roleId);
-      if (index != -1) {
-        return this.users[index]
+    if (role) {
+      role = JSON.parse(role);
+      user = JSON.parse(user);
+
+      if (role) {
+        let userRole = {
+          name: user?.name,
+          id: role?.id,
+          email: user?.email,
+          role: role?.name
+        }
+        return userRole
+      }
+      else {
+        return { id: "4", name: 'Rahul yadav', email: 'rahul@example.com', role: 'client' }
       }
     }
-
-    return this.users[0];
   }
+
+
+
 
 }

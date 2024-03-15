@@ -16,8 +16,7 @@ export class ProjectComponent {
 
   form!: FormGroup;
   dataSource: Project[] = [
-    { name: 'Project 1', description: 'Description for Project 1' },
-    { name: 'Project 2', description: 'Description for Project 2' },
+
   ];
   editDataId!: string;
   displayedColumns: string[] = ['name', 'description', 'action'];
@@ -25,22 +24,24 @@ export class ProjectComponent {
   userDetails!: any;
   constructor(private fb: FormBuilder, private authorizationService: AuthorizationService, private router: Router, private apiService: ApiService) {
     this.getProject()
-
-    this.getAllUsers()
+    this.getAllManager()
 
   }
 
-  getAllUsers() {
-    this.apiService.getAllUsers().subscribe(users => {
-      console.log(users)
-      users = JSON.parse(users)
-      this.users = users.items;
-    });
+
+  getAllManager() {
+    this.apiService.getAllManager().subscribe(res => {
+      console.log(res)
+      this.users = JSON.parse(res);
+    })
   }
+
   getProject() {
     let user = localStorage.getItem('user')
     if (user) {
+      user = JSON.parse(user) as any
       this.userDetails = user;
+      console.log(user)
     }
     if (this.isAdmin()) {
       this.apiService.getProject().subscribe(project => {
@@ -101,7 +102,7 @@ export class ProjectComponent {
 
   isAdmin(): boolean {
     const userRole = this.authorizationService.getCurrentUser()?.role;
-    return userRole === Role.Admin;
+    return userRole == Role.Admin;
   }
   isAuditor(): boolean {
     const userRole = this.authorizationService.getCurrentUser()?.role;

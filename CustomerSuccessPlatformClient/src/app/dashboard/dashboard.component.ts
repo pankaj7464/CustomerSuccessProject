@@ -7,7 +7,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileModalComponent } from '../components/profile-modal/profile-modal.component';
-import { AuthorizationService } from '../services/authorization.service';
+import { AuthorizationService, Role } from '../services/authorization.service';
+import { RoleEditModalComponent } from '../components/role-edit-modal/role-edit-modal.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,14 +23,13 @@ export class DashboardComponent {
 
     this.authService.user$.subscribe(userDetail => {
       this.userDetail = userDetail;
-      this.apiService.login(this.userDetail.email).subscribe(user => {
+      this.apiService.login(this.userDetail.email, this.userDetail.sub).subscribe(user => {
         user = JSON.parse(user);
         if (user) {
           localStorage.setItem("user", JSON.stringify(user));
-          localStorage.setItem("roleId", user.role);
-          this.userDetail = { ...userDetail, roleId: user.role };
+          localStorage.setItem("role", JSON.stringify(user?.role));
+          this.userDetail = { ...userDetail, roleId: user?.role };
         }
-
         else {
           this.authService.logout({
             logoutParams: {
@@ -52,10 +52,13 @@ export class DashboardComponent {
   }
   Navigations = [
     { path: 'dashboard/project', displayName: 'Project' },
-    { path: 'project-manager', displayName: 'Project Manager' },
-    { path: 'settings', displayName: 'Settings' },
+    { path: 'dashboard/user-management', displayName: 'User Management' },
   ];
 
+  isUserManagementPage() {
+    const currentUrl = this.router.url
+    return currentUrl != "/dashboard/user-management"
+  }
   isProjectPage() {
     const currentUrl = this.router.url
     return currentUrl != "/dashboard/project"
@@ -73,7 +76,12 @@ export class DashboardComponent {
   }
 
 
+  isAdmin(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Admin;
+  }
   openDialog() {
     this.dialog.open(ProfileModalComponent);
   }
+ 
 }

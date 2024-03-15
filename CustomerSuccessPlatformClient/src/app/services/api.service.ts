@@ -103,10 +103,12 @@ export class ApiService {
   }
   // Login API services
 
-  login(email: any): Observable<any> {
+  login(email: string, username: string): Observable<any> {
+    console.log(`login ${username}  `)
+
     this.showLoader();
     return this.http
-      .get<any>(this.apiUrl + 'user/detail-by-email?email=' + email, {
+      .get<any>(this.apiUrl + `user/user-by-username-and-email?username=${username}&email=${email}`, {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -119,6 +121,16 @@ export class ApiService {
     this.showLoader();
     return this.http
       .get<any>(this.apiUrl + 'user', {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllManager(): Observable<any> {
+    this.showLoader();
+    return this.http
+      .get<any>(this.apiUrl + 'user/managers', {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -595,9 +607,12 @@ export class ApiService {
   getProject(id?: string): Observable<any[]> {
     id = id || "";
     console.log(id);
+    if (id) {
+      id = `?UserId=${id}`
+    }
     this.showLoader();
     return this.http
-      .get<any[]>(environment.apiUrl + '/projects/' + id)
+      .get<any[]>(environment.apiUrl + '/projects' + id)
       .pipe(finalize(() => {
         this.hideLoader();
       }));

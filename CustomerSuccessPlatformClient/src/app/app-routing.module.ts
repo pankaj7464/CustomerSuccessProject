@@ -18,28 +18,30 @@ import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.co
 import { ProjectComponent } from './pages/project/project.component';
 import { ProjectIdGuard } from './services/ProjectIdGuard';
 import { AuthGuard } from '@auth0/auth0-angular';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
 const routes: Routes = [
   { path: "login", component: LoginComponent },
 
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     children: [
       { path: 'project', component: ProjectComponent },
-      { path: 'audit-history', component: AuditHistoryComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'sprint', component: SprintComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'stakeholder', component: StakeholderComponent,canActivate: [ProjectIdGuard] },
-      { path: 'version-history', component: VersionHistoryComponent,canActivate: [ProjectIdGuard] },
-      { path: 'project-budget', component: ProjectBudgetComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'escalation-matrix', component: EscalationMatrixComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'risk-profiling', component: RiskProfileComponent,canActivate: [ProjectIdGuard] },
-      { path: 'phase-milestone', component: PhaseMilestoneComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'resources', component: ResourcesComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'client-feedback', component: ClientFeedbackComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'approved-team', component: ApprovedTeamComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'project-update', component: ProjectUpdateComponent ,canActivate: [ProjectIdGuard]},
-      { path: 'minute-meeting', component: MinuteMeetingComponent ,canActivate: [ProjectIdGuard] },
+      { path: 'user-management', component: UserManagementComponent },
+      { path: 'audit-history', component: AuditHistoryComponent, canActivate: [ProjectIdGuard] },
+      { path: 'sprint', component: SprintComponent, canActivate: [ProjectIdGuard] },
+      { path: 'stakeholder', component: StakeholderComponent, canActivate: [ProjectIdGuard] },
+      { path: 'version-history', component: VersionHistoryComponent, canActivate: [ProjectIdGuard] },
+      { path: 'project-budget', component: ProjectBudgetComponent, canActivate: [ProjectIdGuard] },
+      { path: 'escalation-matrix', component: EscalationMatrixComponent, canActivate: [ProjectIdGuard] },
+      { path: 'risk-profiling', component: RiskProfileComponent, canActivate: [ProjectIdGuard] },
+      { path: 'phase-milestone', component: PhaseMilestoneComponent, canActivate: [ProjectIdGuard] },
+      { path: 'resources', component: ResourcesComponent, canActivate: [ProjectIdGuard] },
+      { path: 'client-feedback', component: ClientFeedbackComponent, canActivate: [ProjectIdGuard] },
+      { path: 'approved-team', component: ApprovedTeamComponent, canActivate: [ProjectIdGuard] },
+      { path: 'project-update', component: ProjectUpdateComponent, canActivate: [ProjectIdGuard] },
+      { path: 'minute-meeting', component: MinuteMeetingComponent, canActivate: [ProjectIdGuard] },
       { path: '**', redirectTo: '/dashboard/project', pathMatch: 'full' }
     ]
   },

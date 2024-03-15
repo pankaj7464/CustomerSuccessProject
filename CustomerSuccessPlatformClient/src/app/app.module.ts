@@ -35,6 +35,8 @@ import { ClientFeedbackComponent } from './pages/client-feedback/client-feedback
 import { ProjectUpdateComponent } from './pages/project-update/project-update.component';
 import { ProjectComponent } from './pages/project/project.component';
 import { TabComponent } from './components/tab/tab.component';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { RoleEditModalComponent } from './components/role-edit-modal/role-edit-modal.component';
 
 
 @NgModule({
@@ -56,7 +58,9 @@ import { TabComponent } from './components/tab/tab.component';
     ClientFeedbackComponent,
     ProjectUpdateComponent,
     ProjectComponent,
-    TabComponent
+    TabComponent,
+    UserManagementComponent,
+    RoleEditModalComponent
   ],
   imports: [
     BrowserModule,

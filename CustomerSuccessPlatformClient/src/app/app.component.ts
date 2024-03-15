@@ -11,7 +11,6 @@ export class AppComponent implements OnInit {
   isLoading: boolean;
   constructor( public apiService: ApiService,private authService: AuthService) {
     this.isLoading = false;
-  
   }
 
   ngOnInit(): void {
