@@ -26,14 +26,15 @@ export class LoginComponent {
   }
   constructor(private authorizationService: AuthorizationService, private apiService: ApiService, private fb: FormBuilder, private auth: AuthService, private router: Router, private authService: AuthService) {
     this.loginForm = this.fb.group({
-      userRole: ['', Validators.required],
+      username: ['', Validators.required],
+      email: ['', [Validators.required,Validators.email]],
     });
 
     this.users = authorizationService.getAllUsers()
     this.registerForm = this.fb.group({
-      emailAddress: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      userName: ['', Validators.required]
+      email: ['', [Validators.required, Validators.email]],
+      userName: ['', Validators.required],
+      name: ['', Validators.required],
     });
     this.auth.isAuthenticated$.subscribe(auth => {
       if (auth) {
@@ -53,14 +54,18 @@ export class LoginComponent {
   ManualLogin() {
     console.log('Login Form Submitted!', this.loginForm.value);
     if (this.loginForm.valid) {
-      this.apiService.login(this.loginForm.value, "Pankaj7464").subscribe(data => {
+      this.apiService.login(this.loginForm.value).subscribe(data => {
         data = JSON.parse(data)
         console.log(data);
-        if (data.result == 1) {
-          this.apiService.showSuccessToast("Login Success")
+        if (data.isSuccess) {
+          this.apiService.showSuccessToast(data.message)
+            this.router.navigate(['dashboard/project']);
+        }
+        else {
+          this.apiService.showSuccessToast(data.message)
         }
 
-        // this.router.navigate(['dashboard/project']);
+     
       },
         error => {
           this.apiService.showSuccessToast(" There was an error")
@@ -75,10 +80,10 @@ export class LoginComponent {
   register() {
     if (this.registerForm.valid) {
       console.log('Register Form Submitted!', this.registerForm.value);
-      this.apiService.register({ ...this.registerForm.value, appName: "CSP" }).subscribe(data => {
-        console.log(data);
-        this.apiService.showSuccessToast("Register Success")
-        this.router.navigate(['login']);
+      this.apiService.register(this.registerForm.value).subscribe(data => {
+        console.log(JSON.parse(data));
+        this.apiService.showSuccessToast("You have successfully registered. Please Wait till you have Verified ")
+        this.changeTab(0);
       },
         error => {
           this.apiService.showSuccessToast(" There was an error")

@@ -94,7 +94,7 @@ export class ApiService {
   register(data: any): Observable<any> {
     this.showLoader();
     return this.http
-      .post<any>(environment.apiUrl + '/api/account/register', data, {
+      .post<any>(this.apiUrl + 'user', data, {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -103,18 +103,20 @@ export class ApiService {
   }
   // Login API services
 
-  login(email: string, username: string): Observable<any> {
-    console.log(`login ${username}  `)
+  login(data: any): Observable<any> {
+
+    console.log(data);
 
     this.showLoader();
     return this.http
-      .get<any>(this.apiUrl + `user/user-by-username-and-email?username=${username}&email=${email}`, {
+      .get<any>(this.apiUrl + `user/user-by-username-and-email?username=${data.username}&email=${data.email}`, {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
         this.hideLoader();
       }));
   }
+
   // All user API services
 
   getAllUsers(): Observable<any> {
@@ -127,10 +129,20 @@ export class ApiService {
         this.hideLoader();
       }));
   }
-  getAllManager(): Observable<any> {
+  getAllUserByRole(role: string): Observable<any> {
     this.showLoader();
     return this.http
-      .get<any>(this.apiUrl + 'user/managers', {
+      .get<any>(this.apiUrl + 'user/users-by-role?roleName=' + role, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  getAllRole(): Observable<any> {
+    this.showLoader();
+    return this.http
+      .get<any>(this.apiUrl + "role", {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -143,6 +155,16 @@ export class ApiService {
     this.showLoader();
     return this.http
       .delete<any>(this.apiUrl + 'project/' + id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  deleteClientFeedback(id: string): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'client-feedback/' + id, {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -413,6 +435,28 @@ export class ApiService {
       }));
   }
 
+  // Update API Services
+  updateUserRole(data: any): Observable<any> {
+    console.log(data);
+    this.showLoader();
+    return this.http
+      .post<any>(environment.apiUrl + `/assign-role?userId=${data.userId}&roleId=${data.roleId}`, {}, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+  toggleUserActiveStatus(id: string, status: boolean): Observable<any> {
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + `user/toggle-user-account-status/${id}?isActive=${status}`, {}, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
   // Post API Services
   postMeetingMenute(data: any): Observable<any> {
     console.log(data);

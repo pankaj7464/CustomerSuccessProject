@@ -18,7 +18,7 @@
     </mat-form-field>
     <mat-form-field class="flex-1 w-full">
       <mat-label>Project Manager</mat-label>
-      <mat-select formControlName="userId">
+      <mat-select formControlName="managerId">
         <mat-option
           *ngFor="let user of users; let idx = index"
           [value]="user.id"

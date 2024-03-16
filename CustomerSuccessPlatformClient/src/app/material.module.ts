@@ -16,6 +16,7 @@ import {
   MatDialogContent,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ export class AppModule { }
     MatDialogClose,
     MatDialogContent,
     MatDialogTitle,
+    MatSlideToggleModule
   ],
   exports: [
     MatFormFieldModule,
@@ -62,6 +64,7 @@ export class AppModule { }
     MatDialogClose,
     MatDialogContent,
     MatDialogTitle,
+    MatSlideToggleModule
   ]
 })
 export class AngularMaterialModule { }

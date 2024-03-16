@@ -20,6 +20,16 @@ export class ProjectBudgetComponent implements OnInit {
     'currency',
     'Actions',
   ];
+  currencies = [
+    { code: 'USD', name: 'United States Dollar' },
+    { code: 'INR', name: 'Indian Ruppee' },
+    { code: 'EUR', name: 'Euro' },
+    { code: 'GBP', name: 'British Pound Sterling' },
+    { code: 'JPY', name: 'Japanese Yen' },
+    { code: 'AUD', name: 'Australian Dollar' }
+ 
+];
+
   dataSource!: any[];
   form!: FormGroup;
   projects: any[] = [];

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   MAT_DIALOG_DATA
 } from '@angular/material/dialog';
+import { ApiService } from '../../services/api.service';
 @Component({
   selector: 'app-role-edit-modal',
   templateUrl: './role-edit-modal.component.html',
@@ -10,29 +11,39 @@ import {
 })
 export class RoleEditModalComponent {
   userRoleForm: FormGroup;
+  userData: any = {};
+  roles!: any[];
 
-  constructor(private formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any) {
-    console.log(data)
+  constructor(private apiService: ApiService, private formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any) {
+    console.log(data.user)
+    this.userData = data.user;
     this.userRoleForm = this.formBuilder.group({
-      userId: [data.id || '', [Validators.required]],
+      userId: [ this.userData.id || '', [Validators.required]],
       roleId: ['', [Validators.required]]
     });
   }
 
   ngOnInit(): void {
-
+    this.getAllRole()
   }
 
+
+  getAllRole() {
+    this.apiService.getAllRole().subscribe((res) => {
+      console.log(res);
+      res = JSON.parse(res);
+      this.roles = res.items;
+    });
+  }
   onSubmit(): void {
     if (this.userRoleForm.valid) {
       const formData = this.userRoleForm.value;
       console.log('Form Data:', formData);
-
-      // Here you can send the formData to your backend for further processing
-      // Example:
-      // this.userService.submitUserRole(formData).subscribe(response => {
-      //   console.log('Response from backend:', response);
-      // });
+      this.apiService.updateUserRole(formData).subscribe(res => {
+        this.getAllRole();
+        this.apiService.showSuccessToast('Role Updated Successfully');
+      })
+     
     }
   }
 

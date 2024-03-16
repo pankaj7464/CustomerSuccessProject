@@ -13,7 +13,7 @@ export class StakeholderComponent {
   form: FormGroup;
   projects: any[] = [];
   editDataId: string = '';
-  displayedColumns: string[] = ['title', 'name', 'contact', 'Actions'];
+  displayedColumns: string[] = ['title', 'name', 'email', 'Actions'];
   dataSource!: any[];
   projectId!: string;
   constructor(private route: ActivatedRoute, private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
@@ -25,7 +25,7 @@ export class StakeholderComponent {
     this.form = this.fb.group({
       name: ['', Validators.required],
       title: ['', Validators.required],
-      contact: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email, ]],
       projectId: [this.projectId, Validators.required],
     });
   }

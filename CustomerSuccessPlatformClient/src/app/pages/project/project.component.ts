@@ -25,12 +25,11 @@ export class ProjectComponent {
   constructor(private fb: FormBuilder, private authorizationService: AuthorizationService, private router: Router, private apiService: ApiService) {
     this.getProject()
     this.getAllManager()
-
   }
 
 
   getAllManager() {
-    this.apiService.getAllManager().subscribe(res => {
+    this.apiService.getAllUserByRole("Manager").subscribe(res => {
       console.log(res)
       this.users = JSON.parse(res);
     })
@@ -41,25 +40,21 @@ export class ProjectComponent {
     if (user) {
       user = JSON.parse(user) as any
       this.userDetails = user;
-      console.log(user)
+      console.log(user,"user details")
     }
-    if (this.isAdmin()) {
-      this.apiService.getProject().subscribe(project => {
-        this.dataSource = project
-      });
-    } else {
       console.log(this.userDetails.id)
       this.apiService.getProject(this.userDetails.id).subscribe(project => {
+        console.log(project)
         this.dataSource = project
       });
-    }
+    
 
   }
   ngOnInit(): void {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
-      userId: ['', Validators.required],
+      managerId: ['', Validators.required],
     });
   }
 

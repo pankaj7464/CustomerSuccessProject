@@ -29,10 +29,7 @@ export class AuditHistoryComponent {
   ];
   form!: FormGroup;
 
-  Users: { name: string, id: string }[] = [{
-    name: "Pankaj Kumar",
-    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  }]
+  auditors: any[] = []
 
   projects: any
 
@@ -64,6 +61,12 @@ export class AuditHistoryComponent {
     this.apiService.getAllProject().subscribe((res) => {
       this.projects = res;
     });
+    this.apiService.getAllUserByRole("Auditor").subscribe((res) => {
+      console.log(res,"Auditor");
+
+      this.auditors = JSON.parse(res);
+    });
+
   }
 
 

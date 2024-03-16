@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class UserManagementComponent {
   dataSource: any[]
-  displayedColumns = ["Name", "Email", "Role", "Actions"]
+  displayedColumns = ["Name", "Email", "Role", "status", "Actions"]
   constructor(private apiService: ApiService, public dialog: MatDialog,) {
     apiService.getAllUsers().subscribe(users => {
       console.log(users);
@@ -20,11 +20,20 @@ export class UserManagementComponent {
     this.dataSource = [];
   }
 
+
+  onSlideToggleChange(checked: boolean, element: any) {
+    // Call your function here with the checked value and element data
+    this.apiService.toggleUserActiveStatus(element.id, checked).subscribe(res => {
+      console.log(res);
+      this.apiService.showSuccessToast("Account Status Changed")
+    });
+    console.log("Element data:", element);
+
+  }
   openRoleEdit(user: any) {
     const dialogRef = this.dialog.open(RoleEditModalComponent, {
       data: { user }
     });
-  
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
     });

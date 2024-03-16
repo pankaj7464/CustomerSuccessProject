@@ -19,8 +19,7 @@ enum FeedbackType {
 })
 export class ClientFeedbackComponent {
   dataSource: ClientFeedback[] = [
-    { feedbackDate: new Date('2023-01-15'), feedbackType: FeedbackType.Suggestion, details: 'Some feedback details' },
-    { feedbackDate: new Date('2023-02-20'), feedbackType: FeedbackType.Complaint, details: 'More feedback details' },
+   
   ];
   displayedColumns: string[] = ['feedbackDate', 'feedbackType', 'details', 'action'];
   editDataId!: string;
@@ -46,7 +45,6 @@ export class ClientFeedbackComponent {
     this.apiService.getClientFeedback(token).subscribe(data => {
       this.dataSource = data;
       console.log(data);
-
     });
   }
 
@@ -79,15 +77,15 @@ export class ClientFeedbackComponent {
     this.form.patchValue(data);
   }
   deleteItem(id: any) {
-    // this.apiService.deleteEscalationMatrix(id).subscribe(
-    //   (res) => {
-    //     this.getAllEscalationMatrix()
-    //     this.apiService.showSuccessToast('Deleted Successfully');
-    //   },
-    //   (error) => {
-    //     this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
-    //   }
-    // );
+    this.apiService.deleteClientFeedback(id).subscribe(
+      (res) => {
+        this.getClientData(this.token)
+        this.apiService.showSuccessToast('Deleted Successfully');
+      },
+      (error) => {
+        this.apiService.showSuccessToast('Error deleting ' + id + ': ' + error);
+      }
+    );
   }
   isClient(): boolean {
     const userRole = this.authorizationService.getCurrentUser()?.role;

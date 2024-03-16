@@ -20,7 +20,7 @@
     <mat-form-field class="flex-1 w-full">
       <mat-label>Reviewed By</mat-label>
       <mat-select formControlName="reviewedBy">
-        <mat-option *ngFor="let user of Users" [value]="user.id">{{
+        <mat-option *ngFor="let user of auditors" [value]="user.id">{{
           user.name
         }}</mat-option>
       </mat-select>

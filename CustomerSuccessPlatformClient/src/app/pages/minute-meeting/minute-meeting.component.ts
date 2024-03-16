@@ -16,8 +16,7 @@ export interface MeetingMinute {
 })
 export class MinuteMeetingComponent {
   dataSource: MeetingMinute[] = [
-    { meetingDate: new Date('2023-01-15'), moMLink: 'https://example.com/mom', comments: 'Some comments' },
-    { meetingDate: new Date('2023-02-20'), moMLink: 'https://example.com/mom2', comments: 'More comments' },
+   
 
   ];
 

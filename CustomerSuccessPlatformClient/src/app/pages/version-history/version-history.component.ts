@@ -24,6 +24,7 @@ export class VersionHistoryComponent implements OnInit {
     'Actions',
   ];
   dataSource!: any[];
+  managers!: any[];
   form: FormGroup;
   editDataId!: string;
 
@@ -40,9 +41,9 @@ export class VersionHistoryComponent implements OnInit {
       changeReason: ['', Validators.required],
       createdBy: ['', Validators.required],
       revisionDate: ['', Validators.required],
-      approvalDate: ['', Validators.required],
-      approvedBy: ['', Validators.required],
-      productId: [id || '', Validators.required],
+      approvalDate: [''],
+      approvedBy: [''],
+      projectId: [id || '', Validators.required],
     });
 
   }
@@ -50,6 +51,7 @@ export class VersionHistoryComponent implements OnInit {
   ngOnInit() {
 
     this.getAllVersionHistory()
+    this.getAllUserByRole()
    
   }
 
@@ -60,6 +62,12 @@ export class VersionHistoryComponent implements OnInit {
     this.apiService.getAllVersionHistory(this.projectId).subscribe((res) => {
       console.log(res);
       this.dataSource = res;
+    });
+  }
+  getAllUserByRole() {
+    this.apiService.getAllUserByRole("Manager").subscribe((res) => {
+      console.log(res);
+      this.managers = JSON.parse(res );
     });
   }
 

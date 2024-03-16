@@ -17,9 +17,7 @@ export interface Resources {
 })
 export class ResourcesComponent {
   dataSource: Resources[] = [
-    { name: 'John Doe', role: 'Developer', startDate: new Date('2023-01-15'), endDate: new Date('2023-02-20'), comment: 'Some comment' },
-    { name: 'Jane Smith', role: 'Tester', startDate: new Date('2023-03-10'), endDate: new Date('2023-04-15'), comment: 'Another comment' },
-    // Add more data objects as needed
+   
   ];
 
   displayedColumns: string[] = ['role', 'start', 'end', 'allocationPercentage', 'action'];

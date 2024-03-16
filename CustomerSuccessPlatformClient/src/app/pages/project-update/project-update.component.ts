@@ -15,9 +15,7 @@ export interface ProjectUpdate {
 })
 export class ProjectUpdateComponent {
   dataSource: ProjectUpdate[] = [
-    { date: new Date('2023-01-15'), generalUpdate: 'Some general update details' },
-    { date: new Date('2023-02-20'), generalUpdate: 'More general update details' },
-    // Add more data objects as needed
+  
   ];
 
   displayedColumns: string[] = ['date', 'generalUpdate', 'action'];

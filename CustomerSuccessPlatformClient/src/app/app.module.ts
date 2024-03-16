@@ -37,6 +37,7 @@ import { ProjectComponent } from './pages/project/project.component';
 import { TabComponent } from './components/tab/tab.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { RoleEditModalComponent } from './components/role-edit-modal/role-edit-modal.component';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -81,7 +82,7 @@ import { RoleEditModalComponent } from './components/role-edit-modal/role-edit-m
       clientId: 'l6AoZ9MlugUZmmFY83P58BA2YQargRJ3',
       
       authorizationParams: {
-        redirect_uri: "http://localhost:4200/dashboard"
+        redirect_uri: `${environment.clientURL}dashboard`
       }
     }),
     
