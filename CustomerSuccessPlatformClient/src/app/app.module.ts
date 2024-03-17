@@ -38,6 +38,7 @@ import { TabComponent } from './components/tab/tab.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { RoleEditModalComponent } from './components/role-edit-modal/role-edit-modal.component';
 import { environment } from '../environments/environment';
+import { RoleManagementComponent } from './pages/role-management/role-management.component';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import { environment } from '../environments/environment';
     ProjectComponent,
     TabComponent,
     UserManagementComponent,
-    RoleEditModalComponent
+    RoleEditModalComponent,
+    RoleManagementComponent
   ],
   imports: [
     BrowserModule,
@@ -78,8 +80,8 @@ import { environment } from '../environments/environment';
 
     // Import the module into the application, with configuration
     AuthModule.forRoot({
-      domain: 'dev-w2cpuspyl8y04bzh.us.auth0.com',
-      clientId: 'l6AoZ9MlugUZmmFY83P58BA2YQargRJ3',
+      domain: environment.AUTH0_DOMAIN,
+      clientId: environment.AUTH0_CLIENT_ID,
       
       authorizationParams: {
         redirect_uri: `${environment.clientURL}dashboard`

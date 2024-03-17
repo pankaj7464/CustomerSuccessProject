@@ -77,6 +77,42 @@ export class ApiService {
     });
   }
 
+  
+// Get Role API service 
+postRole( data: any): Observable<any> {
+  this.showLoader();
+  return this.http
+    .post<any>(this.apiUrl + 'role/',data, {
+      responseType: 'text' as 'json',
+    })
+    .pipe(finalize(() => {
+      this.hideLoader();
+    }));
+}
+
+  // Get Role API service 
+  updateRole(id: any, data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .put<any>(this.apiUrl + 'role/'+id,data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+
+  deleteRoles(id: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .delete<any>(this.apiUrl + 'role/'+id, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
+
   // Register API services
 
   userProfile(): Observable<any> {

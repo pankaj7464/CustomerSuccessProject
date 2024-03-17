@@ -75,6 +75,7 @@ export class DashboardComponent {
   Navigations = [
     { path: 'dashboard/project', displayName: 'Project' },
     { path: 'dashboard/user-management', displayName: 'User Management' },
+    { path: 'dashboard/role-management', displayName: 'Role Management' },
   ];
 
   isUserManagementPage() {
@@ -84,6 +85,10 @@ export class DashboardComponent {
   isProjectPage() {
     const currentUrl = this.router.url
     return currentUrl != "/dashboard/project"
+  }
+  isRolePage() {
+    const currentUrl = this.router.url
+    return currentUrl != "/dashboard/role-management"
   }
   logout() {
     this.authService.logout({

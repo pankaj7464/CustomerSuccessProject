@@ -47,7 +47,7 @@ namespace Promact.CustomerSuccess.Platform.Services
 
         public override async Task<ProjectDto> UpdateAsync(Guid id, UpdateProjectDto input)
         {
-            var projectDto = await base.UpdateAsync(id, input);
+            var projectDto = await base. nUpdateAsync(id, input);
 
 
             return projectDto;

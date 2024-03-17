@@ -6,6 +6,7 @@
     [formGroup]="userRoleForm"
     (ngSubmit)="onSubmit()"
   >
+   <div>
     <mat-form-field appearance="fill">
       <mat-label>Select User</mat-label>
       <mat-select formControlName="userId">
@@ -22,6 +23,7 @@
         }}</mat-option>
       </mat-select>
     </mat-form-field>
+   </div>
     <button mat-raised-button color="primary" type="submit">Submit</button>
   </form>
 </mat-dialog-content>

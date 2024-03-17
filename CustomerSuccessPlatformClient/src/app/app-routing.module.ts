@@ -19,6 +19,7 @@ import { ProjectComponent } from './pages/project/project.component';
 import { ProjectIdGuard } from './services/ProjectIdGuard';
 import { AuthGuard } from '@auth0/auth0-angular';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { RoleManagementComponent } from './pages/role-management/role-management.component';
 const routes: Routes = [
   { path: "login", component: LoginComponent },
 
@@ -29,6 +30,7 @@ const routes: Routes = [
     children: [
       { path: 'project', component: ProjectComponent },
       { path: 'user-management', component: UserManagementComponent },
+      { path: 'role-management', component: RoleManagementComponent },
       { path: 'audit-history', component: AuditHistoryComponent, canActivate: [ProjectIdGuard] },
       { path: 'sprint', component: SprintComponent, canActivate: [ProjectIdGuard] },
       { path: 'stakeholder', component: StakeholderComponent, canActivate: [ProjectIdGuard] },
