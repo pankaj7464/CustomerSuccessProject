@@ -79,16 +79,16 @@ export class ApiService {
 
   
 // Get Role API service 
-postRole( data: any): Observable<any> {
-  this.showLoader();
-  return this.http
-    .post<any>(this.apiUrl + 'role/',data, {
-      responseType: 'text' as 'json',
-    })
-    .pipe(finalize(() => {
-      this.hideLoader();
-    }));
-}
+  postRole( data: any): Observable<any> {
+    this.showLoader();
+    return this.http
+      .post<any>(this.apiUrl + 'role/',data, {
+        responseType: 'text' as 'json',
+      })
+      .pipe(finalize(() => {
+        this.hideLoader();
+      }));
+  }
 
   // Get Role API service 
   updateRole(id: any, data: any): Observable<any> {
@@ -772,7 +772,6 @@ postRole( data: any): Observable<any> {
         this.hideLoader();
       }));
   }
-
   getAllDataForPdf(id: string): Observable<any> {
     const apiCalls = [
       this.getProjectBudgets(id),

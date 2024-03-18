@@ -39,6 +39,7 @@ import { UserManagementComponent } from './pages/user-management/user-management
 import { RoleEditModalComponent } from './components/role-edit-modal/role-edit-modal.component';
 import { environment } from '../environments/environment';
 import { RoleManagementComponent } from './pages/role-management/role-management.component';
+import { NotVerifiedComponent } from './pages/not-verified/not-verified.component';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import { RoleManagementComponent } from './pages/role-management/role-management
     TabComponent,
     UserManagementComponent,
     RoleEditModalComponent,
-    RoleManagementComponent
+    RoleManagementComponent,
+    NotVerifiedComponent
   ],
   imports: [
     BrowserModule,

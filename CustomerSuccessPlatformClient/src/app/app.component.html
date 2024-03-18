@@ -1,2 +1,4 @@
-<div *ngIf="isLoading" class="loader sticky right-0   top-0 left-0 z-50"></div>
+@if(isLoading){
+    <div  class="loader sticky right-0   top-0 left-0 z-50"></div>
+}
 <router-outlet></router-outlet>

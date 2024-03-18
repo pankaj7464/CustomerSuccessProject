@@ -1,5 +1,5 @@
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component,  ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Router } from '@angular/router';
@@ -30,7 +30,7 @@ export class LoginComponent {
       email: ['', [Validators.required,Validators.email]],
     });
 
-    this.users = authorizationService.getAllUsers()
+    
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       userName: ['', Validators.required],
@@ -93,7 +93,4 @@ export class LoginComponent {
 
     }
   }
-
-
-
 }

@@ -8,7 +8,7 @@ import { ApiService } from '../services/api.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileModalComponent } from '../components/profile-modal/profile-modal.component';
 import { AuthorizationService, Role } from '../services/authorization.service';
-import { RoleEditModalComponent } from '../components/role-edit-modal/role-edit-modal.component';
+
 import { environment } from '../../environments/environment.development';
 
 @Component({
@@ -19,12 +19,12 @@ import { environment } from '../../environments/environment.development';
 export class DashboardComponent {
   userDetail!: any
   isLoading: boolean;
+  currentUrl:string ;
   constructor(public dialog: MatDialog, public router: Router, public apiService: ApiService, private cdr: ChangeDetectorRef, @Inject(DOCUMENT) public document: Document,
     public authService: AuthService, public authorizationService: AuthorizationService) {
-
+      this.currentUrl = router.url
     this.authService.user$.subscribe(userDetail => {
       this.userDetail = userDetail;
-      console.log(this.userDetail);
       this.apiService.login({ email: this.userDetail.email, username: this.userDetail.sub }).subscribe(user => {
         user = JSON.parse(user);
         console.log(user);
@@ -38,6 +38,7 @@ export class DashboardComponent {
         }
         else if (user.isSuccess == 2) {
           this.apiService.showSuccessToast("You are not verified yet")
+          this.router.navigate(["not-verified"])
           this.logout();
         }
         else {
@@ -47,9 +48,9 @@ export class DashboardComponent {
             email: this.userDetail.email
           }).subscribe(user => {
             console.log(user);
-
             this.apiService.showSuccessToast("Wait until the user is confirmed")
             this.logout();
+         
           },
             error => {
 
@@ -79,21 +80,18 @@ export class DashboardComponent {
   ];
 
   isUserManagementPage() {
-    const currentUrl = this.router.url
-    return currentUrl != "/dashboard/user-management"
+    return this.currentUrl != "/dashboard/user-management"
   }
   isProjectPage() {
-    const currentUrl = this.router.url
-    return currentUrl != "/dashboard/project"
+    return this.currentUrl != "/dashboard/project"
   }
   isRolePage() {
-    const currentUrl = this.router.url
-    return currentUrl != "/dashboard/role-management"
+    return this.currentUrl != "/dashboard/role-management"
   }
-  logout() {
+  logout(flag?:boolean) {
     this.authService.logout({
       logoutParams: {
-        returnTo: `${environment.clientURL}login`
+        returnTo: flag?`${environment.clientURL}login`:`${environment.clientURL}not-verified`
       }
     });
   }

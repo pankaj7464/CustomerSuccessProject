@@ -35,7 +35,6 @@ namespace Promact.CustomerSuccess.Platform.Services
             _stakeholderRepository = stakeholderRepository;
             _userRoleRepository = userRoleRepository;
             _userRepository = userRepository;
-            _userRepository = userRepository;
         }
         public override async Task<ProjectDto> CreateAsync(CreateProjectDto input)
         {
@@ -47,10 +46,10 @@ namespace Promact.CustomerSuccess.Platform.Services
 
         public override async Task<ProjectDto> UpdateAsync(Guid id, UpdateProjectDto input)
         {
-            var projectDto = await base. nUpdateAsync(id, input);
+            var projectDto =  base.UpdateAsync(id, input);
 
 
-            return projectDto;
+            return await projectDto;
         }
 
         public override async Task DeleteAsync(Guid id)

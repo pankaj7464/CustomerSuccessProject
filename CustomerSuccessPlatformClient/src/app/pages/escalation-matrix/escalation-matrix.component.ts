@@ -76,9 +76,9 @@ export class EscalationMatrixComponent implements OnInit {
   getAllEscalationMatrix(id: string) {
     this.apiService.getAllEscalationMatrix(id).subscribe((res) => {
       this.dataSource = res
-      this.dataSourceForFinantials = res.filter(i => i.escalationType == 0).sort((a, b) => a.level - b.level);
-      this.dataSourceForTechnicals = res.filter(i => i.escalationType == 1).sort((a, b) => a.level - b.level);
-      this.dataSourceForOperationals = res.filter(i => i.escalationType == 2).sort((a, b) => a.level - b.level);
+      this.dataSourceForFinantials = res.filter(i => i.escalationType == 1).sort((a, b) => a.level - b.level);
+      this.dataSourceForTechnicals = res.filter(i => i.escalationType == 2).sort((a, b) => a.level - b.level);
+      this.dataSourceForOperationals = res.filter(i => i.escalationType == 0).sort((a, b) => a.level - b.level);
     });
   }
 

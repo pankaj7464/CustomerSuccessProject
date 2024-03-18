@@ -1,9 +1,3 @@
-<!-- <ul *ngIf="authService.user$ | async as user">
-  <li>{{ user.name }}</li>
-  <li>{{ user.email }}</li>
-</ul>
-
-<button (click)="logout()">Log out</button> -->
 
 <header
   class="bg-[#3f51b5] py-3 px-6 flex justify-between items-center gap-10 mb-4"
@@ -39,7 +33,7 @@
     </div>
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="logout()">Logout</button>
+      <button mat-menu-item (click)="logout(true)">Logout</button>
       <button (click)="openDialog()" mat-menu-item>Profile</button>
     </mat-menu>
   </div>
@@ -50,7 +44,6 @@
     <div class="flex gap-4 flex-col m-2">
       <button
         color="primary"
-        routerLinkActive="active"
         
         (click)="navigateTo(Navigations[0].path)"
         class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline lg:min-w-[10rem]"
@@ -60,7 +53,6 @@
       <button
         *ngIf="isAdmin()"
         color="primary"
-        routerLinkActive="active"
         (click)="navigateTo(Navigations[1].path)"
         class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
@@ -69,7 +61,6 @@
       <button
         *ngIf="isAdmin()"
         color="primary"
-        routerLinkActive="active"
         (click)="navigateTo(Navigations[2].path)"
         class="h-10 bg-gray-100 hover:bg-gray-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >

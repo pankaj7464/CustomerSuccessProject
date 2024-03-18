@@ -19,12 +19,12 @@ export enum Role {
 export class AuthorizationService {
 
 
-  private users: User[] = [
-    { id: "1", name: 'Chintan Shah', email: 'chintan@example.com', role: 'admin' },
-    { id: "2", name: 'Dipa Manjukar', email: 'dipa@example.com', role: 'manager' },
-    { id: "2", name: 'Divyanshu Singh', email: 'divyanshu@example.com', role: 'auditor' },
-    { id: "4", name: 'Rahul yadav', email: 'rahul@example.com', role: 'client' },
-  ];
+  // private users: User[] = [
+  //   { id: "1", name: 'Chintan Shah', email: 'chintan@example.com', role: 'admin' },
+  //   { id: "2", name: 'Dipa Manjukar', email: 'dipa@example.com', role: 'manager' },
+  //   { id: "2", name: 'Divyanshu Singh', email: 'divyanshu@example.com', role: 'auditor' },
+  //   { id: "4", name: 'Rahul yadav', email: 'rahul@example.com', role: 'client' },
+  // ];
 
   roles!: Role[];
 
@@ -33,9 +33,9 @@ export class AuthorizationService {
     return this.roles.some(role => requiredRoles.includes(role));
   }
 
-  getAllUsers(): User[] {
-    return this.users;
-  }
+  // getAllUsers(): User[] {
+  //   return this.users;
+  // }
   getCurrentUser(): any {
     let user = localStorage.getItem('user') as any;
     let role = localStorage.getItem('role') as any;

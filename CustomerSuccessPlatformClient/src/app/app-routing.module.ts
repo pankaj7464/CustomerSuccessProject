@@ -20,8 +20,11 @@ import { ProjectIdGuard } from './services/ProjectIdGuard';
 import { AuthGuard } from '@auth0/auth0-angular';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { RoleManagementComponent } from './pages/role-management/role-management.component';
+import { AdminGuard } from './services/AdminGuard';
+import { NotVerifiedComponent } from './pages/not-verified/not-verified.component';
 const routes: Routes = [
   { path: "login", component: LoginComponent },
+  { path: "not-verified", component: NotVerifiedComponent },
 
   {
     path: 'dashboard',
@@ -29,8 +32,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'project', component: ProjectComponent },
-      { path: 'user-management', component: UserManagementComponent },
-      { path: 'role-management', component: RoleManagementComponent },
+      { path: 'user-management', component: UserManagementComponent,canActivate:[AdminGuard] },
+      { path: 'role-management', component: RoleManagementComponent,canActivate:[AdminGuard] },
       { path: 'audit-history', component: AuditHistoryComponent, canActivate: [ProjectIdGuard] },
       { path: 'sprint', component: SprintComponent, canActivate: [ProjectIdGuard] },
       { path: 'stakeholder', component: StakeholderComponent, canActivate: [ProjectIdGuard] },

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddRoleModalComponent } from './add-role-modal.component';
+import { NotVerifiedComponent } from './not-verified.component';
 
-describe('AddRoleModalComponent', () => {
-  let component: AddRoleModalComponent;
-  let fixture: ComponentFixture<AddRoleModalComponent>;
+describe('NotVerifiedComponent', () => {
+  let component: NotVerifiedComponent;
+  let fixture: ComponentFixture<NotVerifiedComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AddRoleModalComponent]
+      declarations: [NotVerifiedComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(AddRoleModalComponent);
+    fixture = TestBed.createComponent(NotVerifiedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
