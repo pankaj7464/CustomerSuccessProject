@@ -4,6 +4,8 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos.ApprovedTeam
 {
     public class ApprovedTeamDto : IEntityDto<Guid>
     {
+        internal readonly object NoOfResources;
+
         public Guid Id { get; set; }
         public int NoOfResouces { get; set; }
         public int PhaseNo { get; set; }

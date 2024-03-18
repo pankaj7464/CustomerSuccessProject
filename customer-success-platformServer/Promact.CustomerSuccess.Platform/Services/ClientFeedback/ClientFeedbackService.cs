@@ -26,6 +26,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ClientFeedbacks
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Approved Team Created alert",
+                Body = Template.GenerateClientFeedbackEmailBody(clientFeedback, "Created"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -42,6 +43,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ClientFeedbacks
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Cleint Feedback Updated alert",
+                Body = Template.GenerateClientFeedbackEmailBody(ClientFeedbackDto, "Updated"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -63,6 +65,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ClientFeedbacks
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Cleint Feedback Deleted alert",
+                Body = Template.GetClientFeedbackEmailBody(ObjectMapper.Map<ClientFeedback, ClientFeedbackDto>(cleintFeedback), "Deleted"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));

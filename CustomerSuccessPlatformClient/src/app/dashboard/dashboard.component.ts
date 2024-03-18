@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import 'jspdf-autotable';
 import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../services/api.service';
@@ -27,7 +27,7 @@ export class DashboardComponent {
       this.userDetail = userDetail;
       this.apiService.login({ email: this.userDetail.email, username: this.userDetail.sub }).subscribe(user => {
         user = JSON.parse(user);
-        console.log(user);
+     
         if (user.isSuccess == 1) {
           console.log(user);
           user = user.user
@@ -72,6 +72,11 @@ export class DashboardComponent {
     this.apiService.isLoading().subscribe(isLoading => {
       this.isLoading = isLoading;
     });
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentUrl = this.router.url;
+      }
+    });
   }
   Navigations = [
     { path: 'dashboard/project', displayName: 'Project' },
@@ -80,13 +85,24 @@ export class DashboardComponent {
   ];
 
   isUserManagementPage() {
-    return this.currentUrl != "/dashboard/user-management"
+    return this.currentUrl !== "/dashboard/user-management";
   }
+  
   isProjectPage() {
-    return this.currentUrl != "/dashboard/project"
+    return this.currentUrl !== "/dashboard/project";
   }
+  
   isRolePage() {
-    return this.currentUrl != "/dashboard/role-management"
+    return this.currentUrl !== "/dashboard/role-management";
+  }
+  
+  shouldShowTabs() {
+    return this.isUserManagementPage() && this.isProjectPage() && this.isRolePage();
+  }
+
+
+  ngAfterViewInit() {
+
   }
   logout(flag?:boolean) {
     this.authService.logout({

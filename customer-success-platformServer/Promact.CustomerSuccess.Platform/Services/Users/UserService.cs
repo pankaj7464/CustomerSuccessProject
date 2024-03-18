@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Auth;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Auth.Auth;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -16,17 +20,21 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
         private readonly IRepository<User, Guid> _userRepository;
         private readonly IRepository<UserRole, Guid> _userRoleRepository;
         private readonly IRepository<Role, Guid> _roleRepository;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
         public UserService(
             IRepository<User, Guid> userRepository,
             IRepository<UserRole, Guid> userRoleRepository,
             IRepository<Role, Guid> roleRepository,
+            IConfiguration configuration,
             IMapper mapper):base(userRepository)
+
         {
             _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
+            _configuration = configuration;
             _mapper = mapper;
         }
 
@@ -57,7 +65,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
                 // Map RoleDto
                 userDto.Role = _mapper.Map<Role, RoleDto>(role);
             }
-
+           
             // User exists
             return new Response { message = "You have successfully login", User = userDto ,IsSuccess=1};
         }
@@ -141,8 +149,32 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
             return false; // User not found
         }
 
+        //To be implemented
+        private string GenerateJwtToken(UserDto user)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+        };
+
+            var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(1),
+            signingCredentials: credentials
+        );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
 
     }
+
+
     public class Response
     {
         public string message { get; set; }

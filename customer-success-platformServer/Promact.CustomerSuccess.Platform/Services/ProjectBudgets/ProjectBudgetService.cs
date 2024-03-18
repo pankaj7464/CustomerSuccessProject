@@ -29,8 +29,6 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
             : base(projectBudgetRepository)
         {
             _emailService = emailService;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
             _projectBudgetRepository = projectBudgetRepository;
             
 
@@ -46,6 +44,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Test",
+                Body = Template.GenerateProjectBudgetEmailBody(projectBudgetDto,"Created"),
                 ProjectId = projectId,
             };
 
@@ -63,6 +62,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Project Budget Updated alert",
+                Body    =   Template.GenerateProjectBudgetEmailBody(projectBudgetDto,"Updated"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -83,6 +83,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectBudgets
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Project Budget Deleted alert",
+                Body = Template.GenerateProjectBudgetEmailBody(ObjectMapper.Map<ProjectBudget, ProjectBudgetDto>(projectBudget), "Deleted"),
                 ProjectId = projectBudget.ProjectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));

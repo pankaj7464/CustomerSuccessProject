@@ -30,6 +30,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Resource Created Alert",
+                Body = Template.GenerateProjectResourceEmailBody(resourceDto,"Created"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -48,6 +49,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Resource Updated Alert",
+                Body = Template.GenerateProjectResourceEmailBody(resourceDto,"Updated"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -68,10 +70,12 @@ namespace Promact.CustomerSuccess.Platform.Services.Resource
 
             var projectId = resource.ProjectId;
 
+
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Project Update Created Alert",
                 ProjectId = projectId,
+                Body = "Project resource has been deleted"
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
  

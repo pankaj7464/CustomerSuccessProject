@@ -38,6 +38,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
             {
                 Subject = "Sprint Created  Alert",
                 ProjectId = projectId,
+                Body = Template.GetSprintEmailBody(sprintDto, "Created"),
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
@@ -56,6 +57,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
             {
                 Subject = "Sprint Updated Alert",
                 ProjectId = projectId,
+                Body = Template.GetSprintEmailBody(sprintDto, "Updated"),
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
@@ -74,6 +76,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Sprints
             {
                 Subject = "Project Update Created Alert",
                 ProjectId = projectId,
+                Body = Template.GetSprintEmailBody(ObjectMapper.Map<Sprint, SprintDto>(sprint), "Deleted"),
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
             await base.DeleteAsync(id);

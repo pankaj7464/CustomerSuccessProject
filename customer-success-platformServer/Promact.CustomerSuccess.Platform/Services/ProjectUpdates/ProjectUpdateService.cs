@@ -35,6 +35,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Project Update Created Alert",
+                Body = Template.GetProjectUpdateEmailBody(projectUpdateDto,"Created"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -53,6 +54,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Project Update Updated Alert",
+                Body = Template.GetProjectUpdateEmailBody(projectUpdateDto,"Updated"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -75,6 +77,7 @@ namespace Promact.CustomerSuccess.Platform.Services.ProjectUpdates
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Project Update Deleted Alert",
+                Body = Template.GetProjectUpdateEmailBody(ObjectMapper.Map<ProjectUpdate, ProjectUpdateDto>(projectUpdate), "Deleted"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));

@@ -26,8 +26,6 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
             : base(auditHistoryRepository)
         {
             _emailService = emailService;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
             _auditHistoryRepository = auditHistoryRepository;
         }
 
@@ -40,6 +38,7 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Audit Created alert",
+                Body = Template.GetAuditHistoryEmailBody(auditHistoryDto, "Created"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -56,7 +55,9 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Audit Created alert",
+                Body = Template.GetAuditHistoryEmailBody(auditHistoryDto,"Updated"),
                 ProjectId = projectId,
+
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
@@ -69,8 +70,9 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
 
             var projectDetail = new EmailToStakeHolderDto
             {
-                Subject = "Approved Team Created alert",
+                Subject = "Audit History Deleted alert ",
                 ProjectId = projectId,
+                Body = Template.GetAuditHistoryEmailBody(ObjectMapper.Map<AuditHistory, AuditHistoryDto>(auditnHistory), "Deleted"),
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 

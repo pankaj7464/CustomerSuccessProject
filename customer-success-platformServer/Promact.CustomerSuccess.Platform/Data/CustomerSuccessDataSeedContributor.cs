@@ -5,6 +5,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Promact.CustomerSuccess.Platform.Data
 {
+
     public class CustomerSuccessDataSeedContributor : IDataSeedContributor, ITransientDependency
     {
         private readonly IRepository<User, Guid> _userRepository;
@@ -21,7 +22,7 @@ namespace Promact.CustomerSuccess.Platform.Data
             _userRoleRepository = userRoleRepository;
         }
 
-        public async Task SeedAsync(DataSeedContext context)
+        public  async Task SeedAsync(DataSeedContext context)
         {
             // Check if the admin role already exists
             var adminRole = await _roleRepository.FirstOrDefaultAsync(r => r.Name == "Admin");
@@ -41,6 +42,7 @@ namespace Promact.CustomerSuccess.Platform.Data
 
             // Check if the admin user already exists
             var adminUser = await _userRepository.FirstOrDefaultAsync(u => u.UserName == "admin");
+
 
             if (adminUser == null)
             {

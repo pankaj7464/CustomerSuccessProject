@@ -23,8 +23,6 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
         public PhaseMilestoneService(IRepository<PhaseMilestone, Guid> repository, IEmailService emailService) : base(repository)
         {
             _emailService = emailService;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
             _phaseMilestoneRepository = repository;
         }
 
@@ -37,6 +35,7 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Phase Milestone Created alert",
+                Body="Phase milestone Created Plase check ",
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -53,6 +52,7 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Phase milestone Updated alert",
+                Body ="Phase mile stone updated please check",
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -70,6 +70,7 @@ namespace Promact.CustomerSuccess.Platform.Services.PhaseMilestones
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Approved Team Created alert",
+                Body ="Phase milestone deleted !",
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));

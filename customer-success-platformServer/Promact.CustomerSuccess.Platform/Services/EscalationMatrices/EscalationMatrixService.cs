@@ -24,8 +24,6 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
             : base(escalationMatrixRepository)
         {
             _emailService = emailService;
-            this.Useremail = Template.Useremail;
-            this.Username = Template.Username;
             _escalationMatrixRepository = escalationMatrixRepository;
 
 
@@ -42,6 +40,7 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
             {
                 Subject = "Escalation Matrix Created alert",
                 ProjectId = projectId,
+                Body = "Escalation matrix Created please check !"
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
@@ -56,7 +55,7 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
             {
                 To = Useremail,
                 Subject = "Escalation Matrix Updated alert",
-                Body = Template.GetEmailTemplate(Username)
+                Body ="Escalation Matrix Updated "
             };
             _emailService.SendEmail(emailDto);
 
@@ -69,7 +68,7 @@ namespace Promact.CustomerSuccess.Platform.Services.EscalationMatrices
             {
                 To = Useremail,
                 Subject = "Escalation Matrix Deleted alert",
-                Body = Template.GetEmailTemplate(Username)
+                Body = "Escalation matrix Deleted "
             };
             _emailService.SendEmail(emailDto);
 

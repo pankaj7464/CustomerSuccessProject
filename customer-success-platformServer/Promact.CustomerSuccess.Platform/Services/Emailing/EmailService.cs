@@ -30,7 +30,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
                     {
                         To = stakeholder.Email,
                         Subject = request.Subject,
-                        Body = Template.GetEmailTemplate(stakeholder.Name)
+                        Body = request.Body,
                     };
 
                     // Send email asynchronously
@@ -54,7 +54,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
             email.Subject = request.Subject;
             email.Body = new TextPart(TextFormat.Html)
             {
-                Text =request.Body
+                Text = request.Body==null ? string.Empty : request.Body,
             };
 
             try

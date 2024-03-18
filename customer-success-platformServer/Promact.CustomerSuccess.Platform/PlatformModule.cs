@@ -53,6 +53,8 @@ using Serilog;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using Volo.Abp.Data;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Promact.CustomerSuccess.Platform;
 
@@ -169,11 +171,20 @@ namespace Promact.CustomerSuccess.Platform;
 
         }
 
-        context.Services.AddAuthentication().AddJwtBearer(options =>
-        {
-            options.Authority = configuration["Authentication:JwtBearer:Authority"];
-            options.Audience = configuration["Authentication:JwtBearer:Audience"];
-        });
+        context.Services.AddAuthentication()
+          .AddJwtBearer(options =>
+          {
+              options.TokenValidationParameters = new TokenValidationParameters
+              {
+                  ValidateIssuer = true,
+                  ValidateAudience = true,
+                  ValidateLifetime = true,
+                  ValidateIssuerSigningKey = true,
+                  ValidIssuer = configuration["Jwt:Issuer"], 
+                  ValidAudience = configuration["Jwt:Audience"],
+                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])) 
+              };
+          });
 
         ConfigureAuthentication(context);
         ConfigureBundles();
@@ -228,6 +239,7 @@ namespace Promact.CustomerSuccess.Platform;
         return new X509Certificate2(file, passPhrase,
                             X509KeyStorageFlags.MachineKeySet);
     }
+
     private X509Certificate2 GetEncryptionCertificate(IWebHostEnvironment hostingEnv,
                                  IConfiguration configuration)
     {
@@ -244,6 +256,7 @@ namespace Promact.CustomerSuccess.Platform;
                 return new X509Certificate2(file, passPhrase,
                                 X509KeyStorageFlags.MachineKeySet);
         }
+
         // file doesn't exist or was deleted because it expired
         using var algorithm = RSA.Create(keySizeInBits: 2048);
         var subject = new X500DistinguishedName("CN=Fabrikam Encryption Certificate");
@@ -364,6 +377,7 @@ namespace Promact.CustomerSuccess.Platform;
             });
     }
 
+
     private void ConfigureAutoMapper(ServiceConfigurationContext context)
     {
         context.Services.AddAutoMapperObjectMapper<PlatformModule>();
@@ -475,7 +489,6 @@ namespace Promact.CustomerSuccess.Platform;
             app.UseMultiTenancy();
         }
 
-        
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();

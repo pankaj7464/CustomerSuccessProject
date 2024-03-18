@@ -1,5 +1,4 @@
 ﻿using Promact.CustomerSuccess.Platform.Entities;
-using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Stakeholder;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
@@ -35,6 +34,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
             {
                 Subject = "Stakeholder Added",
                 ProjectId = projectId,
+                Body = Template.GetStakeholderEmailBody(stakeholderDto,"Created")
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
@@ -53,6 +53,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
             {
                 Subject = "Stakeholder updated Alert",
                 ProjectId = projectId,
+                Body = Template.GetStakeholderEmailBody(stakeholderDto,"Updated")
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 
@@ -69,8 +70,9 @@ namespace Promact.CustomerSuccess.Platform.Services.Stakeholders
 
             var projectDetail = new EmailToStakeHolderDto
             {
-                Subject = "Project Update Created Alert",
+                Subject = "Project Update Deleted Alert",
                 ProjectId = projectId,
+                Body = Template.GetStakeholderEmailBody(ObjectMapper.Map<Stakeholder, StakeholderDto>(stakeholder), "Deleted"),
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
 

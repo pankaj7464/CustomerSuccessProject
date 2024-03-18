@@ -31,6 +31,7 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Minute meeting Created alert",
+                Body = Template.GenerateMeetingMinutesEmailBody(meetingMinuteDto, "Created"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -49,6 +50,7 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Meeting Minute Updated Alert",
+                Body = Template.GenerateMeetingMinutesEmailBody(meetingMinuteDto, "Updated"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
@@ -71,6 +73,7 @@ namespace Promact.CustomerSuccess.Platform.Services.MeetingMinutes
             var projectDetail = new EmailToStakeHolderDto
             {
                 Subject = "Meeting Minute Deleted Alert",
+                Body = Template.GenerateMeetingMinutesEmailBody(ObjectMapper.Map<MeetingMinute, MeetingMinuteDto>(meetingMinute), "Deleted"),
                 ProjectId = projectId,
             };
             Task.Run(() => _emailService.SendEmailToStakeHolder(projectDetail));
