@@ -128,7 +128,7 @@
     <!-- Created By Column -->
     <ng-container matColumnDef="createdBy">
       <th mat-header-cell *matHeaderCellDef>Created By</th>
-      <td mat-cell *matCellDef="let element">{{ element.createdBy }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.creater.name ||'-' }}</td>
     </ng-container>
 
     <!-- Revision Date Column -->
@@ -151,7 +151,7 @@
     <ng-container matColumnDef="approvedBy">
       <th mat-header-cell *matHeaderCellDef>Approved By</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.approvedBy ? element.approvedBy : "-" }}
+        {{ element.creater.name || "-" }}
       </td>
     </ng-container>
 

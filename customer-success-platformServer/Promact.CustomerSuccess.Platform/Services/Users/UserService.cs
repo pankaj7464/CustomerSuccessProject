@@ -1,33 +1,36 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿
+using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Auth;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Auth.Auth;
+using Promact.CustomerSuccess.Platform.Services.Emailing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Users;
 
 namespace Promact.CustomerSuccess.Platform.Services.Users
 {
+
     public class UserService :  CrudAppService<User, UserDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateUserDto, CreateUpdateUserDto>, IUserService
     {
-        private readonly IRepository<User, Guid> _userRepository;
+        private readonly IRepository<Entities.User, Guid> _userRepository;
         private readonly IRepository<UserRole, Guid> _userRoleRepository;
-        private readonly IRepository<Role, Guid> _roleRepository;
+        private readonly IRepository<Entities.Role, Guid> _roleRepository;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        IEmailService _emailService;
 
         public UserService(
             IRepository<User, Guid> userRepository,
             IRepository<UserRole, Guid> userRoleRepository,
             IRepository<Role, Guid> roleRepository,
             IConfiguration configuration,
+            IEmailService emailService,
             IMapper mapper):base(userRepository)
 
         {
@@ -35,7 +38,57 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
             _configuration = configuration;
+            _emailService = emailService;
+
             _mapper = mapper;
+        }
+
+        public override async Task<UserDto> CreateAsync(CreateUpdateUserDto input)
+        {
+            // Call base method to create the user
+            var createdUser = await base.CreateAsync(input);
+            var role = await _roleRepository.FirstOrDefaultAsync(ad => ad.Name == "Admin");
+            var client = await _roleRepository.FirstOrDefaultAsync(ad => ad.Name == "Client");
+            if(createdUser != null && client!=null )
+            {
+                // Create new UserRole
+                var newUserRole = new UserRole
+                {
+                    UserId = client.Id,
+                    RoleId = createdUser.Id
+                };
+                await _userRoleRepository.InsertAsync(newUserRole, autoSave: true);
+            }
+            
+            if (role != null)
+            {
+                var adminRole = await _userRoleRepository.FirstOrDefaultAsync(ar => ar.RoleId == role.Id);
+                if (adminRole != null)
+                {
+                    var admin = await _userRepository.FirstOrDefaultAsync(user => user.Id == adminRole.UserId);
+                    if(admin != null)
+                    {
+                        var userConfirmationEmail = new EmailDto
+                        {
+                            To = input.Email,
+                            Subject = "Welcome to our platform!",
+                            Body = Template.GenerateConfirmationEmail(input.UserName, input.Email, _configuration["App:SelfUrl"])
+                        };
+                        var adminNotificationEmail = new EmailDto
+                        {
+                            To = admin.Email, 
+                            Subject = "New User registered",
+                            Body = $"A new user has registered with the email: {input.Email}. Please verify them if valid."
+                        };
+                        _emailService.SendEmail(userConfirmationEmail);
+                        _emailService.SendEmail(adminNotificationEmail);
+                    }
+                }
+            }
+
+
+            // Return the created user
+            return createdUser;
         }
 
         public async Task<Response> GetUserByUsernameAndEmailAsync(string username, string email)
@@ -49,6 +102,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
             }
             if (!user.active)
             {
+               
                 return new Response { message = "You are not verified user", User = null,IsSuccess=2 };
             }
 
@@ -141,8 +195,16 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
             if (user != null)
             {
                 user.active = isActive;
-                await _userRepository.UpdateAsync(user,true);
-                
+                await _userRepository.UpdateAsync(user, true);
+
+                var notificationEmail = new EmailDto
+                {
+                    To = user.Email,
+                    Subject = isActive ? "Your account has been activated" : "Your account has been deactivated",
+                    Body = isActive ? "Your account has been activated. You can now access our platform." : "Your account has been deactivated. If you believe this is an error, please contact support."
+                };
+
+                _emailService.SendEmail(notificationEmail); 
                 return true; // Account status updated successfully
             }
 

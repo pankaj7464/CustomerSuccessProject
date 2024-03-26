@@ -5,7 +5,6 @@ using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using static Volo.Abp.Identity.IdentityPermissions;
 
 
 
@@ -78,21 +77,23 @@ namespace Promact.CustomerSuccess.Platform.Services.VersionHistories
             var users = await _userRepository.GetListAsync();
 
             // Fetch version histories for the specified projectId
-            var versionHistories = await Repository.GetListAsync(vh => vh.ProjectId == projectId);
+            var versionHistories = await _repository.GetListAsync(vh => vh.ProjectId == projectId);
 
-            // If version histories exist
-            if (versionHistories != null)
-            {
-                // Iterate through each version history
-                foreach (var versionHistory in versionHistories)
-                {
-                    // Find the user associated with the version history's CreatedBy property
-                    versionHistory.User = users.FirstOrDefault(u => u.Id == versionHistory.CreatedBy);
-                }
-            }
+           
 
             // Map version histories to DTOs
             var versionHistoryDtos = ObjectMapper.Map<List<VersionHistory>, List<VersionHistoryDto>>(versionHistories);
+
+            // If version histories exist
+            if (versionHistoryDtos != null)
+            {
+                // Iterate through each version history
+                foreach (var versionHistory in versionHistoryDtos)
+                {
+                    // Find the user associated with the version history's CreatedBy property
+                    versionHistory.Creater = users.FirstOrDefault(u => u.Id == versionHistory.CreatedBy);
+                }
+            }
 
             return versionHistoryDtos;
         }

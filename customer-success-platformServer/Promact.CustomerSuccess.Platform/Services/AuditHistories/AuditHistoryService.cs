@@ -2,10 +2,13 @@
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.AuditHistory;
+using Promact.CustomerSuccess.Platform.Services.Dtos.VersionHistory;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Users;
+using static Volo.Abp.Identity.IdentityPermissions;
 
 namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
 {
@@ -18,15 +21,15 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
                        IAuditHistoryService
     {
         private readonly IEmailService _emailService;
-        private readonly string Useremail ;
-        private readonly string Username;
+        private readonly IRepository<User, Guid> _userRepository;
         private readonly IRepository<AuditHistory, Guid> _auditHistoryRepository;
 
-        public AuditHistoryService(IRepository<AuditHistory, Guid> auditHistoryRepository, IEmailService emailService)
+        public AuditHistoryService(IRepository<AuditHistory, Guid> auditHistoryRepository, IEmailService emailService, IRepository<User, Guid> userRepository)
             : base(auditHistoryRepository)
         {
             _emailService = emailService;
             _auditHistoryRepository = auditHistoryRepository;
+            _userRepository = userRepository;
         }
 
         public override async Task<AuditHistoryDto> CreateAsync(CreateAuditHistoryDto input)
@@ -78,9 +81,32 @@ namespace Promact.CustomerSuccess.Platform.Services.AuditHistories
 
             await base.DeleteAsync(id);
         } 
-        public async Task<List<AuditHistory>> GetAuditHistoriesByProjectIdAsync(Guid projectId)
+        public async Task<List<AuditHistoryDto>> GetAuditHistoriesByProjectIdAsync(Guid projectId)
         {
-            return await _auditHistoryRepository.GetListAsync(ah => ah.ProjectId == projectId);
+
+            // Fetch all users
+            var users = await _userRepository.GetListAsync();
+
+            // Fetch version histories for the specified projectId
+            var auditHistories = await _auditHistoryRepository.GetListAsync(vh => vh.ProjectId == projectId);
+
+
+
+            // Map version histories to DTOs
+            var auditHistoryDtos = ObjectMapper.Map<List<AuditHistory>, List<AuditHistoryDto>>(auditHistories);
+
+            // If version histories exist
+            if (auditHistoryDtos != null)
+            {
+                // Iterate through each version history
+                foreach (var aduitHistoryDto in auditHistoryDtos)
+                {
+                    // Find the user associated with the version history's CreatedBy property
+                    aduitHistoryDto.ReviewedByUser = users.FirstOrDefault(u => u.Id == aduitHistoryDto.ReviewedBy);
+                }
+            }
+
+            return auditHistoryDtos;
         }
 
 

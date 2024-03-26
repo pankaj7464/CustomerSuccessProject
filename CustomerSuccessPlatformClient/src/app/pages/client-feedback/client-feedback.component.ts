@@ -87,8 +87,8 @@ export class ClientFeedbackComponent {
       }
     );
   }
-  isClient(): boolean {
+  isManager(): boolean {
     const userRole = this.authorizationService.getCurrentUser()?.role;
-    return userRole === Role.Client;
+    return userRole === Role.Admin || userRole === Role.Manager;
   }
 }

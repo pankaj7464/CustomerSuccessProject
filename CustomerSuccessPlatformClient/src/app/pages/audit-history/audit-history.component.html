@@ -85,7 +85,7 @@
     <!-- Reviewed By Column -->
     <ng-container matColumnDef="reviewedBy">
       <th mat-header-cell *matHeaderCellDef>Reviewed By</th>
-      <td mat-cell *matCellDef="let element">{{ element.reviewedBy }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.reviewedByUser.name ||'-' }}</td>
     </ng-container>
 
     <!-- Status Column -->

@@ -18,14 +18,6 @@ export enum Role {
 })
 export class AuthorizationService {
 
-
-  // private users: User[] = [
-  //   { id: "1", name: 'Chintan Shah', email: 'chintan@example.com', role: 'admin' },
-  //   { id: "2", name: 'Dipa Manjukar', email: 'dipa@example.com', role: 'manager' },
-  //   { id: "2", name: 'Divyanshu Singh', email: 'divyanshu@example.com', role: 'auditor' },
-  //   { id: "4", name: 'Rahul yadav', email: 'rahul@example.com', role: 'client' },
-  // ];
-
   roles!: Role[];
 
 

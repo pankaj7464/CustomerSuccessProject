@@ -6,8 +6,8 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos.Auth
     {
         public Guid Id { get; set; }
 
-        public string UserId { get; set; }
-        public string RoleId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid RoleId { get; set; }
 
     }
 }

@@ -75,7 +75,8 @@ export class AuditHistoryComponent {
     this.apiService.getAllAuditHistory(id).subscribe((res) => {
       console.log(res);
       this.dataSource = res;
-      console.log(this.dataSource)
+
+      console.log(this.dataSource,"audit datasource")
     });
   }
 

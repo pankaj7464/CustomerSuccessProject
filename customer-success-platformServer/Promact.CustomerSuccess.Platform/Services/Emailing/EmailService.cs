@@ -12,6 +12,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
     {
         private readonly IConfiguration _configuration;
         private readonly IRepository<Stakeholder, Guid> _stakeholderRepository;
+        private readonly ILogger<EmailService> _logger;
         public EmailService(IConfiguration configuration, IRepository<Stakeholder, Guid> stakeholderRepository)
         {
             _configuration = configuration;
@@ -23,25 +24,72 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
             try
             {
                 var stakeholders = await _stakeholderRepository.GetListAsync(s => s.ProjectId == request.ProjectId);
+                var fromAddress = _configuration["EmailSettings:FromAddress"];
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse(fromAddress));
 
                 foreach (var stakeholder in stakeholders)
                 {
-                    var emailDto = new EmailDto
+                    email.To.Add(MailboxAddress.Parse(stakeholder.Email));
+                    email.Body = new TextPart(TextFormat.Html)
                     {
-                        To = stakeholder.Email,
-                        Subject = request.Subject,
-                        Body = request.Body,
+                        Text = Template.GetEmailTemplate(stakeholder.Name)
                     };
-
-                    // Send email asynchronously
-                    Task.Run(() => SendEmail(emailDto));
                 }
+                email.Subject = request.Subject;
+
+                // Send email asynchronously
+                await Task.Run(() => SendEmailToMultipleReciever(email));
             }
             catch (Exception ex) { }
         }
 
+        public void SendEmailToMultipleReciever(MimeMessage email)
+        {
+
+            Console.WriteLine("=================================================");
+            var smtpServer = _configuration["EmailSettings:SmtpServer"];
+            var port = int.Parse(_configuration["EmailSettings:Port"]);
+            var username = _configuration["EmailSettings:Username"];
+            var password = _configuration["EmailSettings:Password"];
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtpServer, port, SecureSocketOptions.StartTls);
+                    client.Authenticate(username, password);
+                    client.Send(email);
+                    client.Disconnect(true);
+                    _logger.LogInformation("email send Successfully");
+                }
+
+            }
+            catch (SmtpCommandException ex)
+            {
+                // Log the specific SMTP command exception
+                _logger.LogError("SMTP command error: {ex.Message}");
+            }
+            catch (SmtpProtocolException ex)
+            {
+                // Log the specific SMTP protocol exception
+                _logger.LogError($"SMTP protocol error: {ex.Message}");
+            }
+            catch (AuthenticationException ex)
+            {
+                // Log the specific authentication exception
+                _logger.LogError($"Authentication error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Log any other exceptions
+                _logger.LogError($"Unexpected error: {ex.Message}");
+            }
+
+        }
+
         public void SendEmail(EmailDto request)
         {
+
             Console.WriteLine("=================================================");
             var smtpServer = _configuration["EmailSettings:SmtpServer"];
             var port = int.Parse(_configuration["EmailSettings:Port"]);
@@ -54,7 +102,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
             email.Subject = request.Subject;
             email.Body = new TextPart(TextFormat.Html)
             {
-                Text = request.Body==null ? string.Empty : request.Body,
+                Text = request.Body
             };
 
             try
@@ -69,7 +117,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Emailing
 
             }
             catch (Exception ex) { }
-           
+
         }
     }
 }
