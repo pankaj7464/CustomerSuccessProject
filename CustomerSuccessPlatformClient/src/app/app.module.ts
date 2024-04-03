@@ -81,14 +81,7 @@ import { NotVerifiedComponent } from './pages/not-verified/not-verified.componen
 
 
     // Import the module into the application, with configuration
-    AuthModule.forRoot({
-      domain: environment.AUTH0_DOMAIN,
-      clientId: environment.AUTH0_CLIENT_ID,
-      
-      authorizationParams: {
-        redirect_uri: `${environment.clientURL}dashboard`
-      }
-    }),
+    AuthModule.forRoot({...environment.auth0}),
     
   ],
   providers: [

@@ -10,7 +10,7 @@ import { ApiResponse } from '../models/api-response';
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = `${environment.apiUrl}/api/app/`;
+  private apiUrl = `${environment.API_URL}/api/app/`;
   private loadingSubject: Subject<boolean> = new Subject<boolean>();
 
   menu: { role: string[], path: string }[] = [
@@ -118,7 +118,7 @@ export class ApiService {
   userProfile(): Observable<any> {
     this.showLoader();
     return this.http
-      .get<any>(environment.apiUrl + '/api/account/my-profile', {
+      .get<any>(environment.API_URL + '/api/account/my-profile', {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -476,7 +476,7 @@ export class ApiService {
     console.log(data);
     this.showLoader();
     return this.http
-      .post<any>(environment.apiUrl + `/assign-role?userId=${data.userId}&roleId=${data.roleId}`, {}, {
+      .post<any>(environment.API_URL + `/assign-role?userId=${data.userId}&roleId=${data.roleId}`, {}, {
         responseType: 'text' as 'json',
       })
       .pipe(finalize(() => {
@@ -692,7 +692,7 @@ export class ApiService {
     }
     this.showLoader();
     return this.http
-      .get<any[]>(environment.apiUrl + '/projects' + id)
+      .get<any[]>(environment.API_URL + '/projects' + id)
       .pipe(finalize(() => {
         this.hideLoader();
       }));

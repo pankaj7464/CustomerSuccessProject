@@ -107,7 +107,7 @@ export class DashboardComponent {
   logout(flag?:boolean) {
     this.authService.logout({
       logoutParams: {
-        returnTo: flag?`${environment.clientURL}login`:`${environment.clientURL}not-verified`
+        returnTo: flag?`${environment.clientURL}/login`:`${environment.clientURL}/not-verified`
       }
     });
   }

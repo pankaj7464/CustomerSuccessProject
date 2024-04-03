@@ -55,6 +55,9 @@ using System.Security.Cryptography;
 using Volo.Abp.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
 
 namespace Promact.CustomerSuccess.Platform;
 
@@ -137,9 +140,10 @@ namespace Promact.CustomerSuccess.Platform;
             {
                 options.AddAudiences("Platform");
                 options.UseLocalServer();
-                options.UseAspNetCore();
+                options.UseAspNetCore(); 
             });
         });
+
 
         if (!hostingEnvironment.IsDevelopment())
         {
@@ -171,20 +175,18 @@ namespace Promact.CustomerSuccess.Platform;
 
         }
 
-        context.Services.AddAuthentication()
-          .AddJwtBearer(options =>
-          {
-              options.TokenValidationParameters = new TokenValidationParameters
-              {
-                  ValidateIssuer = true,
-                  ValidateAudience = true,
-                  ValidateLifetime = true,
-                  ValidateIssuerSigningKey = true,
-                  ValidIssuer = configuration["Jwt:Issuer"], 
-                  ValidAudience = configuration["Jwt:Audience"],
-                  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"])) 
-              };
-          });
+        context.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = $"https://{configuration["Auth0:Domain"]}/";
+                options.Audience = configuration["Auth0:Audience"];
+            });
+
+
 
         ConfigureAuthentication(context);
         ConfigureBundles();
@@ -367,17 +369,39 @@ namespace Promact.CustomerSuccess.Platform;
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
-                    {"Platform", "Platform API"}
+            {"Platform", "Platform API"}
             },
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Platform API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
+
+                // Define security scheme for bearer token
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer"
+                });
+
+                // Add JWT bearer token authentication requirement
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new List<string>()
+                }
+                });
             });
     }
-
-
     private void ConfigureAutoMapper(ServiceConfigurationContext context)
     {
         context.Services.AddAutoMapperObjectMapper<PlatformModule>();
@@ -477,11 +501,11 @@ namespace Promact.CustomerSuccess.Platform;
 
         }
         
+        app.UseAuthentication();
         app.UseCorrelationId();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors();
-        app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
         if (IsMultiTenant)
@@ -492,6 +516,7 @@ namespace Promact.CustomerSuccess.Platform;
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();
+
         app.UseAuthorization();
 
         app.UseSwagger();

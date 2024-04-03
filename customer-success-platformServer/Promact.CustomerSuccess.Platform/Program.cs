@@ -58,7 +58,7 @@ public class Program
             }
 
             Log.Information("Starting Promact.CustomerSuccess.Platform.");
-            await app.RunAsync();
+            await app.RunAsync(); 
             return 0;
         }
         catch (Exception ex)

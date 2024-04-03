@@ -58,6 +58,7 @@ namespace Promact.CustomerSuccess.Platform.Services
         }
 
         [HttpGet("projects")]
+
         public async Task<List<ProjectDto>> GetProjectsByUserIdAsync(Guid userId)
         {
             var projects = new List<Project>();

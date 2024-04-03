@@ -1,11 +1,14 @@
 ﻿
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Auth;
 using Promact.CustomerSuccess.Platform.Services.Dtos.Auth.Auth;
 using Promact.CustomerSuccess.Platform.Services.Emailing;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -24,7 +27,6 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         IEmailService _emailService;
-
         public UserService(
             IRepository<User, Guid> userRepository,
             IRepository<UserRole, Guid> userRoleRepository,
@@ -124,6 +126,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
             return new Response { message = "You have successfully login", User = userDto ,IsSuccess=1};
         }
 
+
         public async Task<UserDto> GetDetailByEmailAsync(string email)
         {
             var user = (await _userRepository.GetListAsync(u => u.Email == email)).FirstOrDefault();
@@ -211,27 +214,75 @@ namespace Promact.CustomerSuccess.Platform.Services.Users
             return false; // User not found
         }
 
-        //To be implemented
-        private string GenerateJwtToken(UserDto user)
+
+        public async Task<string> login(string userId)  
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[]
+            var user = await _userRepository.FirstOrDefaultAsync(u => u.UserName == userId);
+
+            if (user != null)
             {
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-        };
+                var userDto = new UserDto
+                {
 
-            var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddDays(1),
-            signingCredentials: credentials
-        );
+                    Name = user.Name,
+                    Email = user.Email,
+                    Id = user.Id
+                };
+              
+                return await GenerateToken(userDto);
+            }
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return "Not found";
         }
+
+
+
+        //To be implemented
+        private async Task<string> GenerateToken(UserDto user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+
+            var userRole = await _userRoleRepository.GetListAsync(ur => ur.UserId == user.Id);
+            var roles = new List<string>();
+
+            if (userRole != null)
+            {
+                foreach (var role in userRole)
+                {
+                    var rs = await _roleRepository.GetListAsync(r => r.Id == role.RoleId);
+                    foreach(var r in rs)
+                    {
+                        if (r != null)
+                        {
+                            roles.Add(r.Name);
+                        }
+                    }
+                }
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+            };
+
+            // Adding roles as claims
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+
+
 
 
     }
