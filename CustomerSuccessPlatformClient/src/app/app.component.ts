@@ -11,10 +11,6 @@ export class AppComponent implements OnInit {
   isLoading: boolean;
   constructor( public apiService: ApiService,private authService: AuthService) {
     this.isLoading = false;
-    this.authService.user$.subscribe(user =>{
-      console.log(user);
-      localStorage.setItem('user', JSON.stringify(user));
-    });
   }
 
   ngOnInit(): void {

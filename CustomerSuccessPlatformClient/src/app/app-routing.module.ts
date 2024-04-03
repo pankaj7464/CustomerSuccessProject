@@ -10,30 +10,49 @@ import { RiskProfileComponent } from './pages/risk-profiling/risk-profiling.comp
 import { PhaseMilestoneComponent } from './pages/phase-milestone/phase-milestone.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './services/AuthGuard';
-
+import { ResourcesComponent } from './pages/resources/resources.component';
+import { ClientFeedbackComponent } from './pages/client-feedback/client-feedback.component';
+import { ApprovedTeamComponent } from './pages/approved-team/approved-team.component';
+import { ProjectUpdateComponent } from './pages/project-update/project-update.component';
+import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.component';
+import { ProjectComponent } from './pages/project/project.component';
+import { ProjectIdGuard } from './services/ProjectIdGuard';
+import { AuthGuard } from '@auth0/auth0-angular';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { RoleManagementComponent } from './pages/role-management/role-management.component';
+import { AdminGuard } from './services/AdminGuard';
+import { NotVerifiedComponent } from './pages/not-verified/not-verified.component';
 const routes: Routes = [
   { path: "login", component: LoginComponent },
+  { path: "not-verified", component: NotVerifiedComponent },
 
   {
     path: 'dashboard',
-    canActivate: [AuthGuard],
     component: DashboardComponent,
+    canActivate: [AuthGuard],
     children: [
-      { path: 'audit-history', component: AuditHistoryComponent },
-      { path: 'sprint', component: SprintComponent },
-      { path: 'stakeholder', component: StakeholderComponent },
-      { path: 'version-history', component: VersionHistoryComponent },
-      { path: 'project-budget', component: ProjectBudgetComponent },
-      { path: 'escalation-matrix', component: EscalationMatrixComponent },
-      { path: 'risk-profiling', component: RiskProfileComponent },
-      { path: 'phase-milestone', component: PhaseMilestoneComponent },
-      { path: '**', redirectTo: '/dashboard/audit-history', pathMatch: 'full' } 
+      { path: 'project', component: ProjectComponent },
+      { path: 'user-management', component: UserManagementComponent,canActivate:[AdminGuard] },
+      { path: 'role-management', component: RoleManagementComponent,canActivate:[AdminGuard] },
+      { path: 'audit-history', component: AuditHistoryComponent, canActivate: [ProjectIdGuard] },
+      { path: 'sprint', component: SprintComponent, canActivate: [ProjectIdGuard] },
+      { path: 'stakeholder', component: StakeholderComponent, canActivate: [ProjectIdGuard] },
+      { path: 'version-history', component: VersionHistoryComponent, canActivate: [ProjectIdGuard] },
+      { path: 'project-budget', component: ProjectBudgetComponent, canActivate: [ProjectIdGuard] },
+      { path: 'escalation-matrix', component: EscalationMatrixComponent, canActivate: [ProjectIdGuard] },
+      { path: 'risk-profiling', component: RiskProfileComponent, canActivate: [ProjectIdGuard] },
+      { path: 'phase-milestone', component: PhaseMilestoneComponent, canActivate: [ProjectIdGuard] },
+      { path: 'resources', component: ResourcesComponent, canActivate: [ProjectIdGuard] },
+      { path: 'client-feedback', component: ClientFeedbackComponent, canActivate: [ProjectIdGuard] },
+      { path: 'approved-team', component: ApprovedTeamComponent, canActivate: [ProjectIdGuard] },
+      { path: 'project-update', component: ProjectUpdateComponent, canActivate: [ProjectIdGuard] },
+      { path: 'minute-meeting', component: MinuteMeetingComponent, canActivate: [ProjectIdGuard] },
+      { path: '**', redirectTo: '/dashboard/project', pathMatch: 'full' }
     ]
   },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login', pathMatch: 'full' } 
+  { path: '**', redirectTo: '/login', pathMatch: 'full' }
 ];
 
 @NgModule({

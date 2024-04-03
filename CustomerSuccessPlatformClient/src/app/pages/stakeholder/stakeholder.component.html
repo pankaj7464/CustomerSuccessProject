@@ -1,7 +1,9 @@
+
 <form
   [formGroup]="form"
   (ngSubmit)="submitForm()"
   class="flex gap-2 flex-wrap m-4"
+  *ngIf="isManager()"
 >
   <div
     class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4"
@@ -16,19 +18,10 @@
       <input matInput formControlName="name" />
     </mat-form-field>
     <mat-form-field class="flex-1 w-full">
-      <mat-label>Contact</mat-label>
-      <input matInput formControlName="contact" />
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" />
     </mat-form-field>
-    <mat-form-field class="flex-1 w-full">
-      <mat-label>Project</mat-label>
-      <mat-select formControlName="projectId">
-        <mat-option value="" disabled>Select</mat-option>
-        <!-- Add your options here -->
-        <mat-option *ngFor="let project of projects" [value]="project.id">{{
-          project.name
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+
   </div>
   <!-- Submit Button -->
   <button
@@ -57,19 +50,19 @@
     </ng-container>
 
     <!-- Contact Column -->
-    <ng-container matColumnDef="contact">
-      <th mat-header-cell *matHeaderCellDef>Contact</th>
-      <td mat-cell *matCellDef="let element">{{ element.contact }}</td>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let element">{{ element.email }}</td>
     </ng-container>
 
     <!-- Action Column -->
     <ng-container matColumnDef="Actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let element" class="flex items-center">
-        <button mat-icon-button (click)="editItem(element)">
+        <button [disabled]="!isManager()" mat-icon-button (click)="editItem(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteItem(element.id)">
+        <button [disabled]="!isManager()" mat-icon-button (click)="deleteItem(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ApiService } from '../../services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthorizationService, Role } from '../../services/authorization.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-version-history-table',
@@ -22,10 +24,16 @@ export class VersionHistoryComponent implements OnInit {
     'Actions',
   ];
   dataSource!: any[];
+  managers!: any[];
   form: FormGroup;
-  editDataId!:string;
+  editDataId!: string;
 
-  constructor(private apiService: ApiService,private fb:FormBuilder) {
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private fb: FormBuilder, private authorizationService: AuthorizationService) {
+    let id = localStorage.getItem("projectId")
+    if (id) {
+      this.projectId = id
+    }
+
     this.form = this.fb.group({
       version: ['', Validators.required],
       type: ['', Validators.required],
@@ -33,20 +41,33 @@ export class VersionHistoryComponent implements OnInit {
       changeReason: ['', Validators.required],
       createdBy: ['', Validators.required],
       revisionDate: ['', Validators.required],
-      approvalDate: ['', Validators.required],
-      approvedBy: ['', Validators.required]
+      approvalDate: [''],
+      approvedBy: [''],
+      projectId: [id || '', Validators.required],
     });
 
   }
-
+  projectId!: string;
   ngOnInit() {
-    this.getAllVersionHistory();
+
+    this.getAllVersionHistory()
+    this.getAllUserByRole()
+   
   }
 
-  getAllVersionHistory(){
-    this.apiService.getAllVersionHistory().subscribe((res) => {
+
+
+
+  getAllVersionHistory() {
+    this.apiService.getAllVersionHistory(this.projectId).subscribe((res) => {
       console.log(res);
-      this.dataSource = res.items;
+      this.dataSource = res;
+    });
+  }
+  getAllUserByRole() {
+    this.apiService.getAllUserByRole("Manager").subscribe((res) => {
+      console.log(res);
+      this.managers = JSON.parse(res );
     });
   }
 
@@ -62,25 +83,25 @@ export class VersionHistoryComponent implements OnInit {
     );
   }
 
-  submitForm(){
+  submitForm() {
     console.log('Submit', this.form.value)
     if (this.form.valid) {
-    if(this.editDataId){
-      this.apiService.updateVersionHistory(this.editDataId,this.form.value).subscribe((res) => {
-        this.getAllVersionHistory();
-        this.apiService.showSuccessToast(
-          'Version History Updated Successfully'
-        );
-      });
-    }
-    else{
-      this.apiService.postVersionHistory(this.form.value).subscribe((res) => {
-        this.getAllVersionHistory();
-        this.apiService.showSuccessToast(
-          'Version History Added Successfully'
-        );
-      });
-    }
+      if (this.editDataId) {
+        this.apiService.updateVersionHistory(this.editDataId, this.form.value).subscribe((res) => {
+          this.getAllVersionHistory();
+          this.apiService.showSuccessToast(
+            'Version History Updated Successfully'
+          );
+        });
+      }
+      else {
+        this.apiService.postVersionHistory(this.form.value).subscribe((res) => {
+          this.getAllVersionHistory();
+          this.apiService.showSuccessToast(
+            'Version History Added Successfully'
+          );
+        });
+      }
     } else {
       this.form.markAllAsTouched();
     }
@@ -89,5 +110,10 @@ export class VersionHistoryComponent implements OnInit {
   editItem(data: any) {
     this.editDataId = data.id
     this.form.patchValue(data);
+  }
+
+  isManager(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Manager || userRole === Role.Admin;
   }
 }

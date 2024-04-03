@@ -1,13 +1,15 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { jsPDF } from 'jspdf';
+import { NavigationEnd, Router } from '@angular/router';
 import 'jspdf-autotable';
-import autoTable from 'jspdf-autotable';
 import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../services/api.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileModalComponent } from '../components/profile-modal/profile-modal.component';
+import { AuthorizationService, Role } from '../services/authorization.service';
+
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,151 +17,112 @@ import { ApiService } from '../services/api.service';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+  userDetail!: any
   isLoading: boolean;
-  constructor(public router: Router, public apiService: ApiService, private cdr: ChangeDetectorRef, @Inject(DOCUMENT) public document: Document,
-    public authService: AuthService) {
-      this.authService.user$.subscribe(user => {
-        console.log(user);
-      });
+  currentUrl:string ;
+  constructor(public dialog: MatDialog, public router: Router, public apiService: ApiService, private cdr: ChangeDetectorRef, @Inject(DOCUMENT) public document: Document,
+    public authService: AuthService, public authorizationService: AuthorizationService) {
+      this.currentUrl = router.url
+    this.authService.user$.subscribe(userDetail => {
+      this.userDetail = userDetail;
+      this.apiService.login({ email: this.userDetail.email, username: this.userDetail.sub }).subscribe(user => {
+        user = JSON.parse(user);
+     
+        if (user.isSuccess == 1) {
+          console.log(user);
+          user = user.user
+          this.apiService.showSuccessToast("User successfully logged in")
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("role", JSON.stringify(user?.role));
+          this.userDetail = { ...userDetail, roleId: user?.role };
+        }
+        else if (user.isSuccess == 2) {
+          this.apiService.showSuccessToast("You are not verified yet")
+          this.router.navigate(["not-verified"])
+          this.logout();
+        }
+        else {
+          this.apiService.register({
+            name: this.userDetail.nickname,
+            username: this.userDetail.sub,
+            email: this.userDetail.email
+          }).subscribe(user => {
+            console.log(user);
+            this.apiService.showSuccessToast("Wait until the user is confirmed")
+            this.logout();
+         
+          },
+            error => {
+
+            }
+          );
+        
+        }
+      },
+        error => {
+          console.log(error);
+        }
+      )
+    });
     this.isLoading = false;
   }
 
+ 
   ngOnInit(): void {
     this.apiService.isLoading().subscribe(isLoading => {
       this.isLoading = isLoading;
     });
-  }
-  navigateTo(path: any) {
-    console.log("/dashboard/"+path);
-    this.router.navigate(["/dashboard/"+path]);
-  }
-
-  Navigations = [
-    { path: 'project', displayName: 'Project' },
-    { path: 'project-manager', displayName: 'Project Manager' },
-    { path: 'settings', displayName: 'Settings' },
-  ];
-
-  tabs: { path: string; displayName: string }[] = [
-    { path: 'audit-history', displayName: 'Audit History' },
-    { path: 'sprint', displayName: 'Sprint' },
-    { path: 'stakeholder', displayName: 'Stakeholder' },
-    { path: 'version-history', displayName: 'Version History' },
-    { path: 'project-budget', displayName: 'Project Budget' },
-    { path: 'escalation-matrix', displayName: 'Escalation Matrix' },
-    { path: 'risk-profiling', displayName: 'Risk Profiling' },
-    { path: 'phase-milestone', displayName: 'Phase Milestone' },
-  ];
-
-
-  generatePdf() {
-    this.apiService.getAllDataForPdf().subscribe(
-      (data) => {
-        const doc = new jsPDF();
-
-        Object.keys(data).forEach((key) => {
-
-          if (data[key]) {
-            let items = data[key].items;
-            if (key == "escalationMatrix") {
-
-              items = items.sort((a: any, b: any) => a.level - b.level)
-
-            }
-            if (items.length > 0) {
-              const tableData = items.map((item: any) => {
-                const rowData = [];
-
-                switch (key) {
-                  case "projectBudgets": {
-                    item.type = this.apiService.projectType[item.type]
-                    break;
-
-                  }
-                  case "auditHistory": {
-                    item.reviewedBy = "Test user"
-                    item.dateOfAudit = new Date(item.dateOfAudit).toLocaleDateString();
-                    break;
-                  }
-                  case "phaseMilestone": {
-                    item.endDate = new Date(item.endDate).toLocaleDateString();
-                    item.startDate = new Date(item.startDate).toLocaleDateString();
-                    item.status = this.apiService.phaseMilestoneStatus[item.status];
-                    break;
-                  }
-                  case "escalationMatrix": {
-                    const escalationType: string[] = this.apiService.escalationType;
-                    const levels: string[] = this.apiService.levels;
-                    item.level = levels[item.level]
-                    item.escalationType = escalationType[item.escalationType]
-
-                    break;
-                  }
-                  case "riskProfile": {
-
-                    item.impact = this.apiService.impacts[item.impact]
-                    item.type = this.apiService.riskTypes[item.type]
-                    item.severity = this.apiService.severities[item.severity]
-                    break;
-                  }
-                  case "versionHistory": {
-                    item.approvalDate = new Date(item.approvalDate).toLocaleDateString();
-                    item.revisionDate = new Date(item.revisionDate).toLocaleDateString();
-                    item.status = this.apiService.sprintStatuses[item.status];
-                    break;
-                  }
-                  case "sprint": {
-                    item.endDate = new Date(item.endDate).toLocaleDateString();
-                    item.startDate = new Date(item.startDate).toLocaleDateString();
-                    item.status = this.apiService.sprintStatuses[item.status];
-                    break;
-                  }
-                  default:
-                    "test"
-                }
-                for (const prop in item) {
-                  if (item.hasOwnProperty(prop) && !prop.toLowerCase().includes('id')) {
-                    rowData.push(item[prop]);
-                  }
-                }
-                return rowData;
-              });
-              const tableName = key.charAt(0).toUpperCase() + key.slice(1);
-
-              doc.text(`Table: ${tableName}`, 10, 10);
-              autoTable(doc, {
-                // Exclude keys containing 'id' substring from header
-                head: [Object.keys(items[0]).filter(key => !key.toLowerCase().includes('id'))],
-                body: tableData,
-                startY: 20,
-              });
-
-              // Add a page break after each table except for the last one
-              if (key !== Object.keys(data)[Object.keys(data).length - 1]) {
-                doc.addPage();
-              }
-            }
-          }
-
-        });
-
-        doc.save('Report.pdf');
-        this.cdr.detectChanges();
-        this.apiService.showSuccessToast('Report downloaded successfully');
-      },
-      (err) => console.log(err)
-
-    );
-
-
-  }
-
-  logout() {
-    this.authService.logout({
-      logoutParams: {
-        returnTo: "http://localhost:4200/login"
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentUrl = this.router.url;
       }
     });
+  }
+  Navigations = [
+    { path: 'dashboard/project', displayName: 'Project' },
+    { path: 'dashboard/user-management', displayName: 'User Management' },
+    { path: 'dashboard/role-management', displayName: 'Role Management' },
+  ];
+
+  isUserManagementPage() {
+    return this.currentUrl !== "/dashboard/user-management";
+  }
+  
+  isProjectPage() {
+    return this.currentUrl !== "/dashboard/project";
+  }
+  
+  isRolePage() {
+    return this.currentUrl !== "/dashboard/role-management";
+  }
+  
+  shouldShowTabs() {
+    return this.isUserManagementPage() && this.isProjectPage() && this.isRolePage();
+  }
+
+
+  ngAfterViewInit() {
+
+  }
+  logout(flag?:boolean) {
+    this.authService.logout({
+      logoutParams: {
+        returnTo: flag?`${environment.clientURL}/login`:`${environment.clientURL}/not-verified`
+      }
+    });
+  }
+  navigateTo(path: string) {
+    // throw new Error('Method not implemented.');
+    this.router.navigate([path])
+  }
+
+
+  isAdmin(): boolean {
+    const userRole = this.authorizationService.getCurrentUser()?.role;
+    return userRole === Role.Admin;
+  }
+  openDialog() {
+    this.dialog.open(ProfileModalComponent);
   }
 
 }

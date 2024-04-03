@@ -66,7 +66,8 @@ function toPortablePath(p) {
 
 const builtinModules = new Set(Module.builtinModules || Object.keys(process.binding(`natives`)));
 const isBuiltinModule = (request) => request.startsWith(`node:`) || builtinModules.has(request);
-function readPackageScope(checkPath) {
+function readPackage
+(checkPath) {
   const rootSeparatorIndex = checkPath.indexOf(npath.sep);
   let separatorIndex;
   do {

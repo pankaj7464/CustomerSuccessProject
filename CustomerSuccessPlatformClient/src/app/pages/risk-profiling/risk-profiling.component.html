@@ -1,18 +1,11 @@
+
 <form
   [formGroup]="form"
   (ngSubmit)="submitForm()"
   class="flex gap-2 flex-wrap m-4"
+  *ngIf="isManager()"
 >
   <div class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4">
-    <!-- Project ID -->
-    <mat-form-field class="flex-1 w-full">
-      <mat-label>Project ID</mat-label>
-      <mat-select formControlName="projectId">
-        <mat-option *ngFor="let project of projects" [value]="project.id">{{
-          project.name
-        }}</mat-option>
-      </mat-select>
-    </mat-form-field>
 
     <!-- Risk Type -->
     <mat-form-field class="flex-1 w-full">
@@ -49,14 +42,7 @@
     </mat-form-field>
   </div>
 
-  <!-- Remediation Steps -->
-  <div class="w-full mb-4">
-    <mat-form-field class="w-full">
-      <mat-label>Remediation Steps</mat-label>
-      <textarea matInput formControlName="remediationSteps"></textarea>
-    </mat-form-field>
-  </div>
-
+ 
   <!-- Submit Button -->
   <button
     mat-raised-button
@@ -91,22 +77,14 @@
       <td mat-cell *matCellDef="let element">{{ impacts[element.impact] }}</td>
     </ng-container>
 
-    <!-- Remediation Steps Column -->
-    <ng-container matColumnDef="remediationSteps">
-      <th mat-header-cell *matHeaderCellDef>Remediation Steps</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.remediationSteps.join(", ") }}
-      </td>
-    </ng-container>
-
     <!-- Action Column -->
     <ng-container matColumnDef="Actions">
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let element" class="flex items-center">
-        <button mat-icon-button (click)="editItem(element)">
+        <button [disabled]="!isManager()" mat-icon-button (click)="editItem(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteItem(element.id)">
+        <button [disabled]="!isManager()" mat-icon-button (click)="deleteItem(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

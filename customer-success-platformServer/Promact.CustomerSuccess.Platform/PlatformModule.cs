@@ -7,7 +7,6 @@ using Promact.CustomerSuccess.Platform.Data;
 using Promact.CustomerSuccess.Platform.Localization;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
-using Volo.Abp.Uow;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.MultiTenancy;
@@ -53,6 +52,12 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
+using Volo.Abp.Data;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
 
 namespace Promact.CustomerSuccess.Platform;
 
@@ -135,9 +140,10 @@ namespace Promact.CustomerSuccess.Platform;
             {
                 options.AddAudiences("Platform");
                 options.UseLocalServer();
-                options.UseAspNetCore();
+                options.UseAspNetCore(); 
             });
         });
+
 
         if (!hostingEnvironment.IsDevelopment())
         {
@@ -161,12 +167,24 @@ namespace Promact.CustomerSuccess.Platform;
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
+      
 
         if (hostingEnvironment.IsDevelopment())
         {
             context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 
         }
+
+        context.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(options =>
+            {
+                options.Authority = $"https://{configuration["Auth0:Domain"]}/";
+                options.Audience = configuration["Auth0:Audience"];
+            });
 
 
 
@@ -223,6 +241,7 @@ namespace Promact.CustomerSuccess.Platform;
         return new X509Certificate2(file, passPhrase,
                             X509KeyStorageFlags.MachineKeySet);
     }
+
     private X509Certificate2 GetEncryptionCertificate(IWebHostEnvironment hostingEnv,
                                  IConfiguration configuration)
     {
@@ -239,6 +258,7 @@ namespace Promact.CustomerSuccess.Platform;
                 return new X509Certificate2(file, passPhrase,
                                 X509KeyStorageFlags.MachineKeySet);
         }
+
         // file doesn't exist or was deleted because it expired
         using var algorithm = RSA.Create(keySizeInBits: 2048);
         var subject = new X500DistinguishedName("CN=Fabrikam Encryption Certificate");
@@ -349,16 +369,39 @@ namespace Promact.CustomerSuccess.Platform;
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
-                    {"Platform", "Platform API"}
+            {"Platform", "Platform API"}
             },
             options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "Platform API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
+
+                // Define security scheme for bearer token
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer"
+                });
+
+                // Add JWT bearer token authentication requirement
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new List<string>()
+                }
+                });
             });
     }
-
     private void ConfigureAutoMapper(ServiceConfigurationContext context)
     {
         context.Services.AddAutoMapperObjectMapper<PlatformModule>();
@@ -419,6 +462,8 @@ namespace Promact.CustomerSuccess.Platform;
             });
         });
 
+        context.Services.AddTransient<IDataSeedContributor, CustomerSuccessDataSeedContributor>();
+
     }
 
 
@@ -456,11 +501,11 @@ namespace Promact.CustomerSuccess.Platform;
 
         }
         
+        app.UseAuthentication();
         app.UseCorrelationId();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors();
-        app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
         if (IsMultiTenant)
@@ -468,10 +513,10 @@ namespace Promact.CustomerSuccess.Platform;
             app.UseMultiTenancy();
         }
 
-        
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();
+
         app.UseAuthorization();
 
         app.UseSwagger();

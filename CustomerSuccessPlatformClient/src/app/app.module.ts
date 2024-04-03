@@ -24,8 +24,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table'
+
+
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ApprovedTeamComponent } from './pages/approved-team/approved-team.component';
+import { ResourcesComponent } from './pages/resources/resources.component';
+import { MinuteMeetingComponent } from './pages/minute-meeting/minute-meeting.component';
+import { ClientFeedbackComponent } from './pages/client-feedback/client-feedback.component';
+import { ProjectUpdateComponent } from './pages/project-update/project-update.component';
+import { ProjectComponent } from './pages/project/project.component';
+import { TabComponent } from './components/tab/tab.component';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
+import { RoleEditModalComponent } from './components/role-edit-modal/role-edit-modal.component';
+import { environment } from '../environments/environment';
+import { RoleManagementComponent } from './pages/role-management/role-management.component';
+import { NotVerifiedComponent } from './pages/not-verified/not-verified.component';
 
 
 @NgModule({
@@ -40,7 +54,18 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     RiskProfileComponent,
     PhaseMilestoneComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    ApprovedTeamComponent,
+    ResourcesComponent,
+    MinuteMeetingComponent,
+    ClientFeedbackComponent,
+    ProjectUpdateComponent,
+    ProjectComponent,
+    TabComponent,
+    UserManagementComponent,
+    RoleEditModalComponent,
+    RoleManagementComponent,
+    NotVerifiedComponent
   ],
   imports: [
     BrowserModule,
@@ -55,15 +80,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 
-   
     // Import the module into the application, with configuration
-    AuthModule.forRoot({
-      domain: 'dev-w2cpuspyl8y04bzh.us.auth0.com',
-      clientId: 'l6AoZ9MlugUZmmFY83P58BA2YQargRJ3',
-      authorizationParams: {
-        redirect_uri: "http://localhost:4200/dashboard"
-      }
-    }),
+    AuthModule.forRoot({...environment.auth0}),
     
   ],
   providers: [

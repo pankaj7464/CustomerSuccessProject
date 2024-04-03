@@ -1,9 +1,13 @@
+
 <form
   [formGroup]="form"
   (ngSubmit)="submitForm()"
   class="flex gap-2 flex-wrap m-4"
+  *ngIf="isAuditorOrAdmin()"
 >
-  <div class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4">
+  <div
+    class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4"
+  >
     <!-- Date of Audit -->
     <mat-form-field class="flex-1 w-full">
       <mat-label>Date of Audit</mat-label>
@@ -16,7 +20,7 @@
     <mat-form-field class="flex-1 w-full">
       <mat-label>Reviewed By</mat-label>
       <mat-select formControlName="reviewedBy">
-        <mat-option *ngFor="let user of Users" [value]="user.id">{{
+        <mat-option *ngFor="let user of auditors" [value]="user.id">{{
           user.name
         }}</mat-option>
       </mat-select>
@@ -35,7 +39,9 @@
     </mat-form-field>
   </div>
 
-  <div class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4">
+  <div
+    class="flex justify-between flex-col md:flex-row items-center w-full mb-4 gap-4"
+  >
     <!-- Reviewed Section -->
     <mat-form-field class="flex-1 w-full">
       <mat-label>Reviewed Section</mat-label>
@@ -79,7 +85,7 @@
     <!-- Reviewed By Column -->
     <ng-container matColumnDef="reviewedBy">
       <th mat-header-cell *matHeaderCellDef>Reviewed By</th>
-      <td mat-cell *matCellDef="let element">{{ element.reviewedBy }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.reviewedByUser.name ||'-' }}</td>
     </ng-container>
 
     <!-- Status Column -->
@@ -110,10 +116,10 @@
     <ng-container matColumnDef="Actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let element" class="flex items-center">
-        <button mat-icon-button (click)="editItem(element)">
+        <button [disabled]="!isAuditorOrAdmin()" mat-icon-button (click)="editItem(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteItem(element.id)">
+        <button [disabled]="!isAuditorOrAdmin()" mat-icon-button (click)="deleteItem(element.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
